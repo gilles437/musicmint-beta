@@ -1,0 +1,56 @@
+{
+  "numCards": [
+    {
+      "image": "/assets/img/icons/testi_s4_ic1.png",
+      "value": "2,5M+",
+      "type": {
+        "text1": "Downloaded and",
+        "text2": "Installation"
+      }
+    },
+    {
+      "image": "/assets/img/icons/testi_s4_ic2.png",
+      "value": "4.8/5",
+      "stars": 5,
+      "type": "Based on 1,258 reviews"
+    }
+  ],
+  "testiCards": [
+    {
+      "userImg": "/assets/img/testimonials/user4.png",
+      "stars": 5,
+      "title": {
+        "text1": "“You can even send emails to Evernote and gather  ",
+        "text2": " all of the things you need in a single place.”"
+      },
+      "author": {
+        "name": "jurgen k.",
+        "position": "Senior Marketing",
+        "company": "Br /ator"
+      }
+    },
+    {
+      "userImg": "/assets/img/testimonials/user5.png",
+      "stars": 5,
+      "title": "“Notero - 1st my choice for notes app. Awesome”",
+      "author": {
+        "name": "foden p.",
+        "position": "Director",
+        "company": "Ecoland Resort"
+      }
+    },
+    {
+      "userImg": "/assets/img/testimonials/user6.png",
+      "stars": 5,
+      "title": {
+        "text1": "”.This app is seriously good. It’s simple, clean and ",
+        "text2": " a real joy to use.”"
+      },
+      "author": {
+        "name": "Kerry T.",
+        "position": "Designer",
+        "company": "Teckzone Inc"
+      }
+    }
+  ]
+}

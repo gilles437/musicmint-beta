@@ -1,0 +1,38 @@
+[
+  {
+    "image": "/assets/img/icons/fe1.png",
+    "title": {
+      "text1": "Notes Powerful",
+      "text2": "and Security"
+    }
+  },
+  {
+    "image": "/assets/img/icons/fe2.png",
+    "title": {
+      "text1": "Easy Sort, Classify",
+      "text2": "and Search"
+    }
+  },
+  {
+    "image": "/assets/img/icons/fe3.png",
+    "title": {
+      "text1": "Collaboration and",
+      "text2": "Share"
+    },
+    "new": true
+  },
+  {
+    "image": "/assets/img/icons/fe4.png",
+    "title": {
+      "text1": "Quick Note In",
+      "text2": "Everywhere"
+    }
+  },
+  {
+    "image": "/assets/img/icons/fe5.png",
+    "title": {
+      "text1": "Write and Draw",
+      "text2": "on Ipad"
+    }
+  }
+]

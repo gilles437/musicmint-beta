@@ -1,0 +1,17 @@
+[
+  {
+    "icon": "fab fa-github",
+    "title": "جيت هوب",
+    "description": "المصدر المفتوح ورمز الاتصال"
+  },
+  {
+    "icon": "fab fa-twitter",
+    "title": "تويتر",
+    "description": "آخر الأخبار والتحديثات"
+  },
+  {
+    "icon": "fab fa-telegram",
+    "title": "تليجرام",
+    "description": "قناه للمجتمع"
+  }
+]

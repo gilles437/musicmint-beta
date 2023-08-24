@@ -1,0 +1,38 @@
+[
+  {
+    "image": "/assets/img/icons/fe1.png",
+    "title": {
+      "text1": "خدمه متميزه",
+      "text2": "وأمنة"
+    }
+  },
+  {
+    "image": "/assets/img/icons/fe2.png",
+    "title": {
+      "text1": "سهل التنسيق والاستخدام ",
+      "text2": "والبحث"
+    }
+  },
+  {
+    "image": "/assets/img/icons/fe3.png",
+    "title": {
+      "text1": "شارك",
+      "text2": "التطبيق"
+    },
+    "new": true
+  },
+  {
+    "image": "/assets/img/icons/fe4.png",
+    "title": {
+      "text1": "ملاحظة سريعة في ",
+      "text2": "في كل مكان"
+    }
+  },
+  {
+    "image": "/assets/img/icons/fe5.png",
+    "title": {
+      "text1": "أرسم واكتب ",
+      "text2": "على الايباد"
+    }
+  }
+]
