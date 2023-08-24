@@ -1,0 +1,28 @@
+{
+  "title": "نظارة سامسونج للواقع الافتراضى الجديدة",
+  "images": [
+    "/assets/img/shop/products/pr1.png",
+    "/assets/img/shop/products/pr2.png",
+    "/assets/img/shop/products/pr3.png",
+    "/assets/img/shop/products/pr4.png",
+    "/assets/img/shop/products/pr5.png"
+  ],
+  "mainInfo": {
+    "title": "نظارة سامسونج للواقع الافتراضى الجديدة",
+    "category": "سامسونج",
+    "rating": 4,
+    "reviews": 3,
+    "price": 222.65,
+    "discription": "بدون منصة رقمية قوية ، يضيع الوقت والمال ، ويبقى المحتوى دون أن يلاحظه أحد ، ويختفي العملاء المحتملون.",
+    "features": [
+      " نظارة واقع افتراضى تدعم الجيل الرابع والخامس",
+      "تتكامل مع جميع الأجهزة كمحمول ,  PS4, PS5, etc",
+      "مزامنة وحفظ البيانات مع السحابة"
+    ]
+  },
+  "moreInfo": {
+    "SKU": "VRO20-5112",
+    "Category": "تكنولوجى",
+    "tags": ["سامسونج", "oculus", "vr", "نظارة", "ar"]
+  }
+}

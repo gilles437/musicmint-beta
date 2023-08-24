@@ -1,0 +1,17 @@
+[
+  {
+    "icon": "fab fa-github",
+    "title": "Github",
+    "description": "Open Source & Commnit Code"
+  },
+  {
+    "icon": "fab fa-twitter",
+    "title": "Twitter",
+    "description": "Latest News & Update"
+  },
+  {
+    "icon": "fab fa-telegram",
+    "title": "Telegram",
+    "description": "Chanel for Community"
+  }
+]

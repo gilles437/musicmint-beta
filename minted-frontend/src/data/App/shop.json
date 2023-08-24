@@ -1,0 +1,119 @@
+[
+  {
+    "title": "ASUS Chromebook Flip -10.2 inch, 256GB",
+    "image": "/assets/img/shop/products/1.png",
+    "category": "asus",
+    "label": "new",
+    "liked": true,
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  },
+  {
+    "title": "Macbook Air 2018, 1 TB",
+    "image": "/assets/img/shop/products/2.png",
+    "category": "apple",
+    "label": "15% off",
+    "liked": false,
+    "rating": 4,
+    "reviews": 3,
+    "price": {
+      "old": "521.00",
+      "new": "421.00"
+    }
+  },
+  {
+    "image": "/assets/img/shop/products/3.png",
+    "liked": false,
+    "category": "samsung",
+    "title": "Samsung New VR Headset, Oculus 2.0",
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  },
+  {
+    "image": "/assets/img/shop/products/4.png",
+    "liked": false,
+    "category": "brand name",
+    "title": "iPhone 6s Gold 64GB, Retina Ready",
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  },
+  {
+    "image": "/assets/img/shop/products/5.png",
+    "liked": false,
+    "category": "Xbox",
+    "title": "Xbox One Controller",
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  },
+  {
+    "image": "/assets/img/shop/products/6.png",
+    "label": "15% off",
+    "liked": false,
+    "category": "amcrest",
+    "title": "Amcrest Outdoor Camera",
+    "rating": 4,
+    "reviews": 3,
+    "price": {
+      "new": "421.00",
+      "old": "521.00"
+    }
+  },
+  {
+    "image": "/assets/img/shop/products/7.png",
+    "liked": false,
+    "category": "dji2",
+    "title": "DJI II Phantom 4 Quad Drone With Camera",
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  },
+  {
+    "image": "/assets/img/shop/products/8.png",
+    "liked": false,
+    "category": "gopro",
+    "title": "Gopro Hero 4 Sliver 4K HD, Wireles Sport Camera",
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  },
+  {
+    "image": "/assets/img/shop/products/9.png",
+    "liked": false,
+    "category": "nikon",
+    "title": "Nikon Coolpix Camera",
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  },
+  {
+    "title": "Sony Camera 24.5MP, HD, 4k Wireless",
+    "image": "/assets/img/shop/products/10.png",
+    "category": "sony",
+    "liked": false,
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  },
+  {
+    "title": "All My Dangerous Friends - Marketing Book",
+    "image": "/assets/img/shop/products/11.png",
+    "category": "seo book",
+    "liked": false,
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  },
+  {
+    "title": "Love Does - Bob Goff",
+    "image": "/assets/img/shop/products/12.png",
+    "category": "seo book",
+    "liked": false,
+    "rating": 4,
+    "reviews": 3,
+    "price": "197.00"
+  }
+]

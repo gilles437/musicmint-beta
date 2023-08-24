@@ -1,0 +1,28 @@
+{
+  "title": "Samsung New VR Headset Oculus 2.0",
+  "images": [
+    "/assets/img/shop/products/pr1.png",
+    "/assets/img/shop/products/pr2.png",
+    "/assets/img/shop/products/pr3.png",
+    "/assets/img/shop/products/pr4.png",
+    "/assets/img/shop/products/pr5.png"
+  ],
+  "mainInfo": {
+    "title": "Samsung New VR Headset Oculus 2.0",
+    "category": "Samsung",
+    "rating": 4,
+    "reviews": 3,
+    "price": 222.65,
+    "discription": "Without a strong digital platform, time and money are wasted, content sits unnoticed, and prospective clients disappear.",
+    "features": [
+      "VR 2 in 1, support 3D/4D AR",
+      "Intergrate with all devices as mobile, PS4, PS5, etc",
+      "Sync and Save data with Cloud"
+    ]
+  },
+  "moreInfo": {
+    "SKU": "VRO20-5112",
+    "Category": "Technology",
+    "tags": ["samsung", "oculus", "vr", "headset", "ar"]
+  }
+}

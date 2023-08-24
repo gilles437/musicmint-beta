@@ -1,0 +1,22 @@
+[
+  {
+    "picture": "/assets/img/team/1.jpeg",
+    "name": "Michael Edwards",
+    "position": "CEO Founder"
+  },
+  {
+    "picture": "/assets/img/team/5.jpeg",
+    "name": "Bobby Kane",
+    "position": "CTO"
+  },
+  {
+    "picture": "/assets/img/team/3.jpeg",
+    "name": "Robert Downey Jr",
+    "position": "Project Manager"
+  },
+  {
+    "picture": "/assets/img/team/4.jpeg",
+    "name": "Andrew Robertson",
+    "position": "Marketing Leader"
+  }
+]

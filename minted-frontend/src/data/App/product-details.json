@@ -1,0 +1,30 @@
+{
+  "nav_pills": [
+    {
+      "id": "pills-description",
+      "title": "Description"
+    },
+    {
+      "id": "pills-reviews",
+      "title": "Reviews (3)"
+    },
+    {
+      "id": "pills-information",
+      "title": "Additional Information"
+    }
+  ],
+  "nav_tabs": [
+    {
+      "id": "pills-description",
+      "show": true
+    },
+    {
+      "id": "pills-reviews",
+      "show": false
+    },
+    {
+      "id": "pills-information",
+      "show": false
+    }
+  ]
+}
