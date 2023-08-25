@@ -1,10 +1,7 @@
-import { memo, useEffect, useState } from 'react';
-import Image from 'next/image';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { BaseWallet, Account } from '@polkadot-onboard/core';
-import { AccountBox } from './AccountBox';
-import styles from '@styles/Home.module.css';
-
+import { memo, useEffect, useState } from "react";
+import Identicon from "@polkadot/react-identicon";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { BaseWallet, Account } from "@polkadot-onboard/core";
 
 const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
@@ -13,9 +10,8 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
 
   useEffect(() => {
     const setupApi = async () => {
-      const provider = new WsProvider('wss://westend-rpc.polkadot.io');
+      const provider = new WsProvider("wss://westend-rpc.polkadot.io");
       const api = await ApiPromise.create({ provider });
-
       setApi(api);
     };
 
@@ -29,6 +25,7 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
         setIsBusy(true);
         await wallet.connect();
         let accounts = await wallet.getAccounts();
+        console.log({ accounts });
         setAccounts(accounts);
       } catch (error) {
         // handle error
@@ -39,23 +36,28 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
   };
 
   return (
-    <div className={`${styles.card} ${styles.shadow}`} style={{ marginBottom: '20px' }} onClick={walletClickHandler}>
-      <div className={`${styles.walletheader}`}>
-        <div style={{ margin: 5, display: 'flex', alignItems: 'center' }}>
-          {wallet?.metadata?.iconUrl && <Image width={45} height={45} src={wallet.metadata.iconUrl} alt='wallet icon' />}
-        </div>
-        <div>{`${wallet.metadata.title} ${wallet.metadata.version || ''}`}</div>
-      </div>
-      <div className={`${styles.wallet}`}>
-        {accounts.length > 0 &&
-          accounts.map(({ address, name = '' }) => (
-            <div key={address}>
-              <AccountBox api={api} account={{ address, name }} signer={wallet.signer} />
-            </div>
-          ))}
-      </div>
+    <div>
+      {accounts.length ? (
+        <>
+          <Identicon value={accounts[0].address} size="32" theme="polkadot" />
+          {beatifyAddress(accounts[0].address)}
+        </>
+      ) : (
+        <button
+          onClick={walletClickHandler}
+          className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+        >
+          <small>
+            <i className="fas fa-wallet me-1"></i> Connect Wallet
+          </small>
+        </button>
+      )}
     </div>
   );
 };
 
+// function beatifyAddress(address : string) {
+function beatifyAddress(address: string) {
+  return `${address.slice(0, 5)}...${address.slice(-5)}`;
+}
 export default memo(Wallet);

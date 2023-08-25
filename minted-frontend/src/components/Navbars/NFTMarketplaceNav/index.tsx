@@ -58,16 +58,16 @@ const Navbar = () => {
                 Homes
               </a>
               <ul className="dropdown-menu" aria-labelledby="navbarDropdown1">
-                <li><Link href="/"><a className="dropdown-item"> Landing Preview </a></Link></li>
-                <li><Link href="/home-it-solutions2"><a className="dropdown-item"> Creative It Solutions </a></Link></li>
-                <li><Link href="/home-data-analysis"><a className="dropdown-item"> Data Analysis </a></Link></li>
-                <li><Link href="/home-app-landing"><a className="dropdown-item"> App Landing </a></Link></li>
-                <li><Link href="/home-saas-technology"><a className="dropdown-item"> Saas Technology </a></Link></li>
-                <li><Link href="/home-marketing-startup"><a className="dropdown-item"> Marketing Startup </a></Link></li>
-                <li><Link href="/home-it-solutions"><a className="dropdown-item"> It Solution </a></Link></li>
-                <li><Link href="/home-software-company"><a className="dropdown-item"> Software Company </a></Link></li>
-                <li><Link href="/home-digital-agency"><a className="dropdown-item"> Digital Agency </a></Link></li>
-                <li><Link href="/home-modren-shop"><a className="dropdown-item"> Modren Shop </a></Link></li>
+                <li><Link href="/" className="dropdown-item"> Landing Preview </Link></li>
+                <li><Link href="/home-it-solutions2" className="dropdown-item"> Creative It Solutions </Link></li>
+                <li><Link href="/home-data-analysis" className="dropdown-item"> Data Analysis </Link></li>
+                <li><Link href="/home-app-landing" className="dropdown-item"> App Landing </Link></li>
+                <li><Link href="/home-saas-technology" className="dropdown-item"> Saas Technology </Link></li>
+                <li><Link href="/home-marketing-startup" className="dropdown-item"> Marketing Startup </Link></li>
+                <li><Link href="/home-it-solutions" className="dropdown-item"> It Solution </Link></li>
+                <li><Link href="/home-software-company" className="dropdown-item"> Software Company </Link></li>
+                <li><Link href="/home-digital-agency" className="dropdown-item"> Digital Agency </Link></li>
+                <li><Link href="/home-modren-shop" className="dropdown-item"> Modren Shop </Link></li>
               </ul>
             </li>
             <li className="nav-item dropdown" onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
@@ -77,34 +77,28 @@ const Navbar = () => {
                 {/* <!-- <small className="hot alert-danger text-danger">hot</small> --> */}
               </a>
               <ul className="dropdown-menu" aria-labelledby="navbarDropdown1">
-                <li><Link href="/page-about-app"><a className="dropdown-item">about</a></Link></li>
-                <li><Link href="/page-product-app"><a className="dropdown-item">product</a></Link></li>
-                <li><Link href="/page-services-app"><a className="dropdown-item">services</a></Link></li>
-                <li><Link href="/page-shop-app"><a className="dropdown-item">shop</a></Link></li>
-                <li><Link href="/page-single-project-app"><a className="dropdown-item">single project</a></Link></li>
-                <li><Link href="/page-single-post-app"><a className="dropdown-item">single post</a></Link></li>
+                <li><Link href="/page-about-app" className="dropdown-item">about</Link></li>
+                <li><Link href="/page-product-app" className="dropdown-item">product</Link></li>
+                <li><Link href="/page-services-app" className="dropdown-item">services</Link></li>
+                <li><Link href="/page-shop-app" className="dropdown-item">shop</Link></li>
+                <li><Link href="/page-single-project-app" className="dropdown-item">single project</Link></li>
+                <li><Link href="/page-single-post-app" className="dropdown-item">single post</Link></li>
               </ul>
             </li>
             <li className="nav-item">
-              <Link href="/page-portfolio-app">
-                <a className="nav-link">
+              <Link href="/page-portfolio-app" className="nav-link">
                   portfolio
-                </a>
               </Link>
             </li>
             <li className="nav-item">
-              <Link href="/page-blog-app">
-                <a className="nav-link">
+              <Link href="/page-blog-app" className="nav-link">
                   blog
-                </a>
               </Link>
             </li>
             <li className="nav-item">
-              <Link href="/page-contact-app">
-                <a className="nav-link">
+              <Link href="/page-contact-app" className="nav-link">
                   {/* <img src="//assets/img/icons/nav_icon/price.png" alt="" className="icon-15 me-1"> */}
                   contact
-                </a>
               </Link>
             </li>
           </ul>
