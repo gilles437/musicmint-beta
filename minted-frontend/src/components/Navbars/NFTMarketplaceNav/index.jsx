@@ -1,6 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import navbarScrollEffect from "@common/navbarScrollEffect";
+import dynamic from 'next/dynamic';
+
+const Connect = dynamic(() => import('./Connect').then(m => m.Connect), {
+  ssr: false,
+});
 
 const Navbar = () => {
   const navbarRef = useRef(null);
@@ -104,16 +109,16 @@ const Navbar = () => {
           <div className="nav-side mt-3 mt-lg-0">
             <div className="d-lg-flex align-items-center d-block">
               <div className="social-icons">
-                <p> Connect Us : </p>
+                {/* <p> Connect Us : </p> */}
                 <div className="icons">
                   <a href="#"> <i className="fab fa-twitter"></i> </a>
                   <a href="#"> <i className="fab fa-discord"></i> </a>
                   <a href="#"> <i className="fab fa-linkedin"></i> </a>
                 </div>
               </div>
-              <a href="#0" className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen ms-lg-4 mt-3 mt-lg-0" target="_blank">
-                <small> <i className="fas fa-wallet me-1"></i> Connect Wallet </small>
-              </a>
+              <div className="ms-lg-4 mt-3 mt-lg-0">
+                <Connect />
+              </div>
             </div>
           </div>
           <div className="nav-search d-block d-lg-none">

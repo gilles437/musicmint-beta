@@ -3,7 +3,6 @@ import Script from "next/script";
 import Head from "next/head";
 import "../styles/preloader.css";
 import "../styles/globals.css";
-import "@polkadot/api-augment";
 
 function MyApp({ Component, pageProps }) {
   return (
