@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import ModalVideo from "react-modal-video";
-import "react-modal-video/css/modal-video.css";
+// import ModalVideo from "react-modal-video";
+// import "react-modal-video/css/modal-video.css";
 
 const Header = () => {
   const [isOpen, setOpen] = useState(false);
 
-  const openVideo = (e) => {
+  const openVideo = (e: any) => {
     e.preventDefault();
     setOpen(true);
   }
@@ -66,7 +66,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      {
+      {/* {
         typeof window !== "undefined" &&
         (
           <ModalVideo
@@ -77,7 +77,7 @@ const Header = () => {
             onClose={() => setOpen(false)}
           />
         )
-      }
+      } */}
     </header>
   )
 }

@@ -16,7 +16,7 @@ const Navbar = () => {
     navbarScrollEffect(navbarRef.current);
   }, [navbarRef]);
 
-  const handleMouseMove = (event) => {
+  const handleMouseMove = (event: any) => {
     const dropDownToggler = event.target.classList.contains('dropdown-toggle') ? event.target : event.target.querySelector('.dropdown-toggle');
     const dropDownMenu = dropDownToggler?.nextElementSibling;
 
@@ -24,7 +24,7 @@ const Navbar = () => {
     dropDownMenu?.classList?.add('show');
   }
 
-  const handleMouseLeave = (event) => {
+  const handleMouseLeave = (event: any) => {
     const dropdown = event.target.classList.contains('dropdown') ? event.target : event.target.closest('.dropdown');
     const dropDownToggler = dropdown.querySelector('.dropdown-toggle');
     const dropDownMenu = dropdown.querySelector('.dropdown-menu');

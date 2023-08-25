@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Autoplay } from 'swiper';
-import CountTo from '../CountTo';
+// import CountTo from '../CountTo';
 import features from '@data/NFTMarketplace/features.json';
 
 import "swiper/css";
@@ -41,8 +41,8 @@ const Features = () => {
                       <h5> {feature.name} </h5>
                       <p>
                         Rise:
-                        <span className="color-yellowGreen ms-1"> $ </span>
-                        <CountTo className="counter color-yellowGreen" from={0} to={feature.rise} speed={1500} position={position} />
+                        <span className="color-yellowGreen ms-1"> $1200000 </span>
+                        {/* <CountTo className="counter color-yellowGreen" from={0} to={feature.rise} speed={1500} position={position} /> */}
                       </p>
                     </div>
                   </a>

@@ -3,14 +3,14 @@ import projects from '@data/NFTMarketplace/projects.json';
 
 const Projects = () => {
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (!mixitup) return;
-      mixitup('.projects')
-    }, 0);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     if (!mixitup) return;
+  //     mixitup('.projects')
+  //   }, 0);
+  // }, []);
 
-  const addActiveClass = (e) => {
+  const addActiveClass = (e: any) => {
     document.querySelectorAll('span[data-filter]').forEach(el => el.classList.remove('active'));
     e.currentTarget.classList.add('active');
   }

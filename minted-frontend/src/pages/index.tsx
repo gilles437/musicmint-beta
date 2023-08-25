@@ -27,7 +27,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Iteck - NFT Marketplace</title>
+        <title>MintedWave - NFT Marketplace</title>
       </Head>
 
       <MainLayout>

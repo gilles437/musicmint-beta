@@ -39,7 +39,7 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
     <div>
       {accounts.length ? (
         <>
-          <Identicon value={accounts[0].address} size="32" theme="polkadot" />
+          <Identicon value={accounts[0].address} size={32} theme="polkadot" />
           {beatifyAddress(accounts[0].address)}
         </>
       ) : (
