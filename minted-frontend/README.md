@@ -1,20 +1,13 @@
-# mintedwaves
-The source code for the mintedwaves front end  using Allfeat.network
-
-
-
-# Install Dependencies
-
-## USING YARN (Recommend)
-- yarn install
-## USING NPM
-- npm i OR npm i --legacy-peer-deps
-
-
-
 ## Getting Started
+switch to next example directory and install the dependencies:
+```bash
+cd <next example folder>
 
-First, run the development server:
+npm install
+# or
+yarn install
+```
+run the development server:
 
 ```bash
 npm run dev
