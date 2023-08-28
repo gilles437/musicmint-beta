@@ -41,13 +41,18 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
     setCurrentAccount(address);
   };
 
+  const walletDisConnect = () => {
+    setAccounts([]);
+    setCurrentAccount(null);
+  };
+
   return (
     <div>
       {accounts.length ? (
         <>
           <div className="btn-group">
             <div
-              className="dropdown-toggle"
+              className="dropdown-toggle mousePointer"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
@@ -55,30 +60,40 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
                 value={currentAccount?.address}
                 size={32}
                 theme="polkadot"
+                className="pe-1"
               />
               {beatifyAddress(currentAccount?.address)}
             </div>
-            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-sm-start">
+            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-sm-start mousePointer">
               {accounts.map((account: Account) => (
                 <li
                   key={account.address}
                   onClick={() => selectAddress(account)}
                 >
-                  <div className="dropdown-item">
+                  <div className="dropdown-item mousePointer">
                     <Identicon
                       value={account.address}
                       size={32}
                       theme="polkadot"
+                      className="pe-1"
                     />
                     {beatifyAddress(account.address)}
                   </div>
                 </li>
               ))}
-              {/* <li>
-                <a className="dropdown-item" href="#">
+              <li>
+                <a className="dropdown-item mousePointer" href="#">
                   Profile
                 </a>
-              </li> */}
+              </li>
+              <li>
+                <div
+                  onClick={() => walletDisConnect()}
+                  className="dropdown-item mousePointer"
+                >
+                  Disconnect
+                </div>
+              </li>
             </ul>
           </div>
         </>
