@@ -64,34 +64,50 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
               />
               {beatifyAddress(currentAccount?.address)}
             </div>
-            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-sm-start mousePointer">
+            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-lg-end mousePointer wallet-connect">
               {accounts.map((account: Account) => (
                 <li
                   key={account.address}
                   onClick={() => selectAddress(account)}
                 >
-                  <div className="dropdown-item mousePointer">
+                  <div className="dropdown-item d-flex">
                     <Identicon
                       value={account.address}
                       size={32}
                       theme="polkadot"
                       className="pe-1"
                     />
-                    {beatifyAddress(account.address)}
+                    <p className="navWallet-item">{beatifyAddress(account.address)}</p>
                   </div>
                 </li>
               ))}
               <li>
-                <a className="dropdown-item mousePointer" href="#">
-                  Profile
-                </a>
+                <div className="dropdown-item d-flex">
+                  <p className="navWallet-item">My Account</p>
+                </div>
               </li>
+              <li>
+                <div className="dropdown-item d-flex">
+                  <p className="navWallet-item">My Offer/Bid</p>
+                </div>
+              </li>
+              <li>
+                <div className="dropdown-item d-flex">
+                  <p className="navWallet-item">History</p>
+                </div>
+              </li>
+              <li>
+                <div className="dropdown-item d-flex">
+                  <p className="navWallet-item">My NFTs</p>
+                </div>
+              </li>
+
               <li>
                 <div
                   onClick={() => walletDisConnect()}
-                  className="dropdown-item mousePointer"
+                  className="dropdown-item d-flex"
                 >
-                  Disconnect
+                  <p className="navWallet-item"> Disconnect</p>
                 </div>
               </li>
             </ul>
