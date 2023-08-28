@@ -5,6 +5,7 @@ import { BaseWallet, Account } from "@polkadot-onboard/core";
 
 const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
   const [api, setApi] = useState<ApiPromise | null>(null);
   const [isBusy, setIsBusy] = useState<boolean>(false);
 
@@ -27,6 +28,7 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
         let accounts = await wallet.getAccounts();
         console.log({ accounts });
         setAccounts(accounts);
+        setCurrentAccount(accounts[0]);
       } catch (error) {
         // handle error
       } finally {
@@ -35,12 +37,50 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
     }
   };
 
+  const selectAddress = (address: Account) => {
+    setCurrentAccount(address);
+  };
+
   return (
     <div>
       {accounts.length ? (
         <>
-          <Identicon value={accounts[0].address} size={32} theme="polkadot" />
-          {beatifyAddress(accounts[0].address)}
+          <div className="btn-group">
+            <div
+              className="dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <Identicon
+                value={currentAccount?.address}
+                size={32}
+                theme="polkadot"
+              />
+              {beatifyAddress(currentAccount?.address)}
+            </div>
+            <ul className="dropdown-menu dropdown-menu-end dropdown-menu-sm-start">
+              {accounts.map((account: Account) => (
+                <li
+                  key={account.address}
+                  onClick={() => selectAddress(account)}
+                >
+                  <div className="dropdown-item">
+                    <Identicon
+                      value={account.address}
+                      size={32}
+                      theme="polkadot"
+                    />
+                    {beatifyAddress(account.address)}
+                  </div>
+                </li>
+              ))}
+              {/* <li>
+                <a className="dropdown-item" href="#">
+                  Profile
+                </a>
+              </li> */}
+            </ul>
+          </div>
         </>
       ) : (
         <button
@@ -57,7 +97,7 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
 };
 
 // function beatifyAddress(address : string) {
-function beatifyAddress(address: string) {
-  return `${address.slice(0, 5)}...${address.slice(-5)}`;
+function beatifyAddress(address: string | undefined) {
+  return address ? `${address.slice(0, 5)}...${address.slice(-5)}` : "";
 }
 export default memo(Wallet);

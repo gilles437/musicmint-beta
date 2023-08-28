@@ -9,12 +9,14 @@ const Wallets = () => {
   if (!Array.isArray(wallets)) {
     return null;
   }
+  console.log("All wallets", wallets);
   let allfeatWallet: BaseWallet = wallets[0];
   wallets.map((wallet) => {
-    if (wallet.metadata.id == "allfeat") {
+    if (wallet.metadata.id == "allfeat" || wallet.metadata.title == "allfeat") {
       allfeatWallet = wallet;
     }
   });
+  // console.log("allfeatWallet", allfeatWallet);
 
   return (
     <div>
