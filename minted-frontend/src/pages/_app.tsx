@@ -5,6 +5,7 @@ import Head from "next/head";
 import "../styles/preloader.css";
 import "../styles/globals.css";
 import "../styles/navbar.scss";
+import 'react-toastify/dist/ReactToastify.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

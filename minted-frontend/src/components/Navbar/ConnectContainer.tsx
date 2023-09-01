@@ -4,7 +4,7 @@ import { PolkadotWalletsContextProvider } from "@polkadot-onboard/react";
 import { WalletAggregator } from "@polkadot-onboard/core";
 import { InjectedWalletProvider } from "@polkadot-onboard/injected-wallets";
 import { WalletConnectProvider } from "@polkadot-onboard/wallet-connect";
-import { extensionConfig } from "provider-configs/extensionConfig";
+import { extensionConfig } from "@utils/provider-configs/extensionConfig";
 
 import Wallets from "./Wallets";
 

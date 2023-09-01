@@ -18,17 +18,6 @@ html, body {
   direction: ltr !important;
 }
 
-.rc-slider-handle {
-  border-color: var(--clr-style) !important;
-  background-color: var(--clr-style) !important;
-  opacity: 1 !important;
-}
-
-.rc-slider-handle-dragging {
-  box-shadow: 0 0 0 2px var(--clr-style) !important;
-}
-
-
 .related-products-slider .swiper-container,
 .slider-3items .swiper-container,
 .screenshots-slider .swiper-container {
@@ -39,4 +28,14 @@ html, body {
 .pricing.style-8 .rc-slider-handle {
   background-color: #fff !important;
   border-color: #fff !important;
+}
+
+.home-project-slider .swiper-button-next,
+.home-project-slider .swiper-button-prev{
+  background: transparent;
+  top: 55%;
+}
+
+.home-project-slider .swiper-pagination{
+  bottom: -30px !important;
 }

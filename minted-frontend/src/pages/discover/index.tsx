@@ -5,15 +5,12 @@ import React, { useEffect } from 'react';
 import MainLayout from '@layouts/Main';
 //= Components
 import Navbar from '@components/Navbar';
-import Header from '@components/Home/Header';
-import Projects from '@components/Home/Projects';
-import Features from '@components/Home/Features';
-import Process from '@components/Home/Process';
-import Collections from '@components/Home/Collections';
-import Community from '@components/Home/Community';
+import Projects from '@components/Discover/Projects';
 import Footer from '@components/Footer';
 
-const Home: NextPage = () => {
+
+
+const Discover: NextPage = () => {
   useEffect(() => {
     document.body.classList.add('home-style-12');
     return () => document.body.classList.remove('home-style-12');
@@ -22,18 +19,13 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>MintedWave - NFT Marketplace</title>
+        <title>Discover NFTs - NFT Marketplace</title>
       </Head>
 
       <MainLayout>
         <Navbar />
-        <Header />
         <main>
           <Projects />
-          <Features />
-          <Process />
-          <Collections />
-          <Community />
         </main>
         <Footer />
       </MainLayout>
@@ -41,4 +33,4 @@ const Home: NextPage = () => {
   )
 };
 
-export default Home;
+export default Discover;
