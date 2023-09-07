@@ -8,6 +8,8 @@ import { WeightV2 } from "@polkadot/types/interfaces";
 import AdminContract from "@contract/types/contracts/admin";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { u8aToHex } from "@polkadot/util";
+import { web3Enable, web3FromAddress } from "@polkadot/extension-dapp";
+import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
 
 const ContractAdmin = () => {
   const [isVerified, setArtistVerifiedState] = useState<boolean>();
@@ -19,7 +21,7 @@ const ContractAdmin = () => {
   useEffect(() => {
     async function fetchIsVerifiedArtist() {
       setIsLoading(true);
-
+      web3Enable("subwallet-js");
       // 1. Connection to the chain
       const wsProvider = new WsProvider("wss://rpc-test.allfeat.io");
       const api = await ApiPromise.create({ provider: wsProvider });
@@ -34,51 +36,64 @@ const ContractAdmin = () => {
       // 2. Contract Instantiation
       const contractAddress =
         "5FZCvuohqLZd1haUKtDXNkYFZzDJKDWg7c2Ltj88MPDsWMXK"; // Replace the address of your contract
-      //   const contract = new ContractPromise(api, contractAbi, contractAddress);
+      const contract = new ContractPromise(api, contractAbi, contractAddress);
 
-        // 3. Definition of the call arguments
-      //   const caller = "5HfvsrJHuNH2t97RgHMqh8WhMTrm32DDYjcWkD9HLsZtyf1J";
-      //   const accountId = "5HToLMuPVs9ExBrcWP1wPmtYxToB1TtmQYab7MdQxsmUaGTX"; // Replace by your function argument
-      //   const gasLimit = api.registry.createType("WeightV2", {
-      //     refTime: new BN("10000000000"),
-      //     proofSize: new BN("10000000000"),
-      //   }) as WeightV2;
+      // 3. Definition of the call arguments
+      const caller = "5HfvsrJHuNH2t97RgHMqh8WhMTrm32DDYjcWkD9HLsZtyf1J";
+      const accountId = "5HToLMuPVs9ExBrcWP1wPmtYxToB1TtmQYab7MdQxsmUaGTX"; // Replace by your function argument
+      const gasLimit = api.registry.createType("WeightV2", {
+        refTime: new BN("10000000000"),
+        proofSize: new BN("10000000000"),
+      }) as WeightV2;
 
-      //   // if null is passed, unlimited balance can be used
-      //   const storageDepositLimit = null;
+      // if null is passed, unlimited balance can be used
+      const storageDepositLimit = null;
 
-      //   // 4. Call of the contract's function
-      //   //   console.log("contract.tx", contract.tx);
-
-      //     const addAdminResult = await contract.tx.addAdmin(accountId, {value: 0, gasLimit, storageDepositLimit});
-      //     console.log( {addAdminResult })
-
-      //   const allAdmins = await contract.query.getAllAdmins(caller, {
-      //     value: 0,
-      //     gasLimit,
-      //     storageDepositLimit,
-      //   });
-      //   console.log({ allAdmins }, allAdmins.output?.toJSON());
+      // 4. Call of the contract's function
 
       const savedAccount = localStorage.getItem("currentAccount");
       const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
       console.log({ parsedAccount });
 
-      keyring.setSS58Format(42)
-      const alicePair: KeyringPair = keyring.addFromAddress(parsedAccount);
-      console.log({ alicePair });
 
-      const adminContract = new AdminContract(contractAddress, alicePair, api);
-      console.log({ adminContract });
+      const injector = await web3FromAddress(parsedAccount);
+      const options = injector ? { signer: injector.signer } : undefined;
+      const signer: AddressOrPair = injector
+        ? parsedAccount
+        : keyring.getPair(parsedAccount);
+
+      const addAdminResult = await contract.tx.addAdmin(
+        { value: 0, gasLimit, storageDepositLimit },
+        accountId
+      );
+      console.log({ addAdminResult });
+      const txr = addAdminResult.signAsync(signer, options);
+      console.log({ txr });
+
+      const allAdmins = await contract.query.getAllAdmins(caller, {
+        value: 0,
+        gasLimit,
+        storageDepositLimit,
+      });
+      console.log({ allAdmins }, allAdmins.output?.toJSON());
+
+      // const savedAccount = localStorage.getItem("currentAccount");
+      // const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
+      // console.log({ parsedAccount });
+
+
+
+      // const adminContract = new AdminContract(contractAddress, alicePair, api);
+      // console.log({ adminContract });
       // await adminContract.tx.addAdmin("5D4Q5sf67ZyNNLsRff8g2hWa5T3Z9HeCfbC9EXV8b1x7uVmy");
-      const allAdmins = await adminContract.query.getAllAdmins();
-      console.log({ allAdmins }, allAdmins.value.ok);
+      // const allAdmins = await adminContract.query.getAllAdmins();
+      // console.log({ allAdmins }, allAdmins.value.ok);
 
-      let tempList: string[] = []
-      allAdmins.value.ok?.forEach(account =>{
-        tempList.push(account.toString())
-      })
-      setAdminList(tempList)
+      // let tempList: string[] = []
+      // allAdmins.value.ok?.forEach(account =>{
+      //   tempList.push(account.toString())
+      // })
+      // setAdminList(tempList)
       // if (result.isOk) {
       //   return output?.toHuman(); // Return the result of the function
       // } else {
