@@ -55,20 +55,19 @@ const ContractAdmin = () => {
       const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
       console.log({ parsedAccount });
 
-
       const injector = await web3FromAddress(parsedAccount);
       const options = injector ? { signer: injector.signer } : undefined;
       const signer: AddressOrPair = injector
         ? parsedAccount
         : keyring.getPair(parsedAccount);
 
-      const addAdminResult = await contract.tx.addAdmin(
-        { value: 0, gasLimit, storageDepositLimit },
-        accountId
-      );
-      console.log({ addAdminResult });
-      const txr = addAdminResult.signAsync(signer, options);
-      console.log({ txr });
+      // const addAdminResult = await contract.tx.addAdmin(
+      //   { value: 0, gasLimit, storageDepositLimit },
+      //   accountId
+      // );
+      // console.log({ addAdminResult });
+      // const txr = await addAdminResult.signAndSend(signer, options);
+      // console.log({ txr });
 
       const allAdmins = await contract.query.getAllAdmins(caller, {
         value: 0,
@@ -76,12 +75,6 @@ const ContractAdmin = () => {
         storageDepositLimit,
       });
       console.log({ allAdmins }, allAdmins.output?.toJSON());
-
-      // const savedAccount = localStorage.getItem("currentAccount");
-      // const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-      // console.log({ parsedAccount });
-
-
 
       // const adminContract = new AdminContract(contractAddress, alicePair, api);
       // console.log({ adminContract });
@@ -100,7 +93,6 @@ const ContractAdmin = () => {
       //   throw new Error('Error during contract call');
       // }
     }
-
     fetchIsVerifiedArtist()
       .then((result: any) => {
         setArtistVerifiedState(result?.Ok);

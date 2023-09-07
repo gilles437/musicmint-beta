@@ -5,10 +5,11 @@ import React, { useEffect } from 'react';
 import MainLayout from '@layouts/Main';
 //= Components
 import Navbar from '@components/Navbar';
-import ContractAdmin from '@components/ContractAdmin';
+// import ContractAdmin from '@components/ContractAdmin';
 import Footer from '@components/Footer';
 
-
+import dynamic from 'next/dynamic'
+const ContractAdmin = dynamic(() => import('@components/ContractAdmin'), { ssr: false });
 
 const Discover: NextPage = () => {
   useEffect(() => {
