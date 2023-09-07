@@ -1,5 +1,9 @@
 
-const Metadata = ({ metadata, rtl }) => {
+import news from '@data/SinglePost/all-news.json';
+
+const metadata={ imgLetter: news.user.imgLetter, user: news.user, commentsCount: news.commentsCount, viewsCount: news.viewsCount }
+
+const Metadata= ({ rtl = false }) => {
   return (
     <div className="d-flex small align-items-center justify-content-between mb-70 fs-12px">
       <div className="l_side d-flex align-items-center">

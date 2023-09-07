@@ -52,9 +52,9 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark style-12">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
+        <Link className="navbar-brand" href="/">
           <img src="/assets/image/navbar-logo.png" alt="" />
-        </a>
+        </Link>
         <div className="nav-search d-none d-lg-block">
           <div className="form-group">
             <button className="icon" type="submit">

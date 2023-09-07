@@ -1,0 +1,3 @@
+{
+"Granted": {"name":"Granted","body":{"from":{"name":"AccountId","body":"string | number[]","isResult":false,"isPrimitive":true,"isConvertable":false},"to":{"name":"AccountId","body":"string | number[]","isResult":false,"isPrimitive":true,"isConvertable":false},"role":{"name":"Role","body":{"None":null,"Admin":null,"SuperAdmin":null},"isResult":false,"isPrimitive":false,"isConvertable":false}},"isResult":false,"isPrimitive":false,"isConvertable":false}
+}

@@ -13,11 +13,11 @@ import 'swiper/css/effect-fade';
 
 SwiperCore.use([Navigation, Pagination, Autoplay, EffectFade]);
 
-const BlogSlider = ({ style = "4", rtl= false }) => {
+const BlogSlider = ({ style = "5", rtl= false }) => {
   const data = rtl ? slidesRTL : slides;
 
   return (
-    <section className="blog-slider pt-50 pb-50 style-1">
+    <section className="blog-slider pt-50 pb-50 style-5">
       <div className="container">
         <div className={`section-head text-center mb-60 style-${style}`}>
           <h2 className="mb-20">{ rtl ? 'أخر' : 'Our' } <span>{ rtl ? 'الأخبار' : 'Journal' }</span></h2>
@@ -62,7 +62,7 @@ const BlogSlider = ({ style = "4", rtl= false }) => {
                             </small>
                             <h2 className="title">
                               <Link href={ rtl ? "/rtl-page-single-post" : "/page-single-post-5"}>
-                                <a>{ slide.title }</a>
+                                { slide.title }
                               </Link>
                             </h2>
                             <p className="fs-13px mt-10 text-light text-info">

@@ -11,11 +11,11 @@ import 'swiper/css/pagination';
 
 SwiperCore.use([Navigation, Pagination, Autoplay]);
 
-const PopularPosts = ({ style = "4", rtl = false }) => {
+const PopularPosts = ({ style = "5", rtl = false }) => {
   const data = rtl ? postsRTL : posts;
 
   return (
-    <section className="popular-posts related Posts section-padding pb-100 bg-gray5">
+    <section className="popular-posts related Posts section-padding pb-100">
       <div className="container">
         <h5 className="fw-bold text-uppercase mb-50">{ rtl ? 'المنشورات ذات الصلة' : 'Related Posts' }</h5>
         <div className="related-postes-slider position-relative">

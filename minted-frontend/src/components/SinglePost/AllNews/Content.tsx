@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Content = ({ style, rtl }) => {
+const Content = ({ style =5 , rtl = false }) => {
   return (
     <>
-      <h4 className="fw-bold color-000 lh-4 mb-30">{ rtl ? 'بمناسبة العرض الأول في المملكة المتحدة للفنان هنري باراندي ، المطور' : 'To mark the first UK show of artist Henri Barande, developer' } <a href="#" className={`color-blue${style}`}>{ rtl ? 'موسي' : 'Moussa' }</a> { rtl ? 'واستوديو Schultzschultz الألماني قاما بإنشاء The Lodge Wooden في مدينة برلين' : 'and German studio Schultzschultz  have created The Lodge Wooden at Berlin City' }</h4>
+      <h4 className="fw-bold lh-4 mb-30">{ rtl ? 'بمناسبة العرض الأول في المملكة المتحدة للفنان هنري باراندي ، المطور' : 'To mark the first UK show of artist Henri Barande, developer' } <a href="#" className={`color-blue${style}`}>{ rtl ? 'موسي' : 'Moussa' }</a> { rtl ? 'واستوديو Schultzschultz الألماني قاما بإنشاء The Lodge Wooden في مدينة برلين' : 'and German studio Schultzschultz  have created The Lodge Wooden at Berlin City' }</h4>
       <div className="text mb-10 color-666">
         { rtl ? 'اليوم ، يمارس معظم الناس في المتوسط 4 إلى 6 ساعات من التمارين كل يوم ، ويتأكدون من أن كل شيء يضعونه في أفواههم ليس مليئًا بالسكريات أو المواد الحافظة ، لكنهم لا يهتمون بصحتهم العقلية ، ولا إجازات ، ولا حتى بين الحين والآخر. عطلة نهاية أسبوع طويلة. كل هذا على أمل الحصول على هذا الترويج الكبير في يوم من الأيام.' : 'Today most people get on average 4 to 6 hours of exercise every day, and make sure that everything they put in their mouths is not filled with sugars or preservatives, but they pay no attention to their mental health, no vacations, not even the occasional long weekend. All of this for hopes of one day getting that big promotion' }.
       </div>

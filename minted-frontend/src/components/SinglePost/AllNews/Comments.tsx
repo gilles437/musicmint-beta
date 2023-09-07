@@ -1,5 +1,9 @@
+import news from '@data/SinglePost/all-news.json';
 
-const Comments = ({ commentCard, comments, style, rtl }) => {
+const commentCard = news.commentCard;
+const comments = news.comments;
+
+const Comments = ({ style = 5, rtl = false }) => {
   return (
     <div className="blog-comments mt-70">
       <div className="comment-card card p-5 radius-5 border-0 mt-50">
@@ -85,7 +89,7 @@ const Comments = ({ commentCard, comments, style, rtl }) => {
         <div className="row">
           <div className="col-lg-12">
             <div className="form-group mb-30">
-              <textarea className="form-control radius-4 fs-12px p-3" rows="6" placeholder={ rtl ? "اكتب تعليقك هنا" : "Write your comment here" }></textarea>
+              <textarea className="form-control radius-4 fs-12px p-3" rows={6} placeholder={ rtl ? "اكتب تعليقك هنا" : "Write your comment here" }></textarea>
             </div>
           </div>
           <div className="col-lg-6">

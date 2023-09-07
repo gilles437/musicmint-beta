@@ -1,9 +1,8 @@
 import { memo, useEffect, useState } from "react";
-import Identicon from "@polkadot/react-identicon";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { BaseWallet, Account } from "@polkadot-onboard/core";
 import DropDown from './DropDown';
-
+import { formatAccount } from '@utils/account';
 interface ParentProps {
   accountArray: Account[];
   current: string | null;
@@ -19,17 +18,6 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
     accountArray: accounts,
     current: currentAccount,
   }
-
-  useEffect(() => {
-    const setupApi = async () => {
-      const provider = new WsProvider("wss://westend-rpc.polkadot.io");
-      const api = await ApiPromise.create({ provider });
-      setApi(api);
-    };
-
-    setupApi();
-  }, []);
-
   const walletClickHandler = async (event: React.MouseEvent) => {
     console.log(`wallet clicked!`);
     if (!isBusy) {
@@ -37,7 +25,9 @@ const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
         setIsBusy(true);
         await wallet.connect();
         let accounts = await wallet.getAccounts();
-        console.log({ accounts });
+        accounts.map(account =>{
+          account.address = formatAccount(account.address)
+        })
         setAccounts(accounts);
         let data = { key: accounts };
         localStorage.setItem('accounts', JSON.stringify(data));

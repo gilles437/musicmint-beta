@@ -1,14 +1,14 @@
 import React from 'react'
 
-const Details = ({ details, style, rtl }) => {
+const Details = ({ style = 5 , rtl = false }) => {
   return (
     <div className="blog-details-slider mb-100">
       <div className="section-head text-center mb-60 style-5">
-        <h2 className="mb-20 color-000">{ details.title }</h2>
+        <h2 className="mb-20">Crypto Trend 2023</h2>
         <small className="d-block date text">
-          <a href="#" className={`text-uppercase border-end brd-gray pe-3 me-3 color-blue${style} fw-bold`}>{ details.type }</a>
+          <a href="#" className={`text-uppercase border-end brd-gray pe-3 me-3 color-blue${style} fw-bold`}>news</a>
           <i className="bi bi-clock me-1"></i>
-          <span className="op-8 ms-1">{ rtl ? 'تم النشر' : 'Posted on' } { details.time }</span>
+          <span className="op-8 ms-1">{ rtl ? 'تم النشر' : 'Posted on' } 15 Days ago</span>
         </small>
       </div>
       <div className="content-card">

@@ -2,8 +2,10 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import LightGallery from 'lightgallery/react';
 import 'lightgallery/css/lightgallery.css';
+import news from '@data/SinglePost/all-news.json';
 
-const Sidebar = ({ data, style, rtl }) => {
+const data = news.sidebar;
+const Sidebar = ({ style= 5, rtl = false }) => {
   useEffect(() => {
     const lg = document.querySelector('.lg-react-element');
     if (lg) lg.className = 'd-flex justify-content-between flex-wrap';
