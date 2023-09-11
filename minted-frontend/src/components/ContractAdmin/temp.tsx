@@ -76,6 +76,22 @@ const ContractAdmin = () => {
       });
       console.log({ allAdmins }, allAdmins.output?.toJSON());
 
+      // const adminContract = new AdminContract(contractAddress, alicePair, api);
+      // console.log({ adminContract });
+      // await adminContract.tx.addAdmin("5D4Q5sf67ZyNNLsRff8g2hWa5T3Z9HeCfbC9EXV8b1x7uVmy");
+      // const allAdmins = await adminContract.query.getAllAdmins();
+      // console.log({ allAdmins }, allAdmins.value.ok);
+
+      // let tempList: string[] = []
+      // allAdmins.value.ok?.forEach(account =>{
+      //   tempList.push(account.toString())
+      // })
+      // setAdminList(tempList)
+      // if (result.isOk) {
+      //   return output?.toHuman(); // Return the result of the function
+      // } else {
+      //   throw new Error('Error during contract call');
+      // }
     }
     fetchIsVerifiedArtist()
       .then((result: any) => {
