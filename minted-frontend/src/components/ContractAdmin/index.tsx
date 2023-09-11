@@ -11,12 +11,20 @@ import { u8aToHex } from "@polkadot/util";
 import { web3Enable, web3FromAddress } from "@polkadot/extension-dapp";
 import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
 
+interface FetchResult {
+  ok: string[];
+}
+
 const ContractAdmin = () => {
   const [isVerified, setArtistVerifiedState] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [adminList, setAdminList] = useState<string[]>([]);
   const [superAdminList, setSuperAdminList] = useState<[]>([]);
+
+  const contractAddress = "5CDR39HB2UiBwozs584p4AhmCkAueFsVSxHBMpUpZypJoo5g"; // Replace the address of your contract
+  const caller = "5HfvsrJHuNH2t97RgHMqh8WhMTrm32DDYjcWkD9HLsZtyf1J";      //The address of Contract Owner
+  const accountId = "5GYgwUxoyRiuU3kHMRdUub7q4bNSjG1bipVfzqqxutWoQxzc"; // Replace by your function argument
 
   useEffect(() => {
     async function fetchIsVerifiedArtist() {
@@ -34,13 +42,10 @@ const ContractAdmin = () => {
       const keyring = new Keyring({ type: "sr25519", ss58Format: 42 });
 
       // 2. Contract Instantiation
-      const contractAddress =
-        "5FZCvuohqLZd1haUKtDXNkYFZzDJKDWg7c2Ltj88MPDsWMXK"; // Replace the address of your contract
       const contract = new ContractPromise(api, contractAbi, contractAddress);
 
       // 3. Definition of the call arguments
-      const caller = "5HfvsrJHuNH2t97RgHMqh8WhMTrm32DDYjcWkD9HLsZtyf1J";
-      const accountId = "5HToLMuPVs9ExBrcWP1wPmtYxToB1TtmQYab7MdQxsmUaGTX"; // Replace by your function argument
+
       const gasLimit = api.registry.createType("WeightV2", {
         refTime: new BN("10000000000"),
         proofSize: new BN("10000000000"),
@@ -54,7 +59,6 @@ const ContractAdmin = () => {
       const savedAccount = localStorage.getItem("currentAccount");
       const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
       console.log({ parsedAccount });
-
       const injector = await web3FromAddress(parsedAccount);
       const options = injector ? { signer: injector.signer } : undefined;
       const signer: AddressOrPair = injector
@@ -74,9 +78,22 @@ const ContractAdmin = () => {
         gasLimit,
         storageDepositLimit,
       });
-      console.log({ allAdmins }, allAdmins.output?.toJSON());
+      const temp: FetchResult = allAdmins.output?.toJSON() as FetchResult;
+      console.log({ allAdmins }, temp.ok);
+      setAdminList(temp.ok);
+
+      const allSuperAdmins = await contract.query.getAllSuperAdmins(caller, {
+        value: 0,
+        gasLimit,
+        storageDepositLimit,
+      });
+      const syperTemp: FetchResult = allSuperAdmins.output?.toJSON() as FetchResult;
+      console.log({ allSuperAdmins }, syperTemp.ok);
+      setSuperAdminList(syperTemp.ok);
+      console.log({ superAdminList });
 
     }
+
     fetchIsVerifiedArtist()
       .then((result: any) => {
         setArtistVerifiedState(result?.Ok);
@@ -93,9 +110,16 @@ const ContractAdmin = () => {
         <div className="row">
           <div className="col-sm-6">
             All Admin Lists
-            <div></div>
+            {adminList.map((account: string) => (
+              <p key={account} className="ps-1">{account}</p>
+            ))}
           </div>
-          <div className="col-sm-6">col-sm-4</div>
+          <div className="col-sm-6">
+            All Super Admin Lists
+            {superAdminList.map((account: string) => (
+              <p key={account} className="ps-1">{account}</p>
+            ))}
+          </div>
         </div>
       </div>
       {/* <h1>{isLoading && "Loading..."}</h1>
