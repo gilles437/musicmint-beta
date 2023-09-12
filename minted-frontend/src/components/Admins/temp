@@ -93,13 +93,13 @@ const ContractAdmin = () => {
       //   throw new Error('Error during contract call');
       // }
     }
-    fetchIsVerifiedArtist()
-      .then((result: any) => {
-        setArtistVerifiedState(result?.Ok);
-        setIsLoading(false);
-        console.log(result);
-      })
-      .catch(console.error);
+    // fetchIsVerifiedArtist()
+    //   .then((result: any) => {
+    //     setArtistVerifiedState(result?.Ok);
+    //     setIsLoading(false);
+    //     console.log(result);
+    //   })
+    //   .catch(console.error);
   }, []);
 
   // In this case, we are waiting for a bool response from the contract

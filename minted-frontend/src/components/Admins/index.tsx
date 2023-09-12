@@ -3,13 +3,10 @@ import { ApiPromise, WsProvider, Keyring } from "@polkadot/api";
 import { ContractPromise } from "@polkadot/api-contract";
 import contractAbi from "./admin.json"; // Replace by your contract ABI
 import { BN } from "@polkadot/util";
-import { KeyringPair } from "@polkadot/keyring/types";
 import { WeightV2 } from "@polkadot/types/interfaces";
-import AdminContract from "@contract/types/contracts/admin";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
-import { u8aToHex } from "@polkadot/util";
 import { web3Enable, web3FromAddress } from "@polkadot/extension-dapp";
-import { AddressOrPair, SubmittableExtrinsic } from "@polkadot/api/types";
+import { AddressOrPair } from "@polkadot/api/types";
 
 interface FetchResult {
   ok: string[];
@@ -33,44 +30,44 @@ const ContractAdmin = () => {
   const accountId = "5GYgwUxoyRiuU3kHMRdUub7q4bNSjG1bipVfzqqxutWoQxzc"; // Replace by your function argument
   const storageDepositLimit = null;
 
-  useEffect(() => {
-    async function connectChain() {
-      //Connect Chain for API
-      const apiResult = await ApiPromise.create({ provider: wsProvider });
-      setApi(apiResult);
-      const { chainSS58, chainDecimals, chainTokens } = apiResult.registry;
-      const { genesisHash } = apiResult;
-      console.log({ chainSS58, chainDecimals, chainTokens, genesisHash });
-      localStorage.setItem("chainSS58", JSON.stringify(chainSS58));
-      setSs58Format(chainSS58 ? chainSS58 : 42);
+  // useEffect(() => {
+  //   async function connectChain() {
+  //     //Connect Chain for API
+  //     const apiResult = await ApiPromise.create({ provider: wsProvider });
+  //     setApi(apiResult);
+  //     const { chainSS58, chainDecimals, chainTokens } = apiResult.registry;
+  //     const { genesisHash } = apiResult;
+  //     console.log({ chainSS58, chainDecimals, chainTokens, genesisHash });
+  //     localStorage.setItem("chainSS58", JSON.stringify(chainSS58));
+  //     setSs58Format(chainSS58 ? chainSS58 : 42);
 
-      //Contract Create
-      const contract = new ContractPromise(
-        apiResult,
-        contractAbi,
-        contractAddress
-      );
-      setContract(contract);
+  //     //Contract Create
+  //     const contract = new ContractPromise(
+  //       apiResult,
+  //       contractAbi,
+  //       contractAddress
+  //     );
+  //     setContract(contract);
 
-      //Set Kerying
-      const keyring = new Keyring({ type: "sr25519", ss58Format: ss58Format });
-      setKeyring(keyring);
+  //     //Set Kerying
+  //     const keyring = new Keyring({ type: "sr25519", ss58Format: ss58Format });
+  //     setKeyring(keyring);
 
-      //GasLimit
-      const gasLimit = apiResult.registry.createType("WeightV2", {
-        refTime: new BN("10000000000"),
-        proofSize: new BN("10000000000"),
-      }) as WeightV2;
-      setGasLimit(gasLimit);
+  //     //GasLimit
+  //     const gasLimit = apiResult.registry.createType("WeightV2", {
+  //       refTime: new BN("10000000000"),
+  //       proofSize: new BN("10000000000"),
+  //     }) as WeightV2;
+  //     setGasLimit(gasLimit);
 
-      //Connect Wallet for Injector
-      web3Enable("subwallet-js");
-      await cryptoWaitReady();
-    }
-    connectChain()
-      .then((result: any) => {})
-      .catch(console.error);
-  }, []);
+  //     //Connect Wallet for Injector
+  //     web3Enable("subwallet-js");
+  //     await cryptoWaitReady();
+  //   }
+  //   connectChain()
+  //     .then((result: any) => {})
+  //     .catch(console.error);
+  // }, []);
 
   // useEffect(() => {
   //   async function getAdminList() {
@@ -162,27 +159,87 @@ const ContractAdmin = () => {
   //   }
   // };
 
-  // In this case, we are waiting for a bool response from the contract
   return (
     <section className="projects section-padding style-12">
-      <div className="container text-center">
-        <div className="row">
-          <div className="col-sm-6">
-            All Admin Lists
-            {adminList.map((account: string) => (
-              <p key={account} className="ps-1">
-                {account}
-              </p>
-            ))}
+      <div className="container">
+        <div className="text-center">
+          <h1>Admins</h1>
+        </div>
+
+        <div className="mt-5">
+          <div className="row mt-1">
+            <div className="col-sm-6">
+              <h2>Admins Section</h2>
+              <input type="text" placeholder="Enter Address..." />
+            </div>
+            <div className="col-sm-3">
+              <h5>Role</h5>
+              <h5>Creator</h5>
+            </div>
+            <div className="col-sm-3">
+              <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+                Add Admin
+              </button>
+            </div>
           </div>
-          <div className="col-sm-6">
-            All Super Admin Lists
-            {superAdminList.map((account: string) => (
-              <p key={account} className="ps-1">
-                {account}
-              </p>
-            ))}
+
+          <table className="table table-hover table-success table-striped mt-2">
+            <thead className="thead-dark">
+              <tr>
+                <th scope="col">Address</th>
+                <th scope="col">Role</th>
+                <th scope="col">Created On</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"> account</th>
+                <td>Admin</td>
+                <td></td>
+                <td>
+                  <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+                    Remove Admin
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-5">
+          <div className="row">
+            <div className="col-sm-6">
+              <h2>Super Admins Section</h2>
+              <input type="text" placeholder="Enter Address..." />
+            </div>
+            <div className="col-sm-6">
+              <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+                Add Super Admin
+              </button>
+            </div>
           </div>
+
+          <table className="table table-hover table-success table-striped mt-2">
+            <thead className="thead-dark">
+              <tr>
+                <th scope="col">Address</th>
+                <th scope="col">Created On</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row"> account</th>
+                <td></td>
+                <td>
+                  <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+                    Remove Admin
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>

@@ -1,5 +1,4 @@
 import { memo, useEffect, useState } from "react";
-import { ApiPromise, WsProvider } from "@polkadot/api";
 import { BaseWallet, Account } from "@polkadot-onboard/core";
 import DropDown from './DropDown';
 import { formatAccount } from '@utils/account';
@@ -11,7 +10,6 @@ interface ParentProps {
 const Wallet = ({ wallet }: { wallet: BaseWallet }) => {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [currentAccount, setCurrentAccount] = useState<string | null>(null);
-  const [api, setApi] = useState<ApiPromise | null>(null);
   const [isBusy, setIsBusy] = useState<boolean>(false);
 
   const props: ParentProps={

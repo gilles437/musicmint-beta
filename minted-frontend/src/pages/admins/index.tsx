@@ -5,13 +5,12 @@ import React, { useEffect } from 'react';
 import MainLayout from '@layouts/Main';
 //= Components
 import Navbar from '@components/Navbar';
-// import ContractAdmin from '@components/ContractAdmin';
 import Footer from '@components/Footer';
 
 import dynamic from 'next/dynamic'
-const ContractAdmin = dynamic(() => import('@components/ContractAdmin'), { ssr: false });
+const ContractAdmin = dynamic(() => import('@components/Admins'), { ssr: false });
 
-const Discover: NextPage = () => {
+const Admins: NextPage = () => {
   useEffect(() => {
     document.body.classList.add('home-style-12');
     return () => document.body.classList.remove('home-style-12');
@@ -20,7 +19,7 @@ const Discover: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Discover NFTs - NFT Marketplace</title>
+        <title>MintedWave - Admins Page</title>
       </Head>
 
       <MainLayout>
@@ -34,4 +33,4 @@ const Discover: NextPage = () => {
   )
 };
 
-export default Discover;
+export default Admins;
