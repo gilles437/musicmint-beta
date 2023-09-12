@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { Account } from "@polkadot-onboard/core";
 import Identicon from "@polkadot/react-identicon";
+import Link from "next/link";
 
-interface ChildProps  {
-    accountArray: Account[];
-    current: string | null;
-    setAccounts: (accounts: any[]) => void
-  }
+interface ChildProps {
+  accountArray: Account[];
+  current: string | null;
+  setAccounts: (accounts: any[]) => void;
+}
 
 // const DropDown = (accountArray: Account[], current: Account) => {
-const DropDown = (props: ChildProps ) => {
+const DropDown = (props: ChildProps) => {
   const [accounts, setAccounts] = useState<Account[]>(props.accountArray);
-  const [currentAccount, setCurrentAccount] = useState<string| null>(null);
+  const [currentAccount, setCurrentAccount] = useState<string | null>(null);
 
   useEffect(() => {
     setAccounts(props.accountArray);
@@ -20,16 +21,16 @@ const DropDown = (props: ChildProps ) => {
 
   const selectAddress = (address: Account) => {
     setCurrentAccount(address.address);
-    localStorage.setItem('currentAccount', JSON.stringify(address.address));
+    localStorage.setItem("currentAccount", JSON.stringify(address.address));
   };
 
   const walletDisConnect = () => {
     setAccounts([]);
-    props.setAccounts([])
+    props.setAccounts([]);
     setCurrentAccount(null);
     let data = { key: [] };
-    localStorage.setItem('accounts', JSON.stringify(data));
-    localStorage.setItem('currentAccount', 'null');
+    localStorage.setItem("accounts", JSON.stringify(data));
+    localStorage.setItem("currentAccount", "null");
   };
 
   return (
@@ -67,6 +68,17 @@ const DropDown = (props: ChildProps ) => {
               <div className="dropdown-item d-flex">
                 <img src="/assets/image/icon/my-account.svg" alt="my-account" />
                 <p className="ps-1">My Account</p>
+              </div>
+            </li>
+            <li>
+              <div className="dropdown-item">
+                <Link href="/admins" className="d-flex">
+                  <img
+                    src="/assets/image/icon/my-account.svg"
+                    alt="my-account"
+                  />
+                  <p className="ps-1">Admin Dashboard</p>
+                </Link>
               </div>
             </li>
             <li>
