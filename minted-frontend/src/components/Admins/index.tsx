@@ -307,7 +307,7 @@ const ContractAdmin = () => {
               <tbody>
                 {superAdminList.map((account: string) => (
                   <tr>
-                    <th scope="row"> account</th>
+                    <th scope="row"> {account}</th>
                     <td></td>
                     <td>
                       <button
