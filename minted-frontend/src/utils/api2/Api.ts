@@ -52,10 +52,7 @@ export default class Api extends EventEmitter implements ApiService {
       await this.disconnect(); // disconnect if already connected
       const provider = new WsProvider(apiUrl);
       console.log("Connect", apiUrl);
-      const options = getApiOptions(apiUrl);
-      const apiPromise = await ApiPromise.create(
-        Object.assign({ provider }, options)
-      );
+      const apiPromise = await ApiPromise.create({ provider });
       this.setApi(apiPromise);
       this._emit("connect", apiPromise);
     } catch (err) {

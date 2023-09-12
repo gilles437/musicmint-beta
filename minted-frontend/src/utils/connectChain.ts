@@ -1,6 +1,4 @@
 import Connector from "@utils/api2";
-import correctFormat from "@utils/ss58Format";
-import { encodeAddress } from "@polkadot/util-crypto";
 
 export async function connectChain(data: string) {
   let endpoint: string = "wss://rpc-test.allfeat.io";
