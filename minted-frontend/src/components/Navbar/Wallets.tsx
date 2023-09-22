@@ -56,8 +56,6 @@ const Wallets = () => {
           />
         </>
       )}
-      {/* {wallets.map((wallet: BaseWallet) => ( */}
-      {/* ))} */}
     </div>
   );
 };

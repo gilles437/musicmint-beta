@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import MainLayout from '@layouts/Main';
 //= Components
 import Navbar from '@components/Navbar';
-import FileUploader from '@components/FileUploader/FileUploader';
+import FileUploader from '@components/album/FileUploader';
 import Footer from '@components/Footer';
 
 

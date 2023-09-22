@@ -28,7 +28,7 @@ const FileUploader = () => {
      * @param {string} fileImageCid - The CID of the image NFT file.
      * @param {string} fileSoundTrackCid - The CID of the sound track NFT file.
     */
-    const uploadMetadata = (fileImageCid, fileSoundTrackCid) => {
+    const uploadMetadata = async (fileImageCid) => {
         /// This is the JSON object that will be uploaded into the bucket
         //the name will be the image name of the NFT
         const json_metadata = {
@@ -39,7 +39,6 @@ const FileUploader = () => {
             collection_id: currentCollectionId,
             /// NFT image url
             image: `https://ipfs.io/ipfs/${fileImageCid}`,
-            sound_track: `https://ipfs.io/ipfs/${fileSoundTrackCid}`,
         };
 
         const myuuid = uuidv4();
@@ -50,14 +49,15 @@ const FileUploader = () => {
             Body: new Blob([JSON.stringify(json_metadata)], { type: 'application/json' })
         };
 
-        s3.putObject(params, (err, data) => {
-            if (err) {
-                // Todo: error handling
-                console.error("Error uploading JSON metadata file:", err);
-            } else {
-                console.log("Successfully uploaded JSON metadata file");
-            }
-        });
+        const S3Response = await s3.putObject(params).promise();
+        console.log("uploadMetaDaata", S3Response)
+
+        if (S3Response.$response.httpResponse.statusCode === 200) {
+            const file_image_cid = S3Response.$response.httpResponse.headers['x-amz-meta-cid']
+            console.log("uploadMetaDaata URL ", file_image_cid)
+        } else {
+            setMessage("Something went wrong when uploading the image of the NFT");
+        }
 
         return myuuid;
     }
@@ -65,7 +65,7 @@ const FileUploader = () => {
     /** This uploads the image of the NFT's into the nft  bucket.
     */
     const uploadNFTImage = async () => {
-        console.log("NFT_BUCKET_IMAGE_NAME",process.env.NEXT_PUBLIC_NFT_BUCKET_IMAGE_NAME)
+        console.log("NFT_BUCKET_IMAGE_NAME", process.env.NEXT_PUBLIC_NFT_BUCKET_IMAGE_NAME)
         const params = {
             Bucket: process.env.NEXT_PUBLIC_NFT_BUCKET_IMAGE_NAME,
             Key: selectedImage.name,
@@ -74,6 +74,7 @@ const FileUploader = () => {
         };
 
         const S3Response = await s3.putObject(params).promise();
+        console.log("uploadNFTImage", S3Response)
 
         if (S3Response.$response.httpResponse.statusCode === 200) {
             const file_image_cid = S3Response.$response.httpResponse.headers['x-amz-meta-cid']
@@ -135,39 +136,42 @@ const FileUploader = () => {
 
             //start with upload image
             const fileImageCid = await uploadNFTImage()
+            console.log({ fileImageCid })
             if (fileImageCid.length == 0) {
                 console.error('error when uploading image nft')
                 return;
             }
-            const paramsSoundTrack = {
-                Bucket: process.env.NEXT_PUBLIC_NFT_BUCKET_SOUND_TRACK_NAME,
-                Key: selectedSoundTrack.name,
-                ContentType: selectedSoundTrack.type,
-                Body: selectedSoundTrack
-            };
+            // const paramsSoundTrack = {
+            //     Bucket: process.env.NEXT_PUBLIC_NFT_BUCKET_SOUND_TRACK_NAME,
+            //     Key: selectedSoundTrack.name,
+            //     ContentType: selectedSoundTrack.type,
+            //     Body: selectedSoundTrack
+            // };
 
-            //upload sound track and metadata
-            s3.putObject(paramsSoundTrack)
-                .on('httpHeaders', (statusCode, headers) => {
-                    if (statusCode === 200) {
-                        const fileSoundTrackCid = headers['x-amz-meta-cid'];
-                        setCurrentNFTId(uploadMetadata(fileImageCid, fileSoundTrackCid));
+            // //upload sound track and metadata
+            // s3.putObject(paramsSoundTrack)
+            //     .on('httpHeaders', (statusCode, headers) => {
+            //         if (statusCode === 200) {
+            //             const fileSoundTrackCid = headers['x-amz-meta-cid'];
+            //             console.log({ fileSoundTrackCid })
+            //             setCurrentNFTId(uploadMetadata(fileImageCid, fileSoundTrackCid));
 
-                    } else {
-                        setMessage("Something went wrong when uploading the sound track of the NFT")
+            //         } else {
+            //             setMessage("Something went wrong when uploading the sound track of the NFT")
 
-                    }
-                })
-                .send((err, data) => {
-                    if (err) {
-                        console.error("Error uploading NFT file:", err);
-                        setMessage("Something went wrong when uploading the metadata NFT")
-                    } else {
-                        console.log("Successfully uploaded NFT file");
-                        setMessage("Successfully uploaded NFT. ")
-                        emptyFields()
-                    }
-                });
+            //         }
+            //     })
+            //     .send((err, data) => {
+            //         if (err) {
+            //             console.error("Error uploading NFT file:", err);
+            //             setMessage("Something went wrong when uploading the metadata NFT")
+            //         } else {
+            //             console.log("Successfully uploaded NFT file", data);
+            //             setMessage("Successfully uploaded NFT. ")
+            //             emptyFields()
+            //         }
+            //     });
+            uploadMetadata(fileImageCid)
         }
         catch (error) {
             console.log(error)
@@ -207,11 +211,11 @@ const FileUploader = () => {
                     <input type="file" accept=".mp3, .mp4, .wav|audio/*,video/*" onChange={(e) => handleSoundTrackChange(e)} />
                 </div>
                 <div className="upload-area" >
-                    {message &&
+                    {/* {message &&
                         <>
                             <div className="response-message">{message}</div>
                             <div className="response-message">{currentNFTId}</div>
-                        </>}
+                        </>} */}
                     <button className="upload-button" onClick={(e) => uploadNFTToS3Bucket(e, "soundtrack")}>Upload NFT</button>
                 </div>
             </div>

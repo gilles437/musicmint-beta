@@ -96,7 +96,11 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link href="/blog" className="nav-link">
+              <Link
+                href="https://magazine.mintedwaves.com/"
+                target="_blank"
+                className="nav-link"
+              >
                 Magazine
               </Link>
             </li>
@@ -106,13 +110,18 @@ const Navbar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link href="https://stream.mintedwaves.com/" className="nav-link">
+              <Link
+                href="https://stream.mintedwaves.com/"
+                target="_blank"
+                className="nav-link"
+              >
                 Music Streaming
               </Link>
             </li>
             <li className="nav-item">
               <Link
                 href="https://ntcyxvznpe4.typeform.com/to/rJQQSxIa"
+                target="_blank"
                 className="nav-link"
               >
                 Join us

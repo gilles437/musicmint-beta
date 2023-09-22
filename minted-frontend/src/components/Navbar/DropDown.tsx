@@ -72,6 +72,14 @@ const DropDown = (props: ChildProps) => {
             </li>
             <li>
               <div className="dropdown-item">
+                <Link href="/album" className="d-flex">
+                  <img src="/assets/image/icon/my-nft.svg" alt="my-nft" />
+                  <p className="ps-1">My Albums</p>
+                </Link>
+              </div>
+            </li>
+            <li>
+              <div className="dropdown-item">
                 <Link href="/admins" className="d-flex">
                   <img
                     src="/assets/image/icon/my-account.svg"

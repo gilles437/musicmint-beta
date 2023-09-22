@@ -5,12 +5,12 @@ import React, { useEffect } from 'react';
 import MainLayout from '@layouts/Main';
 //= Components
 import Navbar from '@components/Navbar';
-import Projects from '@components/Discover/Projects';
+import CreateAlbum from '@components/album/create';
 import Footer from '@components/Footer';
 
 
 
-const Discover: NextPage = () => {
+const CreateAlbumMain: NextPage = () => {
   useEffect(() => {
     document.body.classList.add('home-style-12');
     return () => document.body.classList.remove('home-style-12');
@@ -19,13 +19,13 @@ const Discover: NextPage = () => {
   return (
     <>
       <Head>
-        <title>MintedWave - Discover NFTs</title>
+      <title>MintedWave - Create Album</title>
       </Head>
 
       <MainLayout>
         <Navbar />
         <main>
-          <Projects />
+          <CreateAlbum />
         </main>
         <Footer />
       </MainLayout>
@@ -33,4 +33,4 @@ const Discover: NextPage = () => {
   )
 };
 
-export default Discover;
+export default CreateAlbumMain;

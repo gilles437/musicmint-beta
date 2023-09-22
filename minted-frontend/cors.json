@@ -12,6 +12,8 @@
                 "DELETE"
             ],
             "AllowedOrigins": [
+                "https://demo.mintedwaves.com",
+                "https://mintedwaves.com",
                 "http://localhost:3000"
             ],
             "ExposeHeaders": [
