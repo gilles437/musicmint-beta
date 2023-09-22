@@ -24,8 +24,8 @@ const CreateAlbum = () => {
   const [currentSoundPrice, setCurrentSoundPrice] = useState<string>("");
   const [selectedSound, setSelectedSound] = useState<File>();
   const [selectedSoundImage, setSelectedSoundImage] = useState<File>();
-  const [showSongs, setShowSongs] = useState(true);
-  const [selectedImageFileCid, setSelectedImageFileCid]= useState<string>("");
+  const [showSongs, setShowSongs] = useState(false);
+  const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>("");
   const [songMetaData, setSongMetaData] = useState<SongMetadataType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -108,6 +108,7 @@ const CreateAlbum = () => {
         console.error("error when uploading image nft");
         return;
       }
+      setSelectedImageFileCid(fileImageCid);
       const tempCurrentMetaId = await uploadMetadata(fileImageCid);
       if (tempCurrentMetaId) {
         const storageSongsData = localStorage.getItem("albums");
@@ -373,7 +374,7 @@ const CreateAlbum = () => {
           <h2>Create Album</h2>
         </div>
         <div className="row">
-          <div className="col-md-7 col-sm-12">
+          <div className="col-md-6 col-sm-12">
             <div className="mt-3">
               <h5>Title</h5>
               <input
@@ -413,15 +414,16 @@ const CreateAlbum = () => {
               <span className="ms-3">AFT</span>
             </div>
           </div>
+          <div className="col-md-6 col-sm-12">
+            {showSongs && (
+              <div>
+                <img src={`https://ipfs.io/ipfs/${selectedImageFileCid}`}></img>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="col-md-5 col-sm-12">
-        {showSongs && (
-          <div>
 
-          </div>)}
-        </div>
-
-        <div className="text-center mb-3">
+        <div className="text-center mt-5">
           <button
             className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
             onClick={(e) => uploadNFTToS3Bucket(e)}
@@ -467,7 +469,6 @@ const CreateAlbum = () => {
                     <input
                       type="text"
                       placeholder="Enter Price..."
-                      style={{ width: "60%" }}
                       value={currentSoundPrice ? currentSoundPrice : ""}
                       onChange={(e: any) =>
                         setCurrentSoundPrice(e.target.value)

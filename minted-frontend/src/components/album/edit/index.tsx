@@ -36,6 +36,7 @@ const EditAlbum = () => {
   const [selectedSoundImage, setSelectedSoundImage] = useState<File>();
   const [currentAlbumMetaData, setCurrentAlbumMetaData] =
     useState<AlbumMetadataType>();
+  const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>("");
   const [songMetaData, setSongMetaData] = useState<SongMetadataType[]>([]);
   const [currentId, setCurrentId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -71,6 +72,7 @@ const EditAlbum = () => {
           setCurrentTitle(data.title);
           setCurrentDescription(data.description);
           setCurrentPrice(data.price);
+          setSelectedImageFileCid(data.image);
           console.log({ temp });
         } catch (error) {
           console.error(error);
@@ -190,9 +192,7 @@ const EditAlbum = () => {
           return;
         }
       }
-
-      console.log({ currentAlbumMetaData, fileImageCid });
-
+      setSelectedImageFileCid(fileImageCid);
       const tempCurrentMetaId = await uploadMetadata(fileImageCid);
       if (tempCurrentMetaId) {
         const storageAlbumsData = localStorage.getItem("albums");
@@ -445,53 +445,62 @@ const EditAlbum = () => {
       <div className="loader-div"></div>
       <div className="container">
         <div className="text-center mb-3">
-          <h2>Update Album</h2>
+          <h2>Edit Album</h2>
         </div>
-        <div className="mt-3">
-          <h5>Title</h5>
-          <input
-            type="text"
-            placeholder="Enter Title..."
-            style={{ width: "70%", height: "100%" }}
-            value={currentTitle ? currentTitle : ""}
-            onChange={(e: any) => setCurrentTitle(e.target.value)}
-          />
+        <div className="row">
+          <div className="col-md-6 col-sm-12">
+            <div className="mt-3">
+              <h5>Title</h5>
+              <input
+                type="text"
+                placeholder="Enter Title..."
+                style={{ width: "70%", height: "100%" }}
+                value={currentTitle ? currentTitle : ""}
+                onChange={(e: any) => setCurrentTitle(e.target.value)}
+              />
+            </div>
+            <div className="mt-3">
+              <h5>Description</h5>
+              <textarea
+                cols={30}
+                rows={3}
+                value={currentDescription ? currentDescription : ""}
+                onChange={(e: any) => setCurrentDescription(e.target.value)}
+                style={{ width: "70%", height: "100%" }}
+              />
+            </div>
+            <div className="mt-3">
+              <h5 className="">Image</h5>
+              <input
+                type="file"
+                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                onChange={(e) => handleImageChange(e)}
+              />
+            </div>
+            <div className="mt-3">
+              <h5>Price</h5>
+              <input
+                type="text"
+                placeholder="Enter Price..."
+                value={currentPrice ? currentPrice : ""}
+                onChange={(e: any) => setCurrentPrice(e.target.value)}
+              />
+              <span className="ms-3">AFT</span>
+            </div>
+          </div>
+          <div className="col-md-6 col-sm-12">
+            <div>
+              <img src={selectedImageFileCid}></img>
+            </div>
         </div>
-        <div className="mt-3">
-          <h5>Description</h5>
-          <textarea
-            cols={30}
-            rows={3}
-            value={currentDescription ? currentDescription : ""}
-            onChange={(e: any) => setCurrentDescription(e.target.value)}
-            style={{ width: "70%", height: "100%" }}
-          />
         </div>
-        <div className="mt-3">
-          <h5 className="">Image</h5>
-          <input
-            type="file"
-            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-            onChange={(e) => handleImageChange(e)}
-          />
-        </div>
-        <div className="mt-3">
-          <h5>Price</h5>
-          <input
-            type="text"
-            placeholder="Enter Price..."
-            value={currentPrice ? currentPrice : ""}
-            onChange={(e: any) => setCurrentPrice(e.target.value)}
-          />
-          <span className="ms-3">AFT</span>
-        </div>
-        <div className="text-center mb-3">
+        <div className="text-center mt-5">
           <button
             className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
             onClick={(e) => uploadNFTToS3Bucket(e)}
             disabled={isLoading}
           >
-            Edit Album
+            Update Album
           </button>
         </div>
 
@@ -518,14 +527,6 @@ const EditAlbum = () => {
                     onChange={(e) => handleSoundChange(e)}
                   />
                 </div>
-                <div className="mt-3">
-                  <h5>Upload image</h5>
-                  <input
-                    type="file"
-                    accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                    onChange={(e) => handleSoundImageChange(e)}
-                  />
-                </div>
               </div>
             </div>
             <div className="col-md-6 col-sm-12">
@@ -535,21 +536,30 @@ const EditAlbum = () => {
                   <input
                     type="text"
                     placeholder="Enter Price..."
-                    style={{ width: "60%" }}
                     value={currentSoundPrice ? currentSoundPrice : ""}
                     onChange={(e: any) => setCurrentSoundPrice(e.target.value)}
                   />
-                 <span className="ms-3">AFT</span>
+                  <span className="ms-3">AFT</span>
                 </div>
-
-                <button
-                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen mt-3"
-                  onClick={(e) => uploadSoundNFTToS3Bucket(e)}
-                  disabled={isLoading}
-                >
-                  Add Song
-                </button>
+                <div className="mt-3">
+                  <h5>Upload image</h5>
+                  <input
+                    type="file"
+                    placeholder="Upload Image"
+                    accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                    onChange={(e) => handleSoundImageChange(e)}
+                  />
+                </div>
               </div>
+            </div>
+            <div className="text-center mt-3">
+              <button
+                className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen mt-3"
+                onClick={(e) => uploadSoundNFTToS3Bucket(e)}
+                disabled={isLoading}
+              >
+                Add Song
+              </button>
             </div>
           </div>
           <div className="mb-5">
