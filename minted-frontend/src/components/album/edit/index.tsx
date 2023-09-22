@@ -6,6 +6,7 @@ import configureAWS from "../awsConfig";
 import { v4 as uuidv4 } from "uuid";
 import S3 from "aws-sdk/clients/s3";
 import axios from "axios";
+import Link from "next/link";
 
 const s3 = configureAWS();
 
@@ -216,9 +217,7 @@ const EditAlbum = () => {
     }
   };
 
-  const emptyFields = () => {
-    setIsImageChanged(false);
-  };
+  const emptyFields = () => {};
 
   const validateFields = () => {
     if (!currentTitle) {
@@ -444,6 +443,11 @@ const EditAlbum = () => {
     <section className="projects section-padding style-12">
       <div className="loader-div"></div>
       <div className="container">
+      <div className="mb-3">
+          <Link href="/album" className="d-flex" style={{ justifyContent: "flex-end" }}>
+            <h4>Back to My Album</h4>
+          </Link>
+        </div>
         <div className="text-center mb-3">
           <h2>Edit Album</h2>
         </div>
@@ -490,9 +494,15 @@ const EditAlbum = () => {
           </div>
           <div className="col-md-6 col-sm-12">
             <div>
-              <img src={selectedImageFileCid}></img>
+              <img
+                src={
+                  isImageChanged
+                    ? `https://ipfs.io/ipfs/${selectedImageFileCid}`
+                    : selectedImageFileCid
+                }
+              ></img>
             </div>
-        </div>
+          </div>
         </div>
         <div className="text-center mt-5">
           <button
@@ -571,6 +581,7 @@ const EditAlbum = () => {
                       <tr>
                         <th scope="col">Title</th>
                         <th scope="col"></th>
+                        <th scope="col"></th>
                         <th scope="col">Price</th>
                         <th scope="col">Created On</th>
                         <th scope="col"></th>
@@ -591,6 +602,16 @@ const EditAlbum = () => {
                                       height: "60px",
                                     }}
                                   />
+                                </td>
+                                <td>
+                                  <audio controls>
+                                    <source
+                                      src={song.sound}
+                                      type="audio/mpeg"
+                                    />
+                                    Your browser does not support the audio
+                                    element.
+                                  </audio>
                                 </td>
                                 <td>{song.price}</td>
                                 <td>09:35 11/02/2023</td>
