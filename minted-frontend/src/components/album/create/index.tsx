@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, CSSProperties } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import configureAWS from "../awsConfig";
@@ -6,8 +6,13 @@ import { v4 as uuidv4 } from "uuid";
 import S3 from "aws-sdk/clients/s3";
 import axios from "axios";
 import Link from "next/link";
+import CircleLoader from "react-spinners/ClipLoader";
 
 const s3 = configureAWS();
+const override: CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+};
 
 type SongMetadataType = {
   title: string;
@@ -369,205 +374,221 @@ const CreateAlbum = () => {
 
   return (
     <section className="projects section-padding style-12">
-      <div className="loader-div"></div>
-      <div className="container">
-        <div className="mb-3">
-          <Link href="/album" className="d-flex" style={{ justifyContent: "flex-end" }}>
-            <h4>Back to My Album</h4>
-          </Link>
-        </div>
-        <div className="text-center mb-3">
-          <h2>Create Album</h2>
-        </div>
-        <div className="row">
-          <div className="col-md-6 col-sm-12">
-            <div className="mt-3">
-              <h5>Title</h5>
-              <input
-                type="text"
-                placeholder="Enter Title..."
-                style={{ width: "70%", height: "100%" }}
-                value={currentTitle ? currentTitle : ""}
-                onChange={(e: any) => setCurrentTitle(e.target.value)}
-              />
-            </div>
-            <div className="mt-3">
-              <h5>Description</h5>
-              <textarea
-                cols={30}
-                rows={3}
-                value={currentDescription ? currentDescription : ""}
-                onChange={(e: any) => setCurrentDescription(e.target.value)}
-                style={{ width: "70%", height: "100%" }}
-              />
-            </div>
-            <div className="mt-3">
-              <h5 className="">Image</h5>
-              <input
-                type="file"
-                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                onChange={(e) => handleImageChange(e)}
-              />
-            </div>
-            <div className="mt-3">
-              <h5>Price</h5>
-              <input
-                type="text"
-                placeholder="Enter Price..."
-                value={currentPrice ? currentPrice : ""}
-                onChange={(e: any) => setCurrentPrice(e.target.value)}
-              />
-              <span className="ms-3">AFT</span>
-            </div>
+      {isLoading ? (
+        <CircleLoader
+          color="#36d7b7"
+          loading={isLoading}
+          size={350}
+          cssOverride={override}
+        />
+      ) : (
+        <div className="container">
+          <div className="mb-3">
+            <Link
+              href="/album"
+              className="d-flex"
+              style={{ justifyContent: "flex-end" }}
+            >
+              <h4>Back to My Album</h4>
+            </Link>
           </div>
-          <div className="col-md-6 col-sm-12">
-            {showSongs && (
-              <div>
-                <img src={`https://ipfs.io/ipfs/${selectedImageFileCid}`}></img>
-              </div>
-            )}
+          <div className="text-center mb-3">
+            <h2>Create Album</h2>
           </div>
-        </div>
-
-        <div className="text-center mt-5">
-          <button
-            className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-            onClick={(e) => uploadNFTToS3Bucket(e)}
-            disabled={showSongs || isLoading}
-          >
-            Create Album
-          </button>
-        </div>
-
-        {showSongs && (
-          <div className="mt-3" style={{ borderTop: "1px solid" }}>
-            <h2 className="mt-3">Songs</h2>
-            <div className="row">
-              <div className="col-md-6 col-sm-12">
-                <div className="">
-                  <div>
-                    <h5>Title</h5>
-                    <input
-                      type="text"
-                      placeholder="Enter Title..."
-                      value={currentSoundTitle ? currentSoundTitle : ""}
-                      onChange={(e: any) =>
-                        setCurrentSoundTitle(e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="mt-3">
-                    <h5>Upload soundtrack</h5>
-                    <input
-                      id="files"
-                      type="file"
-                      placeholder="Upload SoundTrack"
-                      accept=".mp3, .mp4, .wav|audio/*,video/*"
-                      onChange={(e) => handleSoundChange(e)}
-                    />
-                  </div>
-                </div>
+          <div className="row">
+            <div className="col-md-6 col-sm-12">
+              <div className="mt-3">
+                <h5>Title</h5>
+                <input
+                  type="text"
+                  placeholder="Enter Title..."
+                  style={{ width: "70%", height: "100%" }}
+                  value={currentTitle ? currentTitle : ""}
+                  onChange={(e: any) => setCurrentTitle(e.target.value)}
+                />
               </div>
-              <div className="col-md-6 col-sm-12">
+              <div className="mt-3">
+                <h5>Description</h5>
+                <textarea
+                  cols={30}
+                  rows={3}
+                  value={currentDescription ? currentDescription : ""}
+                  onChange={(e: any) => setCurrentDescription(e.target.value)}
+                  style={{ width: "70%", height: "100%" }}
+                />
+              </div>
+              <div className="mt-3">
+                <h5 className="">Image</h5>
+                <input
+                  type="file"
+                  accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                  onChange={(e) => handleImageChange(e)}
+                />
+              </div>
+              <div className="mt-3">
                 <h5>Price</h5>
-                <div className="" style={{ alignItems: "center" }}>
-                  <div className="d-flex">
-                    <input
-                      type="text"
-                      placeholder="Enter Price..."
-                      value={currentSoundPrice ? currentSoundPrice : ""}
-                      onChange={(e: any) =>
-                        setCurrentSoundPrice(e.target.value)
-                      }
-                    />
-                    <span className="ms-3">AFT</span>
-                  </div>
-                  <div className="mt-3">
-                    <h5>Upload image</h5>
-                    <input
-                      type="file"
-                      placeholder="Upload Image"
-                      accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                      onChange={(e) => handleSoundImageChange(e)}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="text-center mt-3">
-                <button
-                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen mt-3"
-                  onClick={(e) => uploadSoundNFTToS3Bucket(e)}
-                  disabled={isLoading}
-                >
-                  Add Song
-                </button>
+                <input
+                  type="text"
+                  placeholder="Enter Price..."
+                  value={currentPrice ? currentPrice : ""}
+                  onChange={(e: any) => setCurrentPrice(e.target.value)}
+                />
+                <span className="ms-3">AFT</span>
               </div>
             </div>
-            <div className="mb-5">
-              <div className="row">
-                <div className="col-sm-12 col-md-9">
-                  <div className="mt-5 table-responsive">
-                    <table className="table table-hover table-success table-striped">
-                      <thead className="thead-dark">
-                        <tr>
-                          <th scope="col">Title</th>
-                          <th scope="col"></th>
-                          <th scope="col"></th>
-                          <th scope="col">Price</th>
-                          <th scope="col">Created On</th>
-                          <th scope="col"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {songMetaData.length > 0
-                          ? songMetaData.map(
-                              (song: SongMetadataType, index: number) => (
-                                <tr key={index}>
-                                  <td scope="row">{song.title}</td>
-                                  <td>
-                                    <img
-                                      src={song.image}
-                                      alt=""
-                                      style={{
-                                        width: "60px",
-                                        height: "60px",
-                                      }}
-                                    />
-                                  </td>
-                                  <td>
-                                    <audio controls>
-                                      <source
-                                        src={song.sound}
-                                        type="audio/mpeg"
-                                      />
-                                      Your browser does not support the audio
-                                      element.
-                                    </audio>
-                                  </td>
-                                  <td>{song.price}</td>
-                                  <td>09:35 11/02/2023</td>
-                                  <td>
-                                    <button
-                                      className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                                      onClick={(e) => removeSongs(index)}
-                                      disabled={isLoading}
-                                    >
-                                      Remove
-                                    </button>
-                                  </td>
-                                </tr>
-                              )
-                            )
-                          : null}
-                      </tbody>
-                    </table>
-                  </div>
+            <div className="col-md-6 col-sm-12">
+              {showSongs && (
+                <div>
+                  <img
+                    src={`https://ipfs.io/ipfs/${selectedImageFileCid}`}
+                  ></img>
                 </div>
-              </div>
+              )}
             </div>
           </div>
-        )}
-      </div>
+
+          <div className="text-center mt-5">
+            <button
+              className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+              onClick={(e) => uploadNFTToS3Bucket(e)}
+              disabled={showSongs || isLoading}
+            >
+              Create Album
+            </button>
+          </div>
+
+          {showSongs && (
+            <div className="mt-3" style={{ borderTop: "1px solid" }}>
+              <h2 className="mt-3">Songs</h2>
+              <div className="row">
+                <div className="col-md-6 col-sm-12">
+                  <div className="">
+                    <div>
+                      <h5>Title</h5>
+                      <input
+                        type="text"
+                        placeholder="Enter Title..."
+                        value={currentSoundTitle ? currentSoundTitle : ""}
+                        onChange={(e: any) =>
+                          setCurrentSoundTitle(e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="mt-3">
+                      <h5>Upload soundtrack</h5>
+                      <input
+                        id="files"
+                        type="file"
+                        placeholder="Upload SoundTrack"
+                        accept=".mp3, .mp4, .wav|audio/*,video/*"
+                        onChange={(e) => handleSoundChange(e)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-6 col-sm-12">
+                  <h5>Price</h5>
+                  <div className="" style={{ alignItems: "center" }}>
+                    <div className="d-flex">
+                      <input
+                        type="text"
+                        placeholder="Enter Price..."
+                        value={currentSoundPrice ? currentSoundPrice : ""}
+                        onChange={(e: any) =>
+                          setCurrentSoundPrice(e.target.value)
+                        }
+                      />
+                      <span className="ms-3">AFT</span>
+                    </div>
+                    <div className="mt-3">
+                      <h5>Upload image</h5>
+                      <input
+                        type="file"
+                        placeholder="Upload Image"
+                        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                        onChange={(e) => handleSoundImageChange(e)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="text-center mt-3">
+                  <button
+                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen mt-3"
+                    onClick={(e) => uploadSoundNFTToS3Bucket(e)}
+                    disabled={isLoading}
+                  >
+                    Add Song
+                  </button>
+                </div>
+              </div>
+              {songMetaData.length && (
+                <div className="mb-5">
+                  <div className="row">
+                    <div className="col-sm-12 col-md-9">
+                      <div className="mt-5 table-responsive">
+                        <table className="table table-hover table-success table-striped">
+                          <thead className="thead-dark">
+                            <tr>
+                              <th scope="col">Title</th>
+                              <th scope="col"></th>
+                              <th scope="col"></th>
+                              <th scope="col">Price</th>
+                              <th scope="col">Created On</th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {songMetaData.length > 0
+                              ? songMetaData.map(
+                                  (song: SongMetadataType, index: number) => (
+                                    <tr key={index}>
+                                      <td scope="row">{song.title}</td>
+                                      <td>
+                                        <img
+                                          src={song.image}
+                                          alt=""
+                                          style={{
+                                            width: "60px",
+                                            height: "60px",
+                                          }}
+                                        />
+                                      </td>
+                                      <td>
+                                        <audio controls>
+                                          <source
+                                            src={song.sound}
+                                            type="audio/mpeg"
+                                          />
+                                          Your browser does not support the
+                                          audio element.
+                                        </audio>
+                                      </td>
+                                      <td>{song.price}</td>
+                                      <td>09:35 11/02/2023</td>
+                                      <td>
+                                        <button
+                                          className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                                          onClick={(e) => removeSongs(index)}
+                                          disabled={isLoading}
+                                        >
+                                          Remove
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  )
+                                )
+                              : null}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
       <ToastContainer
         position="top-right"
         newestOnTop={true}
