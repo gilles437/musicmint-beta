@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Autoplay } from 'swiper';
 // import CountTo from '../CountTo';
-import features from '@data/NFTMarketplace/features.json';
+import features from '@/data/NFTMarketplace/features.json';
 
 import "swiper/css";
 import "swiper/css/autoplay";

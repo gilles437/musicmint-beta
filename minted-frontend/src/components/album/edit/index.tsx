@@ -516,7 +516,9 @@ const EditAlbum = () => {
             <div className="col-md-6 col-sm-12">
               <div>
                 <img
-                  src={`https://ipfs.io/ipfs/${returnImageURL(selectedImageFileCid)}`}
+                  src={`https://ipfs.io/ipfs/${returnImageURL(
+                    selectedImageFileCid
+                  )}`}
                 ></img>
               </div>
             </div>
@@ -593,7 +595,7 @@ const EditAlbum = () => {
                 </button>
               </div>
             </div>
-            {songMetaData.length && (
+            {songMetaData.length > 0 ? (
               <div className="mb-5">
                 <div className="row">
                   <div className="col-sm-12 col-md-9">
@@ -610,53 +612,51 @@ const EditAlbum = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {songMetaData.length > 0
-                            ? songMetaData.map(
-                                (song: SongMetadataType, index: number) => (
-                                  <tr key={index}>
-                                    <td scope="row">{song.title}</td>
-                                    <td>
-                                      <img
-                                        src={song.image}
-                                        alt=""
-                                        style={{
-                                          width: "60px",
-                                          height: "60px",
-                                        }}
-                                      />
-                                    </td>
-                                    <td>
-                                      <audio controls>
-                                        <source
-                                          src={song.sound}
-                                          type="audio/mpeg"
-                                        />
-                                        Your browser does not support the audio
-                                        element.
-                                      </audio>
-                                    </td>
-                                    <td>{song.price}</td>
-                                    <td>09:35 11/02/2023</td>
-                                    <td>
-                                      <button
-                                        className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                                        onClick={(e) => removeSongs(index)}
-                                        disabled={isLoading}
-                                      >
-                                        Remove
-                                      </button>
-                                    </td>
-                                  </tr>
-                                )
-                              )
-                            : null}
+                          {songMetaData.map(
+                            (song: SongMetadataType, index: number) => (
+                              <tr key={index}>
+                                <td scope="row">{song.title}</td>
+                                <td>
+                                  <img
+                                    src={song.image}
+                                    alt=""
+                                    style={{
+                                      width: "60px",
+                                      height: "60px",
+                                    }}
+                                  />
+                                </td>
+                                <td>
+                                  <audio controls>
+                                    <source
+                                      src={song.sound}
+                                      type="audio/mpeg"
+                                    />
+                                    Your browser does not support the audio
+                                    element.
+                                  </audio>
+                                </td>
+                                <td>{song.price}</td>
+                                <td>09:35 11/02/2023</td>
+                                <td>
+                                  <button
+                                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                                    onClick={(e) => removeSongs(index)}
+                                    disabled={isLoading}
+                                  >
+                                    Remove
+                                  </button>
+                                </td>
+                              </tr>
+                            )
+                          )}
                         </tbody>
                       </table>
                     </div>
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       )}

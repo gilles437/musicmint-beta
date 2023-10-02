@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import navbarScrollEffect from "@common/navbarScrollEffect";
-import ConnectContainer from "./ConnectContainer";
+import navbarScrollEffect from "@/common/navbarScrollEffect";
+// import ConnectContainer from "./ConnectContainer";
 import { Account } from "@polkadot-onboard/core";
 import DropDown from "./DropDown";
+
+import dynamic from 'next/dynamic'
+const ConnectContainer = dynamic(() => import('@/components/Navbar/ConnectContainer'), { ssr: false });
+
 interface ParentProps {
   accountArray: Account[];
   current: string | null;

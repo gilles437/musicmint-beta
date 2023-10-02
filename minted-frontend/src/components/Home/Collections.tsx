@@ -1,5 +1,5 @@
 import React from "react";
-import collectionsData from "@data/NFTMarketplace/collections.json";
+import collectionsData from "@/data/NFTMarketplace/collections.json";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper";
 

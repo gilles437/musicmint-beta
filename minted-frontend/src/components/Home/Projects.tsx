@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import projects from "@data/NFTMarketplace/projects.json";
+import projects from "@/data/NFTMarketplace/projects.json";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper";
 

@@ -1,4 +1,4 @@
-import news from '@data/SinglePost/all-news.json';
+import news from '@/data/SinglePost/all-news.json';
 
 const commentCard = news.commentCard;
 const comments = news.comments;

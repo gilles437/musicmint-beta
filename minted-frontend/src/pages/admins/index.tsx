@@ -2,13 +2,13 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
 //= Layout
-import MainLayout from '@layouts/Main';
+import MainLayout from '@/layouts/Main';
 //= Components
-import Navbar from '@components/Navbar';
-import Footer from '@components/Footer';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 import dynamic from 'next/dynamic'
-const ContractAdmin = dynamic(() => import('@components/Admins'), { ssr: false });
+const ContractAdmin = dynamic(() => import('@/components/Admins'), { ssr: false });
 
 const Admins: NextPage = () => {
   useEffect(() => {

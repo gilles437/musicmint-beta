@@ -2,11 +2,11 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
 //= Layout
-import MainLayout from '@layouts/Main';
+import MainLayout from '@/layouts/Main';
 //= Components
-import Navbar from '@components/Navbar';
-import EditAlbum from '@components/album/edit';
-import Footer from '@components/Footer';
+import Navbar from '@/components/Navbar';
+import EditAlbum from '@/components/album/edit';
+import Footer from '@/components/Footer';
 
 
 

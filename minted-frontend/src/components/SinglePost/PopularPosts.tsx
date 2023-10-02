@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Navigation, Pagination, Autoplay } from 'swiper';
-import posts from '@data/SinglePost/posts.json';
-import postsRTL from '@data/SinglePost/posts-rtl.json';
+import posts from '@/data/SinglePost/posts.json';
+import postsRTL from '@/data/SinglePost/posts-rtl.json';
 
 import "swiper/css";
 import 'swiper/css/autoplay';

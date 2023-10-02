@@ -1,5 +1,5 @@
 
-import news from '@data/SinglePost/all-news.json';
+import news from '@/data/SinglePost/all-news.json';
 
 const metadata={ imgLetter: news.user.imgLetter, user: news.user, commentsCount: news.commentsCount, viewsCount: news.viewsCount }
 

@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Account } from "@polkadot-onboard/core";
 import Identicon from "@polkadot/react-identicon";
 import Link from "next/link";
+import {
+  web3Accounts,
+  web3Enable
+} from '@polkadot/extension-dapp';
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 interface ChildProps {
   accountArray: Account[];
@@ -15,6 +20,30 @@ const DropDown = (props: ChildProps) => {
   const [currentAccount, setCurrentAccount] = useState<string | null>(null);
 
   useEffect(() => {
+    // const handleConnect = async() => {
+		// await cryptoWaitReady();
+
+    //   web3Enable('polkadot-extension-dapp-example')
+    //     .then((injectedExtensions) => {
+    //       if (!injectedExtensions.length) {
+    //         return Promise.reject(new Error('NO_INJECTED_EXTENSIONS'));
+    //       }
+  
+    //       return web3Accounts();
+    //     })
+    //     .then((accounts) => {
+    //       if (!accounts.length) {
+    //         return Promise.reject(new Error('NO_ACCOUNTS'));
+    //       }
+    //       console.log({accounts})
+    //     })
+    //     .catch((error) => {
+    //       console.error('Error with connect', error);
+    //     });
+    // };
+  
+    // handleConnect();
+  
     setAccounts(props.accountArray);
     setCurrentAccount(props.current);
   }, [props.accountArray, props.current]);

@@ -2,15 +2,7 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
-      "@components/*": ["components/*"],
-      "@hooks/*": ["hooks/*"],
-      "@common/*": ["common/*"],
-      "@data/*": ["data/*"],
-      "@layouts/*": ["layouts/*"],
-      "@utils/*": ["utils/*"],
-      "@contract/*": ["contract/*"],
-      "@styles/*": ["styles/*"],
-      "@assets/*": ["public/assets/*"]
+      "@/*": ["*"],
     },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

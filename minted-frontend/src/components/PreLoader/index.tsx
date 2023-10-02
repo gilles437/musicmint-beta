@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import loadingPace from '@common/loadingPace';
+import loadingPace from '@/common/loadingPace';
 
 const PreLoader = () => {
   useEffect(() => {

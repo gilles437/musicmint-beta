@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
       <Component {...pageProps} />
 
-      <Script strategy="beforeInteractive" src="/assets/js/lib/pace.js"></Script>
+      {/* <Script strategy="beforeInteractive" src="/assets/js/lib/pace.js"></Script> */}
       <Script strategy="beforeInteractive" src="/assets/js/lib/bootstrap.bundle.min.js"></Script>
       <Script strategy="beforeInteractive" src="/assets/js/lib/mixitup.min.js"></Script>
       <Script strategy="beforeInteractive" src="/assets/js/lib/wow.min.js"></Script>

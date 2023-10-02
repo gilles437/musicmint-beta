@@ -1,5 +1,5 @@
 import React from 'react';
-import processSteps from '@data/NFTMarketplace/process.json'
+import processSteps from '@/data/NFTMarketplace/process.json'
 
 const Process = () => {
   return (

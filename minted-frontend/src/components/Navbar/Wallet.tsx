@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import { BaseWallet, Account } from "@polkadot-onboard/core";
 import DropDown from './DropDown';
-import { formatAccount } from '@utils/account';
+import { formatAccount } from '@/utils/account';
 interface ParentProps {
   accountArray: Account[];
   current: string | null;

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Navigation, Pagination, Autoplay, EffectFade } from 'swiper';
-import slides from '@data/Blog/slides.json';
-import slidesRTL from '@data/Blog/slides-rtl.json';
+import slides from '@/data/Blog/slides.json';
+import slidesRTL from '@/data/Blog/slides-rtl.json';
 
 // Import Swiper styles
 import 'swiper/css';

@@ -5,7 +5,7 @@ import contractAbi from "./admin.json"; // Replace by your contract ABI
 import { BN } from "@polkadot/util";
 import { KeyringPair } from "@polkadot/keyring/types";
 import { WeightV2 } from "@polkadot/types/interfaces";
-import AdminContract from "@contract/types/contracts/admin";
+import AdminContract from "@/contract/types/contracts/admin";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { u8aToHex } from "@polkadot/util";
 import { web3Enable, web3FromAddress } from "@polkadot/extension-dapp";

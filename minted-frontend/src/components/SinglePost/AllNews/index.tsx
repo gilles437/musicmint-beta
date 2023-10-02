@@ -4,8 +4,8 @@ import Content from "./Content";
 import Comments from "./Comments";
 import Sidebar from "./Sidebar";
 
-import news from "@data/SinglePost/all-news.json";
-import newsRTL from "@data/SinglePost/all-news-rtl.json";
+import news from "@/data/SinglePost/all-news.json";
+import newsRTL from "@/data/SinglePost/all-news-rtl.json";
 
 const AllNews = ({
   isWide = true,

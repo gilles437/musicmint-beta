@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import LightGallery from 'lightgallery/react';
 import 'lightgallery/css/lightgallery.css';
-import news from '@data/SinglePost/all-news.json';
+import news from '@/data/SinglePost/all-news.json';
 
 const data = news.sidebar;
 const Sidebar = ({ style= 5, rtl = false }) => {

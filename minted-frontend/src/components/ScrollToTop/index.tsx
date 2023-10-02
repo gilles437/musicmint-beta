@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import scrollToTop from '@common/scrollToTop';
+import scrollToTop from '@/common/scrollToTop';
 
 const ScrollToTop = () => {
   useEffect(() => {

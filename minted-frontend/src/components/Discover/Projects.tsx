@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import projects from "@data/NFTMarketplace/projects.json";
+import projects from "@/data/NFTMarketplace/projects.json";
 
 const Projects = () => {
   // useEffect(() => {
@@ -26,8 +26,7 @@ const Projects = () => {
             <img src="/assets/img/icons/star2.png" alt="" className="icon" />
           </h6>
           <h2>
-            {" "}
-            Discover <span> NFTs </span>{" "}
+            Discover <span> NFTs </span>
           </h2>
         </div>
         <div className="content">
@@ -43,7 +42,7 @@ const Projects = () => {
                   src="/assets/img/icons/star3.png"
                   alt=""
                   className="icon"
-                />{" "}
+                />
                 {filter.text}
               </span>
             ))}
