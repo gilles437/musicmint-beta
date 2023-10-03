@@ -1,9 +1,8 @@
 import { useState, useEffect, CSSProperties } from "react";
 import { ContractPromise } from "@polkadot/api-contract";
 import contractAbi from "./admin.json"; // Replace by your contract ABI
-import { BN } from "@polkadot/util";
+import { BN, BN_ONE, BN_TEN } from '@polkadot/util'
 import { WeightV2 } from "@polkadot/types/interfaces";
-import { AddressOrPair } from "@polkadot/api/types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ContractFile } from "./admin";
@@ -34,7 +33,7 @@ const ContractAdmin = () => {
 
   const contractAddress = "5HKi9fceCSig1HE9vj4CrC4YXpXRfaXWsRHH81dCAnVY1Km7"; // Replace the address of your contract
   const caller = "5FNj1E5Wxqg1vMo1qd6Zi6XZjrAXB8ECuXCyHDrsRQZSAPHL"; //The address of Contract Owner
-  const storageDepositLimit = null;
+  const storageDepositLimit = BN_TEN.pow(new BN(18));
 
   useEffect(() => {
     const connectChain = async () => {
@@ -49,8 +48,8 @@ const ContractAdmin = () => {
 
       //GasLimit
       const gasLimit = api.registry.createType("WeightV2", {
-        refTime: new BN("10000000000"),
-        proofSize: new BN("10000000000"),
+        refTime: new BN(2_000_000_000).isub(BN_ONE).mul(BN_TEN),
+        proofSize: new BN(2_000_000)
       }) as WeightV2;
       setGasLimit(gasLimit);
     };
@@ -220,7 +219,7 @@ const ContractAdmin = () => {
   const deployAdminContract1 = async () => {
     if (api && wallet) {
       const __contract = JSON.parse(ContractFile);
-      const code = new CodePromise(api, __contract, __contract.source.wasm);
+      const code = new CodePromise(api, contractAbi, __contract.source.wasm);
       const savedAccount = localStorage.getItem("currentAccount");
       const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
       const tx = code.tx.new(

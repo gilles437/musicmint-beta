@@ -10,7 +10,6 @@ const ConnectContainer = () => {
   const [currentAccount, setCurrentAccount] = useState<string | null>(null);
   
   const { wallet } = useWallets();
-  console.log("All wallets", wallet);
   const Msg = ({}) => (
     <div>
       <img
@@ -25,7 +24,6 @@ const ConnectContainer = () => {
   const notify = () => toast(<Msg />);
   
   const walletClickHandler = useCallback(async () => {
-    console.log(`wallet clicked!`, wallet);
     if (wallet) {
       try {
         await wallet.connect();
