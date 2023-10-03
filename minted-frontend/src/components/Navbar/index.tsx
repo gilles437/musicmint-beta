@@ -1,57 +1,59 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, memo, useState } from "react";
 import Link from "next/link";
-import navbarScrollEffect from "@/common/navbarScrollEffect";
-// import ConnectContainer from "./ConnectContainer";
 import { Account } from "@polkadot-onboard/core";
 import DropDown from "./DropDown";
+import { formatAccount } from "@/utils/account";
 
-import dynamic from 'next/dynamic'
-const ConnectContainer = dynamic(() => import('@/components/Navbar/ConnectContainer'), { ssr: false });
+import dynamic from "next/dynamic";
+const ConnectContainer = dynamic(
+  () => import("@/components/Navbar/ConnectContainer"),
+  { ssr: false }
+);
 
-interface ParentProps {
-  accountArray: Account[];
-  current: string | null;
-}
+// interface ParentProps {
+//   accountArray: Account[];
+//   current: string | null;
+// }
 
 const Navbar = () => {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [currentAccount, setCurrentAccount] = useState<string | null>(null);
-  const props: ParentProps = {
-    accountArray: accounts,
-    current: currentAccount,
-  };
+  // const [accounts, setAccounts] = useState<Account[]>([]);
+  // const [currentAccount, setCurrentAccount] = useState<string | null>(null);
+  // const props: ParentProps = {
+  //   accountArray: accounts,
+  //   current: currentAccount,
+  // };
 
-  useEffect(() => {
-    const handleGetData = () => {
-      const savedAccounts = localStorage.getItem("accounts");
-      if (savedAccounts) {
-        try {
-          const parsedAccounts = JSON.parse(savedAccounts);
-          if (parsedAccounts.key.length) {
-            setAccounts(parsedAccounts.key);
-          }
-        } catch (error) {
-          console.error("Error parsing JSON:", error);
-        }
-      }
+  // useEffect(() => {
+  //   const handleGetData = () => {
+  //     const savedAccounts = localStorage.getItem("accounts");
+  //     if (savedAccounts) {
+  //       try {
+  //         const parsedAccounts = JSON.parse(savedAccounts);
+  //         if (parsedAccounts.key.length) {
+  //           setAccounts(parsedAccounts.key);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error parsing JSON:", error);
+  //       }
+  //     }
 
-      const savedAccount = localStorage.getItem("currentAccount");
-      if (savedAccount) {
-        try {
-          const parsedAccount = JSON.parse(savedAccount);
-          setCurrentAccount(parsedAccount);
-        } catch (error) {
-          console.error("Error parsing JSON:", error);
-        }
-      } else if (accounts.length) {
-        setCurrentAccount(accounts[0].address);
-      } else {
-        setCurrentAccount(null);
-        setAccounts([]);
-      }
-    };
-    handleGetData();
-  }, []);
+  //     const savedAccount = localStorage.getItem("currentAccount");
+  //     if (savedAccount) {
+  //       try {
+  //         const parsedAccount = JSON.parse(savedAccount);
+  //         setCurrentAccount(parsedAccount);
+  //       } catch (error) {
+  //         console.error("Error parsing JSON:", error);
+  //       }
+  //     } else if (accounts.length) {
+  //       setCurrentAccount(accounts[0].address);
+  //     } else {
+  //       setCurrentAccount(null);
+  //       setAccounts([]);
+  //     }
+  //   };
+  //   handleGetData();
+  // }, []);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark style-12">
@@ -135,19 +137,19 @@ const Navbar = () => {
           <div className="nav-side mt-3 mt-lg-0">
             <div className="d-lg-flex align-items-center d-block">
               <div className="ms-lg-4 mt-3 mt-lg-0">
-                {accounts.length ? (
+                {/* {accounts.length ? (
                   <DropDown {...props} setAccounts={setAccounts} />
                 ) : (
                   <ConnectContainer />
-                )}
+                )} */}
+                <ConnectContainer />
               </div>
             </div>
           </div>
           <div className="nav-search d-block d-lg-none">
             <div className="form-group">
               <button className="icon" type="submit">
-                {" "}
-                <i className="fal fa-search"></i>{" "}
+                <i className="fal fa-search"></i>
               </button>
               <input
                 type="text"

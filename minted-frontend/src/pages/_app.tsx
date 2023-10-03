@@ -6,6 +6,7 @@ import "../styles/preloader.css";
 import "../styles/globals.css";
 import "../styles/navbar.scss";
 import 'react-toastify/dist/ReactToastify.css';
+import MainLayout from '@/layouts/Main';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -15,7 +16,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 
-      <Component {...pageProps} />
+      <MainLayout>
+        <Component {...pageProps} />
+      </MainLayout>
 
       {/* <Script strategy="beforeInteractive" src="/assets/js/lib/pace.js"></Script> */}
       <Script strategy="beforeInteractive" src="/assets/js/lib/bootstrap.bundle.min.js"></Script>

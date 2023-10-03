@@ -1,36 +1,26 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import React, { useEffect } from 'react';
-//= Layout
-import MainLayout from '@/layouts/Main';
+import type { NextPage } from "next";
+import Head from "next/head";
+import React, { useEffect } from "react";
 //= Components
-import Navbar from '@/components/Navbar';
-import CreateAlbum from '@/components/album/create';
-import Footer from '@/components/Footer';
-
-
+import CreateAlbum from "@/components/album/create";
 
 const CreateAlbumMain: NextPage = () => {
   useEffect(() => {
-    document.body.classList.add('home-style-12');
-    return () => document.body.classList.remove('home-style-12');
+    document.body.classList.add("home-style-12");
+    return () => document.body.classList.remove("home-style-12");
   }, []);
 
   return (
     <>
       <Head>
-      <title>MintedWave - Create Album</title>
+        <title>MintedWave - Create Album</title>
       </Head>
 
-      <MainLayout>
-        <Navbar />
-        <main>
-          <CreateAlbum />
-        </main>
-        <Footer />
-      </MainLayout>
+      <main>
+        <CreateAlbum />
+      </main>
     </>
-  )
+  );
 };
 
 export default CreateAlbumMain;

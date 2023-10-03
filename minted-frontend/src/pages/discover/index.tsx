@@ -1,19 +1,13 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import React, { useEffect } from 'react';
-//= Layout
-import MainLayout from '@/layouts/Main';
+import type { NextPage } from "next";
+import Head from "next/head";
+import React, { useEffect } from "react";
 //= Components
-import Navbar from '@/components/Navbar';
-import Projects from '@/components/Discover/Projects';
-import Footer from '@/components/Footer';
-
-
+import Projects from "@/components/Discover/Projects";
 
 const Discover: NextPage = () => {
   useEffect(() => {
-    document.body.classList.add('home-style-12');
-    return () => document.body.classList.remove('home-style-12');
+    document.body.classList.add("home-style-12");
+    return () => document.body.classList.remove("home-style-12");
   }, []);
 
   return (
@@ -22,15 +16,11 @@ const Discover: NextPage = () => {
         <title>MintedWave - Discover NFTs</title>
       </Head>
 
-      <MainLayout>
-        <Navbar />
-        <main>
-          <Projects />
-        </main>
-        <Footer />
-      </MainLayout>
+      <main>
+        <Projects />
+      </main>
     </>
-  )
+  );
 };
 
 export default Discover;

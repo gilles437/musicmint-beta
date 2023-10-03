@@ -1,56 +1,109 @@
-import type { WalletConnectConfiguration } from "@polkadot-onboard/wallet-connect";
-import { useState } from "react";
-import { PolkadotWalletsContextProvider } from "@polkadot-onboard/react";
-import { WalletAggregator } from "@polkadot-onboard/core";
-import { InjectedWalletProvider } from "@polkadot-onboard/injected-wallets";
-import { WalletConnectProvider } from "@polkadot-onboard/wallet-connect";
-import { extensionConfig } from "@/utils/provider-configs/extensionConfig";
-
-import Wallets from "./Wallets";
-
-const APP_NAME = "Polkadot Demo";
+import { useCallback, useEffect, useState } from "react";
+import { useWallets } from "@/contexts/Wallets";
+import { Account } from "@polkadot-onboard/core";
+import { formatAccount } from "@/utils/account";
+import { ToastContainer, toast } from "react-toastify";
+import DropDown from "./DropDown";
 
 const ConnectContainer = () => {
-  let injectedWalletProvider = new InjectedWalletProvider(
-    extensionConfig,
-    APP_NAME
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [currentAccount, setCurrentAccount] = useState<string | null>(null);
+  
+  const { wallet } = useWallets();
+  console.log("All wallets", wallet);
+  const Msg = ({}) => (
+    <div>
+      <img
+        src="/assets/image/icon/ALLFEAT_logo+points.png"
+        style={{ height: "25px", width: "25px" }}
+      ></img>
+      <a target="_blank" href="https://polkadot.js.org/extension/">
+        No wallet found. Please press here to install Allfeat wallet.
+      </a>
+    </div>
   );
-  let walletConnectParams: WalletConnectConfiguration = {
-    projectId: "4fae85e642724ee66587fa9f37b997e2",
-    relayUrl: "wss://relay.walletconnect.com",
-    metadata: {
-      name: "Polkadot Demo",
-      description: "Polkadot Demo",
-      url: "#",
-      icons: ["/images/wallet-connect.svg"],
-    },
-    chainIds: [
-      "polkadot:e143f23803ac50e8f6f8e62695d1ce9e",
-      "polkadot:91b171bb158e2d3848fa23a9f1c25182",
-    ],
-    optionalChainIds: [
-      "polkadot:67f9723393ef76214df0118c34bbbd3d",
-      "polkadot:7c34d42fc815d392057c78b49f2755c7",
-    ],
-    onSessionDelete: () => {
-      // do something when session is removed
-    },
-  };
-  let walletConnectProvider = new WalletConnectProvider(
-    walletConnectParams,
-    APP_NAME
-  );
-  let walletAggregator = new WalletAggregator([
-    injectedWalletProvider,
-    walletConnectProvider,
-  ]);
+  const notify = () => toast(<Msg />);
+  
+  const walletClickHandler = useCallback(async () => {
+    console.log(`wallet clicked!`, wallet);
+    if (wallet) {
+      try {
+        await wallet.connect();
+        let accounts = await wallet.getAccounts();
+        accounts.map((account) => {
+          account.address = formatAccount(account.address);
+        });
+        setAccounts(accounts);
+        const savedAccount = localStorage.getItem("currentAccount");
+        const parsedAccount =
+          savedAccount && savedAccount != "null"
+            ? JSON.parse(savedAccount)
+            : accounts[0].address;
+        setCurrentAccount(parsedAccount);
+        localStorage.setItem("currentAccount", JSON.stringify(parsedAccount));
+      } catch (error) {}
+    }
+  }, [wallet]);
+
+  useEffect(() => {
+    walletClickHandler()
+  }, [walletClickHandler])
+
 
   return (
-    <PolkadotWalletsContextProvider walletAggregator={walletAggregator}>
-      <div>
-        <Wallets />
-      </div>
-    </PolkadotWalletsContextProvider>
+    <div>
+      {wallet ? (
+        <div>
+          {accounts.length ? (
+            <DropDown
+              accountArray={accounts}
+              current={currentAccount}
+              setAccounts={setAccounts}
+            />
+          ) : (
+            <button
+              onClick={walletClickHandler}
+              className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+            >
+              <small>
+                <span className="me-1">
+                  <img
+                    src="/assets/image/icon/ALLFEAT_logo+points.png"
+                    style={{ height: "20px", width: "20px" }}
+                  ></img>
+                </span>
+                Connect Wallet
+              </small>
+            </button>
+          )}
+        </div>
+      ) : (
+        <>
+          <button
+            onClick={notify}
+            className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+          >
+            <small>
+              <span className="me-1">
+                <img
+                  src="/assets/image/icon/ALLFEAT_logo+points.png"
+                  style={{ height: "20px", width: "20px" }}
+                ></img>
+              </span>
+              Connect Wallet
+            </small>
+          </button>
+          <ToastContainer
+            position="top-right"
+            newestOnTop={true}
+            autoClose={5000}
+            pauseOnHover
+            pauseOnFocusLoss
+            draggable
+          />
+        </>
+      )}
+    </div>
   );
 };
 

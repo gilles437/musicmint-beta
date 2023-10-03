@@ -3,22 +3,19 @@ import { ContractPromise } from "@polkadot/api-contract";
 import contractAbi from "./admin.json"; // Replace by your contract ABI
 import { BN } from "@polkadot/util";
 import { WeightV2 } from "@polkadot/types/interfaces";
-import { cryptoWaitReady } from "@polkadot/util-crypto";
-import { web3Enable, web3FromAddress } from "@polkadot/extension-dapp";
 import { AddressOrPair } from "@polkadot/api/types";
-import keyring from "@polkadot/ui-keyring";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ContractFile } from "./admin";
 import { CodePromise } from "@polkadot/api-contract";
 import CircleLoader from "react-spinners/ClipLoader";
 import { useApi } from "@/hooks/useApi";
+import { useWallets } from "@/contexts/Wallets";
 
 const override: CSSProperties = {
   display: "block",
   margin: "0 auto",
 };
-
 interface FetchResult {
   ok: [];
 }
@@ -31,7 +28,9 @@ const ContractAdmin = () => {
   const [adminList, setAdminList] = useState<string[]>([]);
   const [superAdminList, setSuperAdminList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  
   const api = useApi();
+  const { wallet } = useWallets();
 
   const contractAddress = "5HKi9fceCSig1HE9vj4CrC4YXpXRfaXWsRHH81dCAnVY1Km7"; // Replace the address of your contract
   const caller = "5FNj1E5Wxqg1vMo1qd6Zi6XZjrAXB8ECuXCyHDrsRQZSAPHL"; //The address of Contract Owner
@@ -39,12 +38,7 @@ const ContractAdmin = () => {
 
   useEffect(() => {
     const connectChain = async () => {
-      // //Connect Wallet for Injector
-      await web3Enable("polkadot-js");
-      await cryptoWaitReady();
-
-      //Connect Chain for API
-      setIsLoading(true);
+      // setIsLoading(true);
       if (api == null) return;
       const { chainSS58, chainDecimals, chainTokens } = api.registry;
       localStorage.setItem("chainSS58", JSON.stringify(chainSS58));
@@ -53,12 +47,6 @@ const ContractAdmin = () => {
       const contract = new ContractPromise(api, contractAbi, contractAddress);
       setContract(contract);
 
-      //Set Kerying
-      keyring.loadAll({
-        ss58Format: chainSS58,
-        type: "sr25519",
-      });
-      
       //GasLimit
       const gasLimit = api.registry.createType("WeightV2", {
         refTime: new BN("10000000000"),
@@ -94,9 +82,7 @@ const ContractAdmin = () => {
         ? allAdmins.output?.toString()
         : "";
       const temp: FetchResult = JSON.parse(stringTemp);
-      console.log({ stringTemp, temp });
       setAdminList(temp.ok);
-      console.log({ adminList });
     }
   };
 
@@ -134,18 +120,13 @@ const ContractAdmin = () => {
       }) >= 0
     ) {
       toastFunction("Account is already added !");
-    } else if (newAdminInput && keyring && contract) {
-      const injector = await web3FromAddress(parsedAccount);
-      const options = injector ? { signer: injector.signer } : undefined;
-      const signer: AddressOrPair = injector
-        ? parsedAccount
-        : keyring.getPair(parsedAccount);
-
+    } else if (newAdminInput && contract && wallet) {
+      const options = wallet ? { signer: wallet.signer } : undefined;
       const addAdminResult = await contract.tx.addAdmin(
         { value: 0, gasLimit, storageDepositLimit },
         newAdminInput
       );
-      const txr = await addAdminResult.signAndSend(signer, options);
+      const txr = await addAdminResult.signAndSend(parsedAccount, options);
 
       const timerId = setTimeout(async () => {
         await getAdminList();
@@ -168,18 +149,13 @@ const ContractAdmin = () => {
       }) >= 0
     ) {
       toastFunction("Account is already added !");
-    } else if (newSuperAdminInput && keyring && contract) {
-      const injector = await web3FromAddress(parsedAccount);
-      const options = injector ? { signer: injector.signer } : undefined;
-      const signer: AddressOrPair = injector
-        ? parsedAccount
-        : keyring.getPair(parsedAccount);
-
+    } else if (newSuperAdminInput && wallet && contract) {
+      const options =  wallet.signer ? { signer: wallet.signer } : undefined;
       const addAdminResult = await contract.tx.addSuperAdmin(
         { value: 0, gasLimit, storageDepositLimit },
         newSuperAdminInput
       );
-      const txr = await addAdminResult.signAndSend(signer, options);
+      const txr = await addAdminResult.signAndSend(parsedAccount, options);
 
       const timerId = setTimeout(async () => {
         await getSuperAdminList();
@@ -198,19 +174,14 @@ const ContractAdmin = () => {
       }) < 0
     ) {
       toastFunction("Current selected account is not SuperAdmin !");
-    } else if (keyring && contract) {
-      const injector = await web3FromAddress(parsedAccount);
-      const options = injector ? { signer: injector.signer } : undefined;
-      const signer: AddressOrPair = injector
-        ? parsedAccount
-        : keyring.getPair(parsedAccount);
-
+    } else if (wallet && contract) {
+      const options = wallet ? { signer: wallet.signer } : undefined;
       const addAdminResult = await contract.tx.removeAdmin(
         { value: 0, gasLimit, storageDepositLimit },
         account
       );
-      const txr = await addAdminResult.signAndSend(signer, options);
-      console.log({ txr });
+      const txr = await addAdminResult.signAndSend(parsedAccount, options);
+
       const timerId = setTimeout(async () => {
         await getAdminList();
       }, 5000);
@@ -223,18 +194,13 @@ const ContractAdmin = () => {
     const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
     if (parsedAccount && parsedAccount != caller) {
       toastFunction("Current selected account is not Contract Owner !");
-    } else if (keyring && contract) {
-      const injector = await web3FromAddress(parsedAccount);
-      const options = injector ? { signer: injector.signer } : undefined;
-      const signer: AddressOrPair = injector
-        ? parsedAccount
-        : keyring.getPair(parsedAccount);
-
+    } else if (wallet && contract) {
+      const options = wallet ? { signer: wallet.signer } : undefined;
       const addAdminResult = await contract.tx.removeSuperAdmin(
         { value: 0, gasLimit, storageDepositLimit },
         account
       );
-      const txr = await addAdminResult.signAndSend(signer, options);
+      const txr = await addAdminResult.signAndSend(parsedAccount, options);
 
       const timerId = setTimeout(async () => {
         await getSuperAdminList();
@@ -252,48 +218,25 @@ const ContractAdmin = () => {
   };
 
   const deployAdminContract1 = async () => {
-    if (api && keyring) {
+    if (api && wallet) {
       const __contract = JSON.parse(ContractFile);
       const code = new CodePromise(api, __contract, __contract.source.wasm);
       const savedAccount = localStorage.getItem("currentAccount");
       const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-      const injector = await web3FromAddress(parsedAccount);
-      // const options = injector ? { signer: injector.signer } : undefined;
-      // console.log({ options, injector });
-      // const signer: AddressOrPair = injector
-      //   ? parsedAccount
-      //   : keyring.getPair(parsedAccount);
-
-      // console.log({ signer });
       const tx = code.tx.new(
         { value: 0, gasLimit, storageDepositLimit },
         parsedAccount
       );
       const unsub = await tx.signAndSend(
         parsedAccount,
-        { signer: injector.signer },
-        ({ status, events }) => {
-          if (status.isInBlock || status.isFinalized) {
-            console.log({ status, events });
-            // address = contractD.address.toString();
-            events
-              .filter(({ event }) =>
-                api.events.contracts.Instantiated.is(event)
-              )
-              .forEach(
-                ({
-                  event: {
-                    data: [deployer, contract],
-                  },
-                }) => {
-                  console.log(`contract address: ${contract}`);
-                }
-              );
+        { signer: wallet.signer },
+        (result) => {
+          if (result.status.isInBlock || result.status.isFinalized) {
+            console.log({ result });
             unsub();
           }
         }
       );
-
     }
   };
 
