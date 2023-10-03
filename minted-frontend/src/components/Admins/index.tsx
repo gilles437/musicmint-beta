@@ -4,21 +4,14 @@ import contractAbi from "./admin.json"; // Replace by your contract ABI
 import { BN } from "@polkadot/util";
 import { WeightV2 } from "@polkadot/types/interfaces";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
-import {
-  web3Enable,
-  web3FromAddress,
-  web3Accounts,
-} from "@polkadot/extension-dapp";
+import { web3Enable, web3FromAddress } from "@polkadot/extension-dapp";
 import { AddressOrPair } from "@polkadot/api/types";
 import keyring from "@polkadot/ui-keyring";
-import type { KeyringPair } from "@polkadot/keyring/types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { deployAdmin } from "@/helper/admin_deploy";
 import { ContractFile } from "./admin";
 import { CodePromise } from "@polkadot/api-contract";
 import CircleLoader from "react-spinners/ClipLoader";
-import type { SubmittableResult } from "@polkadot/api";
 import { useApi } from "@/hooks/useApi";
 
 const override: CSSProperties = {
@@ -30,24 +23,9 @@ interface FetchResult {
   ok: [];
 }
 
-type SignAndSendSuccessResponse = {
-  from: string;
-  txHash?: string;
-  blockHash?: string;
-  result?: SubmittableResult;
-  error?: {
-    message?: any;
-    data?: any;
-  };
-  events?: {
-    [index: string]: any;
-  };
-};
-
 const ContractAdmin = () => {
   const [contract, setContract] = useState<ContractPromise>();
   const [gasLimit, setGasLimit] = useState<WeightV2>();
-  const [ss58Format, setSs58Format] = useState<number>(42);
   const [newAdminInput, setNewAdminInput] = useState<string>("");
   const [newSuperAdminInput, setNewSuperAdminInput] = useState<string>("");
   const [adminList, setAdminList] = useState<string[]>([]);
@@ -69,25 +47,22 @@ const ContractAdmin = () => {
       setIsLoading(true);
       if (api == null) return;
       const { chainSS58, chainDecimals, chainTokens } = api.registry;
-      const { genesisHash } = api;
-      // console.log({ chainSS58, chainDecimals, chainTokens, genesisHash });
       localStorage.setItem("chainSS58", JSON.stringify(chainSS58));
-      setSs58Format(chainSS58 ? chainSS58 : 42);
+
+      //Contract Create
+      const contract = new ContractPromise(api, contractAbi, contractAddress);
+      setContract(contract);
 
       //Set Kerying
       keyring.loadAll({
         ss58Format: chainSS58,
         type: "sr25519",
       });
-
-      //Contract Create
-      const contract = new ContractPromise(api, contractAbi, contractAddress);
-      setContract(contract);
-
+      
       //GasLimit
       const gasLimit = api.registry.createType("WeightV2", {
-        refTime: new BN("0"),
-        proofSize: new BN("0"),
+        refTime: new BN("10000000000"),
+        proofSize: new BN("10000000000"),
       }) as WeightV2;
       setGasLimit(gasLimit);
     };
@@ -119,7 +94,9 @@ const ContractAdmin = () => {
         ? allAdmins.output?.toString()
         : "";
       const temp: FetchResult = JSON.parse(stringTemp);
+      console.log({ stringTemp, temp });
       setAdminList(temp.ok);
+      console.log({ adminList });
     }
   };
 
@@ -169,6 +146,7 @@ const ContractAdmin = () => {
         newAdminInput
       );
       const txr = await addAdminResult.signAndSend(signer, options);
+
       const timerId = setTimeout(async () => {
         await getAdminList();
       }, 5000);
@@ -273,61 +251,49 @@ const ContractAdmin = () => {
     setNewSuperAdminInput(event.target.value);
   };
 
-  const deployAdminContract = async () => {
-    const savedAccount = localStorage.getItem("currentAccount");
-
-    const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-    if (keyring && api) {
-      const injector = await web3FromAddress(parsedAccount);
-      const options = injector ? { signer: injector.signer } : undefined;
-      const signer = injector
-        ? injector.signer
-        : keyring.getPair(parsedAccount);
-      // const tempImportedAccounts = await web3Accounts();
-      // let keyringAccount;
-      // console.log({ tempImportedAccounts });
-      // tempImportedAccounts.map((account) => {
-      //   if (
-      //     account.address == parsedAccount &&
-      //     account.meta.source == "allfeat"
-      //   ) {
-      //     keyringAccount = account;
-
-      //   }
-      // });
-      const controller = await deployAdmin({
-        api,
-        signer: signer,
-        args: [parsedAccount],
-      });
-    }
-  };
-
   const deployAdminContract1 = async () => {
     if (api && keyring) {
       const __contract = JSON.parse(ContractFile);
-      const contract1 = new CodePromise(
-        api,
-        __contract,
-        __contract.source.wasm
-      );
+      const code = new CodePromise(api, __contract, __contract.source.wasm);
       const savedAccount = localStorage.getItem("currentAccount");
       const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
       const injector = await web3FromAddress(parsedAccount);
-      const options = injector ? { signer: injector.signer } : undefined;
-      console.log({ options, injector });
-      const signer: AddressOrPair = injector
-        ? parsedAccount
-        : keyring.getPair(parsedAccount);
+      // const options = injector ? { signer: injector.signer } : undefined;
+      // console.log({ options, injector });
+      // const signer: AddressOrPair = injector
+      //   ? parsedAccount
+      //   : keyring.getPair(parsedAccount);
 
-      console.log({ signer });
-      const tx = contract1.tx.new(
+      // console.log({ signer });
+      const tx = code.tx.new(
         { value: 0, gasLimit, storageDepositLimit },
         parsedAccount
       );
-      console.log({ tx });
-      const txr = await tx.signAndSend(signer, options);
-      console.log(txr.toHex(), txr.hash.toHex());
+      const unsub = await tx.signAndSend(
+        parsedAccount,
+        { signer: injector.signer },
+        ({ status, events }) => {
+          if (status.isInBlock || status.isFinalized) {
+            console.log({ status, events });
+            // address = contractD.address.toString();
+            events
+              .filter(({ event }) =>
+                api.events.contracts.Instantiated.is(event)
+              )
+              .forEach(
+                ({
+                  event: {
+                    data: [deployer, contract],
+                  },
+                }) => {
+                  console.log(`contract address: ${contract}`);
+                }
+              );
+            unsub();
+          }
+        }
+      );
+
     }
   };
 
