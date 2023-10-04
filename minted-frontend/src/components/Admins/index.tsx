@@ -10,6 +10,7 @@ import { CodePromise } from "@polkadot/api-contract";
 import CircleLoader from "react-spinners/ClipLoader";
 import { useApi } from "@/hooks/useApi";
 import { useWallets } from "@/contexts/Wallets";
+import { CodeSubmittableResult } from "@polkadot/api-contract/base";
 
 const override: CSSProperties = {
   display: "block",
@@ -217,22 +218,25 @@ const ContractAdmin = () => {
   };
 
   const deployAdminContract1 = async () => {
+    const __contract = JSON.parse(ContractFile);
     if (api && wallet) {
-      const __contract = JSON.parse(ContractFile);
-      const code = new CodePromise(api, contractAbi, __contract.source.wasm);
+      const code = new CodePromise(api, __contract, __contract.source.wasm );
       const savedAccount = localStorage.getItem("currentAccount");
       const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
       const tx = code.tx.new(
         { value: 0, gasLimit, storageDepositLimit: '50000000000' },
         parsedAccount
       );
+      let address = "";
       const unsub = await tx.signAndSend(
         parsedAccount,
         { signer: wallet.signer },
         (result) => {
           if (result.status.isInBlock || result.status.isFinalized) {
+            if(result.isWarning)
             console.log({ result });
-            console.log(result.toHuman());
+            // address = result.contract.address.toString();
+            // console.log( {address} );
             unsub();
           }
         }
