@@ -223,7 +223,7 @@ const ContractAdmin = () => {
       const savedAccount = localStorage.getItem("currentAccount");
       const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
       const tx = code.tx.new(
-        { value: 0, gasLimit, storageDepositLimit },
+        { value: 0, gasLimit, storageDepositLimit: '50000000000' },
         parsedAccount
       );
       const unsub = await tx.signAndSend(
@@ -232,6 +232,7 @@ const ContractAdmin = () => {
         (result) => {
           if (result.status.isInBlock || result.status.isFinalized) {
             console.log({ result });
+            console.log(result.toHuman());
             unsub();
           }
         }
