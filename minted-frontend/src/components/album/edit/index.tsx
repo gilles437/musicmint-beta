@@ -19,6 +19,7 @@ const override: CSSProperties = {
 type SongMetadataType = {
   title: string;
   price: string;
+  maxSupply: string;
   image: string;
   sound: string;
 };
@@ -38,6 +39,7 @@ const EditAlbum = () => {
   const [selectedImage, setSelectedImage] = useState<File>();
   const [isImageChanged, setIsImageChanged] = useState(false);
   const [currentSoundTitle, setCurrentSoundTitle] = useState<string>("");
+  const [currentSoundMaxSupply, setCurrentSoundMaxSupply] = useState<string>("");
   const [currentSoundPrice, setCurrentSoundPrice] = useState<string>("");
   const [selectedSound, setSelectedSound] = useState<File>();
   const [selectedSoundImage, setSelectedSoundImage] = useState<File>();
@@ -292,6 +294,7 @@ const EditAlbum = () => {
     const json_metadata = {
       title: currentSoundTitle,
       price: currentSoundPrice,
+      maxSupply: currentSoundMaxSupply,
       image: `https://ipfs.io/ipfs/${fileImageCid}`,
       sound: `https://ipfs.io/ipfs/${fileSoundTrackCid}`,
     };
@@ -558,6 +561,17 @@ const EditAlbum = () => {
                       onChange={(e) => handleSoundChange(e)}
                     />
                   </div>
+                  <div className="mt-3">
+                    <h5>MaxSupply</h5>
+                    <input
+                      type="text"
+                      placeholder="Press 0 if no maximum"
+                      value={currentSoundMaxSupply ? currentSoundMaxSupply : ""}
+                      onChange={(e: any) =>
+                        setCurrentSoundMaxSupply(e.target.value)
+                      }
+                    />
+                  </div>
                 </div>
               </div>
               <div className="col-md-6 col-sm-12">
@@ -583,16 +597,16 @@ const EditAlbum = () => {
                       onChange={(e) => handleSoundImageChange(e)}
                     />
                   </div>
+                  <div className="mt-3">
+                    <button
+                      className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen mt-3"
+                      onClick={(e) => uploadSoundNFTToS3Bucket(e)}
+                      disabled={isLoading}
+                    >
+                      Add Song
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="text-center mt-3">
-                <button
-                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen mt-3"
-                  onClick={(e) => uploadSoundNFTToS3Bucket(e)}
-                  disabled={isLoading}
-                >
-                  Add Song
-                </button>
               </div>
             </div>
             {songMetaData.length > 0 ? (
@@ -606,6 +620,7 @@ const EditAlbum = () => {
                             <th scope="col">Title</th>
                             <th scope="col"></th>
                             <th scope="col"></th>
+                            <th scope="col">MaxSupply</th>
                             <th scope="col">Price</th>
                             <th scope="col">Created On</th>
                             <th scope="col"></th>
@@ -636,6 +651,7 @@ const EditAlbum = () => {
                                     element.
                                   </audio>
                                 </td>
+                                <td>{song.maxSupply}</td>
                                 <td>{song.price}</td>
                                 <td>09:35 11/02/2023</td>
                                 <td>
