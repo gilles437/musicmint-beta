@@ -13,7 +13,7 @@ type Account @entity {
 
 type Transfer @entity {
   id: ID!
-  blockNumber: Int! @index
+  block: Int! @index
   timestamp: DateTime! @index
   extrinsicHash: String @index
   from: Account!

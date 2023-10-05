@@ -12,15 +12,12 @@ import { BigNumber } from "@ethersproject/bignumber"
 const CONTRACT_ADDRESS_SS58 = 'HqKoyxWpojbkw3bhRsFk9RYgQofUFLhKo82Wfu9eai2kWMW'
 //const CONTRACT_ADDRESS_SS58 = 'Eu8sD1i48SMvUE7kapR3tkL8QfRpeybvNGMPAw2bM7Ar4n9'
 
-
 const CONTRACT_ADDRESS = toHex(ss58.decode(CONTRACT_ADDRESS_SS58).bytes)
 const SS58_PREFIX = ss58.decode(CONTRACT_ADDRESS_SS58).prefix
   
 const processor = new SubstrateBatchProcessor()
     .setDataSource({
         archive: "https://archive-test-3.allfeat.io/graphql"
-
-//        archive: lookupArchive("shibuya", { release: "FireSquid" })
     })
     .addContractsContractEmitted(CONTRACT_ADDRESS, {
         data: {
@@ -109,7 +106,7 @@ function extractTransferRecords(ctx: Ctx): TransferRecord[] {
                         id: item.event.id,
                         from: event.from && ss58.codec(SS58_PREFIX).encode(event.from),
                         to: event.to && ss58.codec(SS58_PREFIX).encode(event.to),
-                        amount:BigInt(10000000000),
+                        amount:BigInt(255000000000),
                         block: block.header.height,
                         timestamp: new Date(block.header.timestamp)
                     })
