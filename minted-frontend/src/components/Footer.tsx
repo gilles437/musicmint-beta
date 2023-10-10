@@ -19,24 +19,19 @@ const Footer = () => {
                 <h6> ABOUT </h6>
                 <ul>
                   <li>
-                    {" "}
-                    <a href="#"> About Us </a>{" "}
+                    <a href="#"> About Us </a>
                   </li>
                   <li>
-                    {" "}
-                    <a href="#"> Blog </a>{" "}
+                    <a href="#"> Blog </a>
                   </li>
                   <li>
-                    {" "}
-                    <a href="#"> Terms of Service </a>{" "}
+                    <a href="#"> Terms of Service </a>
                   </li>
                   <li>
-                    {" "}
-                    <a href="#"> Privacy Policy </a>{" "}
+                    <a href="#"> Privacy Policy </a>
                   </li>
                   <li>
-                    {" "}
-                    <a href="#"> FAQs </a>{" "}
+                    <a href="#"> FAQs </a>
                   </li>
                 </ul>
               </div>
@@ -74,21 +69,36 @@ const Footer = () => {
               <div className="links mt-5 mt-lg-0">
                 <h6> SOCIAL MEDIA </h6>
                 <div className="social-icons">
-                  <a className="pe-3" href="https://twitter.com/mintedwaves" target="_blank" rel="noreferrer" >
+                  <a
+                    className="pe-3"
+                    href="https://twitter.com/mintedwaves"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <img
                       alt="twitter"
                       src="/assets/image/icon/twitter.svg"
                       style={{ width: "36px", height: "36px" }}
                     ></img>
                   </a>
-                  <a className="pe-3" href="https://www.instagram.com/mintedwaves/" target="_blank" rel="noreferrer" >
+                  <a
+                    className="pe-3"
+                    href="https://www.instagram.com/mintedwaves/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <img
                       alt="instagram"
                       src="/assets/image/icon/instagram.svg"
                       style={{ width: "36px", height: "36px" }}
                     ></img>
                   </a>
-                  <a className="pe-3" href="https://www.facebook.com/mintedwaves" target="_blank" rel="noreferrer" >
+                  <a
+                    className="pe-3"
+                    href="https://www.facebook.com/mintedwaves"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <img
                       alt="facebook"
                       src="/assets/image/icon/facebook.svg"
@@ -102,13 +112,11 @@ const Footer = () => {
         </div>
         <div className="foot">
           <p>
-            {" "}
-            ©Copyright {" "}
+            ©Copyright
             <a href="#" className="color-yellowGreen">
-              {" "}
-              Minted{" "}Waves.{" "}
-            </a>{" "}
-            All Rights Reserved{" "}
+              MintedWaves.
+            </a>
+            All Rights Reserved
           </p>
         </div>
       </div>

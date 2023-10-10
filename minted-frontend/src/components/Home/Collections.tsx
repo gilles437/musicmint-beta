@@ -26,8 +26,7 @@ const Collections = () => {
                 <span className="mx-2"> collections </span>
               </h6>
               <h2>
-                {" "}
-                Top <span> Collection </span>{" "}
+                Top <span> Collection </span>
               </h2>
             </div>
           </div>
@@ -87,10 +86,9 @@ const Collections = () => {
                     <div className="top-info">
                       <h6> {collection.name} </h6>
                       <p>
-                        {" "}
-                        <img src="/assets/img/icons/star2.png" alt="" />{" "}
-                        <span className="text-white"> {collection.items} </span>{" "}
-                        <span> Items </span>{" "}
+                        <img src="/assets/img/icons/star2.png" alt="" />
+                        <span className="text-white"> {collection.items} </span>
+                        <span> Items </span>
                       </p>
                     </div>
                     <div className="auther-img">
