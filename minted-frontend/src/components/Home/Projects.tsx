@@ -97,7 +97,7 @@ const Projects = () => {
                       <div className="img img-cover">
                         <img src={project.image} alt="" />
                         <Link
-                          href="/album"
+                          href="/album/detail"
                           className="butn bg-yellowGreen rounded-3 hover-shadow"
                         >
                           <span className="text-dark">

@@ -39,3 +39,7 @@ html, body {
 .home-project-slider .swiper-pagination{
   bottom: -30px !important;
 }
+
+.album-bottom-border{
+  border-bottom: 1px solid;
+}
