@@ -15,6 +15,7 @@ mod admin {
         to: AccountId,
         /// The role granted.
         role: Role,
+        contract: AccountId,
     }
 
     /// The role of a user.
@@ -30,6 +31,7 @@ mod admin {
         SuperAdmin,
     }
 
+
     #[derive(Encode, Decode, Debug, PartialEq, Eq, Copy, Clone)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum Error {
@@ -44,10 +46,11 @@ mod admin {
     pub struct Admin {
         /// Mapping of the user roles.
         admins: Mapping<AccountId, Role>,
+        admins_contracts: Mapping<AccountId, AccountId>,
         admins_accounts: Vec<AccountId>,
         super_admins_accounts: Vec<AccountId>,
         /// Owner of the smart contract.
-        owner: AccountId,
+        owner: AccountId
     }
 
     impl Admin {
@@ -56,12 +59,13 @@ mod admin {
         pub fn new(owner: AccountId) -> Self {
             Self {
                 admins: Mapping::new(),
+                admins_contracts: Mapping::new(),
                 admins_accounts: Vec::new(),
                 super_admins_accounts: Vec::new(),
                 owner,
             }
         }
-
+        
         /// Adds the admin role to the given `AccountId`.
         /// The smart contract caller must be the owner.
         #[ink(message)]
@@ -76,6 +80,7 @@ mod admin {
                     from: self.env().caller(),
                     to: new_admin,
                     role: Role::SuperAdmin,
+                    contract: [0u8; 32].into()
                 }
             }); 
             Ok(())
@@ -95,6 +100,7 @@ mod admin {
                     from: self.env().caller(),
                     to: admin,
                     role: Role::None,
+                    contract: [0u8; 32].into()
                 }
             });
             Ok(())
@@ -103,16 +109,18 @@ mod admin {
         /// Adds the admin role to the given `AccountId`.
         /// The smart contract caller must be a super admin.
         #[ink(message)]
-        pub fn add_admin(&mut self, new_admin: AccountId) -> Result<(), Error> {
+        pub fn add_admin(&mut self, new_admin: AccountId, new_contract: AccountId) -> Result<(), Error> {
             self.ensure_super_admins()?;
             self.ensure_admin_do_not_exist(new_admin)?;
             self.admins.insert(new_admin, &Role::Admin);
+            self.admins_contracts.insert(new_admin, &new_contract);
             self.admins_accounts.push(new_admin);
             self.env().emit_event({
                 Granted {
                     from: self.env().caller(),
                     to: new_admin,
                     role: Role::Admin,
+                    contract: new_contract
                 }
             });
             Ok(())
@@ -133,12 +141,22 @@ mod admin {
                     from: self.env().caller(),
                     to: admin,
                     role: Role::None,
+                    contract: [0u8; 32].into()
                 }
             });
             Ok(())
         }
 
         /// Gets the role of the given `AccountId`.
+        /// Returns `[0u8; 32].into()` if the given `AccountId` is not is the mapping.
+        #[ink(message)]
+        pub fn get_artist_contract(&self, admin: AccountId) -> Option<AccountId> {
+            self.admins_contracts.get(admin)
+
+          
+        }
+
+        /// Gets the smart contract address of the given `AccountId`.
         /// Returns `Role::None` if the given `AccountId` is not is the mapping.
         #[ink(message)]
         pub fn get_role(&self, admin: AccountId) -> Role {
@@ -147,6 +165,7 @@ mod admin {
                 _ => Role::None,
             }
         }
+
 
         /// Gets all admins.
         /// Returns `Vec<AccountId>` 

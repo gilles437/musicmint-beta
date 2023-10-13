@@ -29,7 +29,6 @@ const processor = new SubstrateBatchProcessor()
 type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
  
- 
 processor.run(new TypeormDatabase(), async ctx => {
     const txs = extractTransferRecords(ctx)
  
