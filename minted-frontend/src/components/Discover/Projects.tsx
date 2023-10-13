@@ -56,13 +56,11 @@ const Projects = () => {
                 <div className="project-card">
                   <div className="top-inf">
                     <span>
-                      {" "}
-                      <i className="fas fa-heart"></i> {project.hearts}{" "}
+                      <i className="fas fa-heart"></i> {project.hearts}
                     </span>
                     <span>
-                      {" "}
-                      <i className="fas fa-sort color-yellowGreen"></i>{" "}
-                      {project.sort}{" "}
+                      <i className="fas fa-sort color-yellowGreen"></i>
+                      {project.sort}
                     </span>
                   </div>
                   <div className="img img-cover">
@@ -71,33 +69,25 @@ const Projects = () => {
                       href="#"
                       className="butn bg-yellowGreen rounded-3 hover-shadow"
                     >
-                      {" "}
                       <span className="text-dark">
-                        {" "}
-                        <i className="fal fa-shopping-basket me-1"></i> Buy Now{" "}
-                      </span>{" "}
+                        <i className="fal fa-shopping-basket me-1"></i> Buy Now
+                      </span>
                     </a>
                   </div>
                   <div className="info">
                     <small>
-                      {" "}
-                      Highest bid{" "}
-                      <span className="color-yellowGreen">
-                        {" "}
-                        {project.bid}{" "}
-                      </span>{" "}
+                      Highest bid
+                      <span className="color-yellowGreen">{project.bid}</span>
                     </small>
                     <h6> {project.title} </h6>
                     <div className="btm-inf">
                       <p>
-                        {" "}
-                        <i className="fal fa-users color-yellowGreen"></i>{" "}
-                        {project.placeBit}+ Place Bit{" "}
+                        <i className="fal fa-users color-yellowGreen"></i>
+                        {project.placeBit}+ Place Bit
                       </p>
                       <p>
-                        {" "}
-                        <i className="fal fa-history color-yellowGreen"></i>{" "}
-                        History{" "}
+                        <i className="fal fa-history color-yellowGreen"></i>
+                        History
                       </p>
                     </div>
                   </div>
@@ -128,7 +118,7 @@ const Projects = () => {
             </a>
             <a href="#">
               <span className="text">
-                next <i className="fas fa-chevron-right"></i>{" "}
+                next <i className="fas fa-chevron-right"></i>
               </span>
             </a>
           </div>

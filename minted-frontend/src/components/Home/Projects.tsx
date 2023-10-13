@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import projects from "@/data/NFTMarketplace/projects.json";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Navigation, Pagination, Autoplay } from "swiper";
+import Link from "next/link";
 
 import "swiper/css";
 import "swiper/css/autoplay";
@@ -26,8 +27,7 @@ const Projects = () => {
                 <span className="mx-2"> NFTs </span>
               </h6>
               <h2>
-                {" "}
-                Top <span> NFT </span>{" "}
+                Top <span> NFT </span>
               </h2>
             </div>
           </div>
@@ -87,49 +87,41 @@ const Projects = () => {
                     <div className="project-card">
                       <div className="top-inf">
                         <span>
-                          {" "}
-                          <i className="fas fa-heart"></i> {project.hearts}{" "}
+                          <i className="fas fa-heart"></i> {project.hearts}
                         </span>
                         <span>
-                          {" "}
-                          <i className="fas fa-sort color-yellowGreen"></i>{" "}
-                          {project.sort}{" "}
+                          <i className="fas fa-sort color-yellowGreen"></i>
+                          {project.sort}
                         </span>
                       </div>
                       <div className="img img-cover">
                         <img src={project.image} alt="" />
-                        <a
-                          href="#"
+                        <Link
+                          href="/album/detail"
                           className="butn bg-yellowGreen rounded-3 hover-shadow"
                         >
-                          {" "}
                           <span className="text-dark">
-                            {" "}
                             <i className="fal fa-shopping-basket me-1"></i> Buy
-                            Now{" "}
-                          </span>{" "}
-                        </a>
+                            Now
+                          </span>
+                        </Link>
                       </div>
                       <div className="info">
                         <small>
-                          {" "}
-                          Highest bid{" "}
+                          Highest bid
                           <span className="color-yellowGreen">
-                            {" "}
-                            {project.bid}{" "}
-                          </span>{" "}
+                            {project.bid}
+                          </span>
                         </small>
                         <h6> {project.title} </h6>
                         <div className="btm-inf">
                           <p>
-                            {" "}
-                            <i className="fal fa-users color-yellowGreen"></i>{" "}
-                            {project.placeBit}+ Place Bit{" "}
+                            <i className="fal fa-users color-yellowGreen"></i>
+                            {project.placeBit}+ Place Bit
                           </p>
                           <p>
-                            {" "}
-                            <i className="fal fa-history color-yellowGreen"></i>{" "}
-                            History{" "}
+                            <i className="fal fa-history color-yellowGreen"></i>
+                            History
                           </p>
                         </div>
                       </div>

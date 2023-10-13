@@ -1,7 +1,7 @@
 import { useState, useEffect, CSSProperties } from "react";
 import { ContractPromise } from "@polkadot/api-contract";
 import contractAbi from "./admin.json"; // Replace by your contract ABI
-import { BN, BN_ONE, BN_TEN } from '@polkadot/util'
+import { BN, BN_ONE, BN_TEN } from "@polkadot/util";
 import { WeightV2 } from "@polkadot/types/interfaces";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -28,18 +28,18 @@ const ContractAdmin = () => {
   const [adminList, setAdminList] = useState<string[]>([]);
   const [superAdminList, setSuperAdminList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const api = useApi();
   const { wallet } = useWallets();
 
   const contractAddress = "5HKi9fceCSig1HE9vj4CrC4YXpXRfaXWsRHH81dCAnVY1Km7"; // Replace the address of your contract
   const caller = "5FNj1E5Wxqg1vMo1qd6Zi6XZjrAXB8ECuXCyHDrsRQZSAPHL"; //The address of Contract Owner
-  const storageDepositLimit = BN_TEN.pow(new BN(18));
+  const storageDepositLimit = null;
 
   useEffect(() => {
     const connectChain = async () => {
-      // setIsLoading(true);
       if (api == null) return;
+      setIsLoading(true);
       const { chainSS58, chainDecimals, chainTokens } = api.registry;
       localStorage.setItem("chainSS58", JSON.stringify(chainSS58));
 
@@ -49,8 +49,8 @@ const ContractAdmin = () => {
 
       //GasLimit
       const gasLimit = api.registry.createType("WeightV2", {
-        refTime: new BN(2_000_000_000).isub(BN_ONE).mul(BN_TEN),
-        proofSize: new BN(2_000_000)
+        refTime: new BN("10000000000"),
+        proofSize: new BN("10000000000"),
       }) as WeightV2;
       setGasLimit(gasLimit);
     };
@@ -59,7 +59,9 @@ const ContractAdmin = () => {
         if (api == null) return;
         setIsLoading(false);
       })
-      .catch(console.error);
+      .catch(() => {
+        setIsLoading(false);
+      });
   }, [api]);
 
   useEffect(() => {
@@ -78,6 +80,7 @@ const ContractAdmin = () => {
         gasLimit,
         storageDepositLimit,
       });
+      console.log({ allAdmins });
       const stringTemp = allAdmins.output?.toString()
         ? allAdmins.output?.toString()
         : "";
@@ -93,6 +96,7 @@ const ContractAdmin = () => {
         gasLimit,
         storageDepositLimit,
       });
+      console.log({ allSuperAdmins });
       const stringTemp = allSuperAdmins.output?.toString()
         ? allSuperAdmins.output?.toString()
         : "";
@@ -150,7 +154,7 @@ const ContractAdmin = () => {
     ) {
       toastFunction("Account is already added !");
     } else if (newSuperAdminInput && wallet && contract) {
-      const options =  wallet.signer ? { signer: wallet.signer } : undefined;
+      const options = wallet.signer ? { signer: wallet.signer } : undefined;
       const addAdminResult = await contract.tx.addSuperAdmin(
         { value: 0, gasLimit, storageDepositLimit },
         newSuperAdminInput
@@ -220,11 +224,11 @@ const ContractAdmin = () => {
   const deployAdminContract1 = async () => {
     const __contract = JSON.parse(ContractFile);
     if (api && wallet) {
-      const code = new CodePromise(api, __contract, __contract.source.wasm );
+      const code = new CodePromise(api, __contract, __contract.source.wasm);
       const savedAccount = localStorage.getItem("currentAccount");
       const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
       const tx = code.tx.new(
-        { value: 0, gasLimit, storageDepositLimit: '50000000000' },
+        { value: 0, gasLimit, storageDepositLimit: "50000000000" },
         parsedAccount
       );
       let address = "";
@@ -233,7 +237,6 @@ const ContractAdmin = () => {
         { signer: wallet.signer },
         (result) => {
           if (result.status.isInBlock || result.status.isFinalized) {
-            if(result.isWarning)
             console.log({ result });
             // address = result.contract.address.toString();
             // console.log( {address} );
