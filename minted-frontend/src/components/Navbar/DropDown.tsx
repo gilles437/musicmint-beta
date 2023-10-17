@@ -28,7 +28,7 @@ const DropDown = (props: ChildProps) => {
     setAccounts([]);
     props.setAccounts([]);
     setCurrentAccount(null);
-    localStorage.setItem("currentAccount", 'null');
+    localStorage.setItem("currentAccount", "null");
   };
 
   return (
@@ -64,8 +64,13 @@ const DropDown = (props: ChildProps) => {
             ))}
             <li>
               <div className="dropdown-item d-flex">
-                <img src="/assets/image/icon/my-account.svg" alt="my-account" />
-                <p className="ps-1">My Account</p>
+                <Link href="/profile" className="d-flex">
+                  <img
+                    src="/assets/image/icon/my-account.svg"
+                    alt="my-account"
+                  />
+                  <p className="ps-1">My Account</p>
+                </Link>
               </div>
             </li>
             <li>

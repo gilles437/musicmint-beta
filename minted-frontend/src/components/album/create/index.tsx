@@ -1,7 +1,7 @@
 import React, { useState, CSSProperties } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import configureAWS from "../awsConfig";
+import configureAWS from "@/utils/ipfs/awsConfig";
 import { v4 as uuidv4 } from "uuid";
 import S3 from "aws-sdk/clients/s3";
 import axios from "axios";
