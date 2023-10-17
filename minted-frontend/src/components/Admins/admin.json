@@ -1,12 +1,12 @@
 {
   "source": {
-    "hash": "0x3ed368a11f401fecaa9331cced8081f0bf240022a953adf5923fd6d6f17f6df0",
+    "hash": "0x5a7dd5455586835ffa08a8e658cce40aa6daa5c86165a1e1c0a8ff404ad53d6f",
     "language": "ink! 4.3.0",
-    "compiler": "rustc 1.71.1",
+    "compiler": "rustc 1.70.0-nightly",
     "build_info": {
-      "build_mode": "Release",
+      "build_mode": "Debug",
       "cargo_contract_version": "3.0.1",
-      "rust_toolchain": "stable-x86_64-unknown-linux-gnu",
+      "rust_toolchain": "nightly-x86_64-unknown-linux-gnu",
       "wasm_opt_settings": {
         "keep_debug_symbols": false,
         "optimization_passes": "Z"
@@ -30,7 +30,7 @@
               "displayName": [
                 "AccountId"
               ],
-              "type": 1
+              "type": 0
             }
           }
         ],
@@ -56,38 +56,38 @@
         "displayName": [
           "AccountId"
         ],
-        "type": 1
+        "type": 0
       },
       "balance": {
         "displayName": [
           "Balance"
         ],
-        "type": 13
+        "type": 15
       },
       "blockNumber": {
         "displayName": [
           "BlockNumber"
         ],
-        "type": 16
+        "type": 18
       },
       "chainExtension": {
         "displayName": [
           "ChainExtension"
         ],
-        "type": 17
+        "type": 19
       },
       "hash": {
         "displayName": [
           "Hash"
         ],
-        "type": 14
+        "type": 16
       },
       "maxEventTopics": 4,
       "timestamp": {
         "displayName": [
           "Timestamp"
         ],
-        "type": 15
+        "type": 17
       }
     },
     "events": [
@@ -103,7 +103,7 @@
               "displayName": [
                 "AccountId"
               ],
-              "type": 1
+              "type": 0
             }
           },
           {
@@ -116,7 +116,7 @@
               "displayName": [
                 "AccountId"
               ],
-              "type": 1
+              "type": 0
             }
           },
           {
@@ -129,7 +129,18 @@
               "displayName": [
                 "Role"
               ],
-              "type": 11
+              "type": 13
+            }
+          },
+          {
+            "docs": [],
+            "indexed": false,
+            "label": "contract",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 0
             }
           }
         ],
@@ -155,7 +166,7 @@
               "displayName": [
                 "AccountId"
               ],
-              "type": 1
+              "type": 0
             }
           }
         ],
@@ -184,7 +195,7 @@
               "displayName": [
                 "AccountId"
               ],
-              "type": 1
+              "type": 0
             }
           }
         ],
@@ -213,7 +224,16 @@
               "displayName": [
                 "AccountId"
               ],
-              "type": 1
+              "type": 0
+            }
+          },
+          {
+            "label": "new_contract",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 0
             }
           }
         ],
@@ -242,7 +262,7 @@
               "displayName": [
                 "AccountId"
               ],
-              "type": 1
+              "type": 0
             }
           }
         ],
@@ -271,13 +291,42 @@
               "displayName": [
                 "AccountId"
               ],
-              "type": 1
+              "type": 0
             }
           }
         ],
         "default": false,
         "docs": [
           " Gets the role of the given `AccountId`.",
+          " Returns `[0u8; 32].into()` if the given `AccountId` is not is the mapping."
+        ],
+        "label": "get_artist_contract",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 10
+        },
+        "selector": "0xc2b8d45d"
+      },
+      {
+        "args": [
+          {
+            "label": "admin",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [
+          " Gets the smart contract address of the given `AccountId`.",
           " Returns `Role::None` if the given `AccountId` is not is the mapping."
         ],
         "label": "get_role",
@@ -288,7 +337,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 10
+          "type": 12
         },
         "selector": "0x85f65d55"
       },
@@ -307,7 +356,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 12
+          "type": 14
         },
         "selector": "0x205acb7d"
       },
@@ -326,7 +375,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 12
+          "type": 14
         },
         "selector": "0x230c3c8f"
       }
@@ -367,9 +416,23 @@
             },
             {
               "layout": {
+                "root": {
+                  "layout": {
+                    "leaf": {
+                      "key": "0x358aef92",
+                      "ty": 0
+                    }
+                  },
+                  "root_key": "0x358aef92"
+                }
+              },
+              "name": "admins_contracts"
+            },
+            {
+              "layout": {
                 "leaf": {
                   "key": "0x00000000",
-                  "ty": 0
+                  "ty": 3
                 }
               },
               "name": "admins_accounts"
@@ -378,7 +441,7 @@
               "layout": {
                 "leaf": {
                   "key": "0x00000000",
-                  "ty": 0
+                  "ty": 3
                 }
               },
               "name": "super_admins_accounts"
@@ -387,7 +450,7 @@
               "layout": {
                 "leaf": {
                   "key": "0x00000000",
-                  "ty": 1
+                  "ty": 0
                 }
               },
               "name": "owner"
@@ -404,20 +467,10 @@
       "id": 0,
       "type": {
         "def": {
-          "sequence": {
-            "type": 1
-          }
-        }
-      }
-    },
-    {
-      "id": 1,
-      "type": {
-        "def": {
           "composite": {
             "fields": [
               {
-                "type": 2,
+                "type": 1,
                 "typeName": "[u8; 32]"
               }
             ]
@@ -431,13 +484,21 @@
       }
     },
     {
-      "id": 2,
+      "id": 1,
       "type": {
         "def": {
           "array": {
             "len": 32,
-            "type": 3
+            "type": 2
           }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": {
+        "def": {
+          "primitive": "u8"
         }
       }
     },
@@ -445,7 +506,9 @@
       "id": 3,
       "type": {
         "def": {
-          "primitive": "u8"
+          "sequence": {
+            "type": 0
+          }
         }
       }
     },
@@ -687,20 +750,25 @@
                 "name": "None"
               },
               {
+                "fields": [
+                  {
+                    "type": 0
+                  }
+                ],
                 "index": 1,
-                "name": "Admin"
-              },
-              {
-                "index": 2,
-                "name": "SuperAdmin"
+                "name": "Some"
               }
             ]
           }
         },
+        "params": [
+          {
+            "name": "T",
+            "type": 0
+          }
+        ],
         "path": [
-          "admin",
-          "admin",
-          "Role"
+          "Option"
         ]
       }
     },
@@ -713,7 +781,7 @@
               {
                 "fields": [
                   {
-                    "type": 0
+                    "type": 13
                   }
                 ],
                 "index": 0,
@@ -734,7 +802,7 @@
         "params": [
           {
             "name": "T",
-            "type": 0
+            "type": 13
           },
           {
             "name": "E",
@@ -750,18 +818,88 @@
       "id": 13,
       "type": {
         "def": {
-          "primitive": "u128"
-        }
+          "variant": {
+            "variants": [
+              {
+                "index": 0,
+                "name": "None"
+              },
+              {
+                "index": 1,
+                "name": "Admin"
+              },
+              {
+                "index": 2,
+                "name": "SuperAdmin"
+              }
+            ]
+          }
+        },
+        "path": [
+          "admin",
+          "admin",
+          "Role"
+        ]
       }
     },
     {
       "id": 14,
       "type": {
         "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 3
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 3
+          },
+          {
+            "name": "E",
+            "type": 6
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "type": {
+        "def": {
+          "primitive": "u128"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "type": {
+        "def": {
           "composite": {
             "fields": [
               {
-                "type": 2,
+                "type": 1,
                 "typeName": "[u8; 32]"
               }
             ]
@@ -775,7 +913,7 @@
       }
     },
     {
-      "id": 15,
+      "id": 17,
       "type": {
         "def": {
           "primitive": "u64"
@@ -783,7 +921,7 @@
       }
     },
     {
-      "id": 16,
+      "id": 18,
       "type": {
         "def": {
           "primitive": "u32"
@@ -791,7 +929,7 @@
       }
     },
     {
-      "id": 17,
+      "id": 19,
       "type": {
         "def": {
           "variant": {}

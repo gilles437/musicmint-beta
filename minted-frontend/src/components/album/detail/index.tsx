@@ -162,7 +162,7 @@ const DetailAlbum = () => {
             {songMetaData.length > 0 ? (
               <div className="mb-5">
                 <div className="row">
-                  <div className="col-sm-12 col-md-9">
+                  <div className="col-sm-12 col-md-12">
                     <div className="mt-5 table-responsive">
                       <table className="table table-hover table-success table-striped">
                         <thead className="thead-dark">

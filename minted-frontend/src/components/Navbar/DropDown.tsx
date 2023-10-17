@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Account } from "@polkadot-onboard/core";
 import Identicon from "@polkadot/react-identicon";
 import Link from "next/link";
+import { beatifyAddress } from "@/utils/account";
+
 interface ChildProps {
   accountArray: Account[];
   current: string | null;
@@ -119,7 +121,5 @@ const DropDown = (props: ChildProps) => {
     </div>
   );
 };
-function beatifyAddress(address: string | null) {
-  return address ? `${address.slice(0, 5)}...${address.slice(-5)}` : "";
-}
+
 export default DropDown;

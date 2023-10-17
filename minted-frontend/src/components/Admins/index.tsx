@@ -10,6 +10,8 @@ import { CodePromise } from "@polkadot/api-contract";
 import CircleLoader from "react-spinners/ClipLoader";
 import { useApi } from "@/hooks/useApi";
 import { useWallets } from "@/contexts/Wallets";
+import { beatifyAddress } from "@/utils/account";
+import Identicon from "@polkadot/react-identicon";
 import { CodeSubmittableResult } from "@polkadot/api-contract/base";
 
 const override: CSSProperties = {
@@ -20,19 +22,28 @@ interface FetchResult {
   ok: [];
 }
 
+interface FetchStringResult {
+  ok: string;
+}
+
+interface adminListType {
+  adminAddress: string;
+  contractAddress: string;
+}
+
 const ContractAdmin = () => {
   const [contract, setContract] = useState<ContractPromise>();
   const [gasLimit, setGasLimit] = useState<WeightV2>();
   const [newAdminInput, setNewAdminInput] = useState<string>("");
   const [newSuperAdminInput, setNewSuperAdminInput] = useState<string>("");
-  const [adminList, setAdminList] = useState<string[]>([]);
+  const [adminList, setAdminList] = useState<adminListType[]>([]);
   const [superAdminList, setSuperAdminList] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const api = useApi();
   const { wallet } = useWallets();
 
-  const contractAddress = "5HKi9fceCSig1HE9vj4CrC4YXpXRfaXWsRHH81dCAnVY1Km7"; // Replace the address of your contract
+  const contractAddress = "5GCWTPcxAjEzqHv82usuvWsCPQVzoM22UGRUiomwCjzCkgXb"; // Replace the address of your contract
   const caller = "5FNj1E5Wxqg1vMo1qd6Zi6XZjrAXB8ECuXCyHDrsRQZSAPHL"; //The address of Contract Owner
   const storageDepositLimit = null;
 
@@ -85,7 +96,31 @@ const ContractAdmin = () => {
         ? allAdmins.output?.toString()
         : "";
       const temp: FetchResult = JSON.parse(stringTemp);
-      setAdminList(temp.ok);
+      let contractAddressArray: adminListType[] = [];
+      await Promise.all(
+        temp.ok.map(async (admin: string) => {
+          const artistContract = await contract.query.getArtistContract(
+            caller,
+            {
+              value: 0,
+              gasLimit,
+              storageDepositLimit,
+            },
+            admin
+          );
+          const contractStringTemp = artistContract.output?.toString()
+            ? artistContract.output?.toString()
+            : "";
+          const contractTemp: FetchStringResult =
+            JSON.parse(contractStringTemp);
+          contractAddressArray.push({
+            adminAddress: admin,
+            contractAddress: contractTemp.ok,
+          });
+        })
+      );
+      console.log({ contractAddressArray });
+      setAdminList(contractAddressArray);
     }
   };
 
@@ -105,32 +140,19 @@ const ContractAdmin = () => {
     }
   };
 
-  const addAdmin = async () => {
-    const savedAccount = localStorage.getItem("currentAccount");
-    const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-    let allAccounts: string[] = adminList.concat(superAdminList);
-    if (
-      parsedAccount &&
-      superAdminList.findIndex((account: string) => {
-        return account == parsedAccount;
-      }) < 0
-    ) {
-      toastFunction("Current selected account is not SuperAdmin !");
-    } else if (!newAdminInput) {
-      toastFunction("You should input address !");
-    } else if (
-      allAccounts.findIndex((account: string) => {
-        return account == newAdminInput.toString();
-      }) >= 0
-    ) {
-      toastFunction("Account is already added !");
-    } else if (newAdminInput && contract && wallet) {
+  const addAdmin = async (newContractAddress: string) => {
+    if (newAdminInput && contract && wallet) {
+      console.log({ newContractAddress, newAdminInput });
       const options = wallet ? { signer: wallet.signer } : undefined;
       const addAdminResult = await contract.tx.addAdmin(
         { value: 0, gasLimit, storageDepositLimit },
-        newAdminInput
+        newAdminInput,
+        newContractAddress
       );
-      const txr = await addAdminResult.signAndSend(parsedAccount, options);
+      const savedAccount = localStorage.getItem("currentAccount");
+      const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
+      await addAdminResult.signAndSend(parsedAccount, options);
+      setNewAdminInput("");
 
       const timerId = setTimeout(async () => {
         await getAdminList();
@@ -142,7 +164,11 @@ const ContractAdmin = () => {
   const addSuperAdmin = async () => {
     const savedAccount = localStorage.getItem("currentAccount");
     const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-    let allAccounts: string[] = adminList.concat(superAdminList);
+    let allAccounts: string[] = [];
+    allAccounts = allAccounts.concat(superAdminList)
+    adminList.map((item: adminListType) => {
+      allAccounts.push(item.adminAddress);
+    });
     if (parsedAccount && caller != parsedAccount) {
       toastFunction("Current selected account is not Contract Owner !");
     } else if (!newSuperAdminInput) {
@@ -159,7 +185,8 @@ const ContractAdmin = () => {
         { value: 0, gasLimit, storageDepositLimit },
         newSuperAdminInput
       );
-      const txr = await addAdminResult.signAndSend(parsedAccount, options);
+      await addAdminResult.signAndSend(parsedAccount, options);
+      setNewSuperAdminInput("");
 
       const timerId = setTimeout(async () => {
         await getSuperAdminList();
@@ -184,7 +211,8 @@ const ContractAdmin = () => {
         { value: 0, gasLimit, storageDepositLimit },
         account
       );
-      const txr = await addAdminResult.signAndSend(parsedAccount, options);
+      await addAdminResult.signAndSend(parsedAccount, options);
+      setNewAdminInput("");
 
       const timerId = setTimeout(async () => {
         await getAdminList();
@@ -204,7 +232,8 @@ const ContractAdmin = () => {
         { value: 0, gasLimit, storageDepositLimit },
         account
       );
-      const txr = await addAdminResult.signAndSend(parsedAccount, options);
+      await addAdminResult.signAndSend(parsedAccount, options);
+      setNewSuperAdminInput("");
 
       const timerId = setTimeout(async () => {
         await getSuperAdminList();
@@ -221,25 +250,47 @@ const ContractAdmin = () => {
     setNewSuperAdminInput(event.target.value);
   };
 
-  const deployAdminContract1 = async () => {
+  const deployAdminContract = async () => {
     const __contract = JSON.parse(ContractFile);
-    if (api && wallet) {
+    const savedAccount = localStorage.getItem("currentAccount");
+    const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
+    let allAccounts: string[] = [];
+    allAccounts = allAccounts.concat(superAdminList)
+    adminList.map((item: adminListType) => {
+      allAccounts.push(item.adminAddress);
+    });
+    if (
+      parsedAccount &&
+      superAdminList.findIndex((account: string) => {
+        return account == parsedAccount;
+      }) < 0
+    ) {
+      toastFunction("Current selected account is not SuperAdmin !");
+    } else if (!newAdminInput) {
+      toastFunction("You should input address !");
+    } else if (
+      allAccounts.findIndex((account: string) => {
+        return account == newAdminInput.toString();
+      }) >= 0
+    ) {
+      toastFunction("Account is already added !");
+    } else if (newAdminInput && contract && wallet && api) {
       const code = new CodePromise(api, __contract, __contract.source.wasm);
-      const savedAccount = localStorage.getItem("currentAccount");
-      const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
       const tx = code.tx.new(
-        { value: 0, gasLimit, storageDepositLimit: "50000000000" },
+        { value: 0, gasLimit, storageDepositLimit: null },
         parsedAccount
       );
-      let address = "";
       const unsub = await tx.signAndSend(
         parsedAccount,
         { signer: wallet.signer },
         (result) => {
           if (result.status.isInBlock || result.status.isFinalized) {
             console.log({ result });
-            // address = result.contract.address.toString();
-            // console.log( {address} );
+            const dataResult: CodeSubmittableResult<"promise"> = result;
+            if (dataResult.contract) {
+              let address = dataResult.contract.address.toString();
+              addAdmin(address);
+            }
             unsub();
           }
         }
@@ -264,12 +315,6 @@ const ContractAdmin = () => {
         ) : (
           <div>
             <div className="mb-5">
-              <button
-                onClick={(e) => deployAdminContract1()}
-                className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-              >
-                Deploy Contract
-              </button>
               <h2 className="mt-3">Artists Section</h2>
               <div className="row mt-3">
                 <div className="col-sm-6">
@@ -286,7 +331,7 @@ const ContractAdmin = () => {
                   style={{ alignItems: "flex-end", display: "flex" }}
                 >
                   <button
-                    onClick={(e) => addAdmin()}
+                    onClick={(e) => deployAdminContract()}
                     className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
                   >
                     Add Artist
@@ -294,31 +339,73 @@ const ContractAdmin = () => {
                 </div>
               </div>
               <div className="row">
-                <div className="col-sm-12 col-md-9">
+                <div className="col-sm-12 col-md-12">
                   <div className="mt-5 table-responsive">
                     <table className="table table-hover table-success table-striped">
                       <thead className="thead-dark">
                         <tr>
                           <th scope="col">Address</th>
+                          <th scope="col">Contract Address</th>
                           <th scope="col">Created On</th>
                           <th scope="col"></th>
                         </tr>
                       </thead>
                       <tbody>
-                        {adminList.map((account: string) => (
-                          <tr key={account}>
-                            <th scope="row">{account}</th>
-                            <td></td>
-                            <td>
-                              <button
-                                onClick={(e) => removeAdmin(account)}
-                                className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                              >
-                                Remove Artist
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                        {adminList.map(
+                          (adminAccount: adminListType, index: number) => (
+                            <tr key={index}>
+                              <th scope="row">
+                                {adminAccount.adminAddress ? (
+                                  <div className="d-flex">
+                                    <p className="ps-1">
+                                      {beatifyAddress(
+                                        adminAccount.adminAddress
+                                      )}
+                                    </p>
+                                    <Identicon
+                                      value={adminAccount.adminAddress}
+                                      size={32}
+                                      theme="polkadot"
+                                      className="pe-1"
+                                    />
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                              </th>
+                              <th scope="row">
+                                {adminAccount.contractAddress ? (
+                                  <div className="d-flex">
+                                    <p className="ps-1">
+                                      {beatifyAddress(
+                                        adminAccount.contractAddress
+                                      )}
+                                    </p>
+                                    <Identicon
+                                      value={adminAccount.contractAddress}
+                                      size={32}
+                                      theme="polkadot"
+                                      className="pe-1"
+                                    />
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                              </th>
+                              <td></td>
+                              <td>
+                                <button
+                                  onClick={(e) =>
+                                    removeAdmin(adminAccount.adminAddress)
+                                  }
+                                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                                >
+                                  Remove Artist
+                                </button>
+                              </td>
+                            </tr>
+                          )
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -352,7 +439,7 @@ const ContractAdmin = () => {
               </div>
 
               <div className="row">
-                <div className="col-sm-12 col-md-9">
+                <div className="col-sm-12 col-md-12">
                   <div className="mt-5 table-responsive">
                     <table className="table table-hover table-success table-striped ">
                       <thead className="thead-dark">
@@ -363,20 +450,40 @@ const ContractAdmin = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {superAdminList.map((account: string) => (
-                          <tr key={account}>
-                            <th scope="row"> {account}</th>
-                            <td></td>
-                            <td>
-                              <button
-                                onClick={(e) => removeSuperAdmin(account)}
-                                className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                              >
-                                Remove Super Admin
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                        {superAdminList.map(
+                          (superAdminAccount: string, index: number) => (
+                            <tr key={index}>
+                              <th scope="row">
+                                {superAdminAccount ? (
+                                  <div className="d-flex">
+                                    <p className="ps-1">
+                                      {beatifyAddress(superAdminAccount)}
+                                    </p>
+                                    <Identicon
+                                      value={superAdminAccount}
+                                      size={32}
+                                      theme="polkadot"
+                                      className="pe-1"
+                                    />
+                                  </div>
+                                ) : (
+                                  ""
+                                )}
+                              </th>
+                              <td></td>
+                              <td>
+                                <button
+                                  onClick={(e) =>
+                                    removeSuperAdmin(superAdminAccount)
+                                  }
+                                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                                >
+                                  Remove Super Admin
+                                </button>
+                              </td>
+                            </tr>
+                          )
+                        )}
                       </tbody>
                     </table>
                   </div>
