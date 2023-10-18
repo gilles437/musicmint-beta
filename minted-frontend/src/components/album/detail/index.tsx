@@ -1,6 +1,7 @@
 import React, { useState, useEffect, CSSProperties } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import CircleLoader from "react-spinners/ClipLoader";
@@ -26,6 +27,15 @@ type AlbumMetadataType = {
   image: string;
 };
 
+type ProfileType = {
+  name: string;
+  description: string;
+  image: string;
+  twitter: string;
+  instagram: string;
+  youTube: string;
+};
+
 const DetailAlbum = () => {
   const [currentTitle, setCurrentTitle] = useState<string>("");
   const [currentDescription, setCurrentDescription] = useState<string>("");
@@ -37,22 +47,28 @@ const DetailAlbum = () => {
   const [currentId, setCurrentId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [currentName, setCurrentName] = useState<string>("");
+  const [currentProfileDescription, setCurrentProfileDescription] =
+    useState<string>("");
+  const [currentTwitter, setCurrentTwitter] = useState<string>("");
+  const [selectedProfileImageFileCid, setSelectedProfileImageFileCid] =
+    useState<string>("");
+  const [currentInstagram, setCurrentInstagram] = useState<string>("");
+  const [currentYouTube, setCurrentYouTube] = useState<string>("");
+
   useEffect(() => {
     (async () => {
       // const routerId = router.query.id as string;
       // const tempId = Number(routerId);
       // setCurrentId(Number(routerId));
-      const tempId = 3;
-      setCurrentId(3);
+      const tempId = 0;
+      setCurrentId(0);
 
       const storageAlbumsData = localStorage.getItem("albums");
       const storageAlbums = storageAlbumsData
         ? JSON.parse(storageAlbumsData)
         : [];
-      console.log({ tempId, storageAlbums }, storageAlbums[tempId]);
       if (storageAlbums.length && storageAlbums[tempId]) {
-        console.log("useEffect", storageAlbums[tempId]);
-
         const axiosConfig = {
           method: "get",
           url: `https://ipfs.io/ipfs/${storageAlbums[tempId].metadata}`,
@@ -69,7 +85,6 @@ const DetailAlbum = () => {
           setCurrentDescription(data.description);
           setCurrentPrice(data.price);
           setSelectedImageFileCid(data.image);
-          console.log({ temp });
         } catch (error) {
           console.error(error);
           return null;
@@ -97,8 +112,35 @@ const DetailAlbum = () => {
             })
           )
         ).filter((data) => data !== null);
-        console.log({ storageSongMetaData });
         setSongMetaData(storageSongMetaData);
+      }
+
+      const storageProfileData = localStorage.getItem("profile");
+      const storageProfile = storageProfileData
+        ? JSON.parse(storageProfileData)
+        : null;
+      if (storageProfile) {
+        const axiosConfig = {
+          method: "get",
+          url: `https://ipfs.io/ipfs/${storageProfile}`,
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        };
+        try {
+          const temp = await axios(axiosConfig);
+          const data: ProfileType = temp.data;
+          setCurrentName(data.name);
+          setCurrentProfileDescription(data.description);
+          setSelectedProfileImageFileCid(data.image);
+          setCurrentTwitter(data.twitter);
+          setCurrentInstagram(data.instagram);
+          setCurrentYouTube(data.youTube);
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
       }
     })();
   }, []);
@@ -155,9 +197,8 @@ const DetailAlbum = () => {
               </div>
             </div>
           </div>
-          <div className="text-center mt-5"></div>
 
-          <div className="mt-3" style={{ borderTop: "1px solid" }}>
+          <div className="my-5" style={{ borderTop: "1px solid" }}>
             <h2 className="mt-3">Songs</h2>
             {songMetaData.length > 0 ? (
               <div className="mb-5">
@@ -222,6 +263,95 @@ const DetailAlbum = () => {
                 </div>
               </div>
             ) : null}
+          </div>
+          
+          <div className="row my-5">
+            <div className="col-md-3 col-sm-12">
+              <div>
+                {selectedProfileImageFileCid ? (
+                  <img
+                    className="w-100 rounded-circle"
+                    src={`https://ipfs.io/ipfs/${returnImageURL(
+                      selectedProfileImageFileCid
+                    )}`}
+                  ></img>
+                ) : (
+                  ""
+                )}
+              </div>
+            </div>
+            <div className="col-md-9 col-sm-12">
+              <div className="d-flex justify-content-between">
+                <div>
+                  <h2>{currentName ? currentName : ""}</h2>
+                </div>
+                <div>
+                  {currentTwitter ? (
+                    <Link
+                      className="pe-3"
+                      href={`https://twitter.com/${currentTwitter}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <img
+                        alt="twitter"
+                        src="/assets/image/icon/twitter-logo.svg"
+                        style={{ width: "32px", height: "32px" }}
+                      ></img>
+                    </Link>
+                  ) : (
+                    ""
+                  )}
+                  {currentInstagram ? (
+                    <Link
+                      className="pe-3"
+                      href={`https://instagram.com/${currentInstagram}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <img
+                        alt="twitter"
+                        src="/assets/image/icon/insta-1.svg"
+                        style={{ width: "32px", height: "32px" }}
+                      ></img>
+                    </Link>
+                  ) : (
+                    ""
+                  )}
+                  {currentYouTube ? (
+                    <Link
+                      className="pe-3"
+                      href={`https://youtube.com/${currentYouTube}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <img
+                        alt="twitter"
+                        src="/assets/image/icon/youtube.svg"
+                        style={{ width: "32px", height: "32px" }}
+                      ></img>
+                    </Link>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+              <div className="mt-3">
+                <p>
+                  {currentProfileDescription ? currentProfileDescription : ""}
+                </p>
+              </div>
+              <div className="mt-3">
+                <Link href="/profile">
+                  <button
+                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                    disabled={isLoading}
+                  >
+                    Go to Profile
+                  </button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       )}

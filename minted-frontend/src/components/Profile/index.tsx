@@ -25,13 +25,13 @@ type ProfileType = {
 
 const CreateProfile = () => {
   const [currentName, setCurrentName] = useState<string>("");
-  const [currentDescription, setCurrentDescription] = useState<string>("");
+  const [currentProfileDescription, setCurrentProfileDescription] = useState<string>("");
   const [selectedImage, setSelectedImage] = useState<File>();
   const [currentTwitter, setCurrentTwitter] = useState<string>("");
   const [currentInstagram, setCurrentInstagram] = useState<string>("");
   const [currentYouTube, setCurrentYouTube] = useState<string>("");
   const [showImage, setShowImage] = useState(false);
-  const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>("");
+  const [selectedProfileImageFileCid, setSelectedProfileImageFileCid] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isImageChanged, setIsImageChanged] = useState(false);
 
@@ -56,9 +56,9 @@ const CreateProfile = () => {
           const temp = await axios(axiosConfig);
           const data: ProfileType = temp.data;
           setCurrentName(data.name);
-          setCurrentDescription(data.description);
+          setCurrentProfileDescription(data.description);
           imageURL = data.image;
-          setSelectedImageFileCid(data.image);
+          setSelectedProfileImageFileCid(data.image);
           setCurrentTwitter(data.twitter);
           setCurrentInstagram(data.instagram);
           setCurrentYouTube(data.youTube);
@@ -124,7 +124,7 @@ const CreateProfile = () => {
   const uploadMetadata = async (fileImageCid: string) => {
     const json_metadata = {
       name: currentName,
-      description: currentDescription,
+      description: currentProfileDescription,
       image: `https://ipfs.io/ipfs/${returnImageURL(fileImageCid)}`,
       twitter: currentTwitter,
       instagram: currentInstagram,
@@ -159,7 +159,7 @@ const CreateProfile = () => {
 
     try {
       setIsLoading(true);
-      let fileImageCid = selectedImageFileCid ? selectedImageFileCid : "";
+      let fileImageCid = selectedProfileImageFileCid ? selectedProfileImageFileCid : "";
       if (isImageChanged) {
         fileImageCid = await uploadNFTImage();
         if (fileImageCid.length == 0) {
@@ -167,7 +167,7 @@ const CreateProfile = () => {
           return;
         }
       }
-      setSelectedImageFileCid(fileImageCid);
+      setSelectedProfileImageFileCid(fileImageCid);
       const tempCurrentMetaId = await uploadMetadata(fileImageCid);
       if (tempCurrentMetaId) {
         localStorage.setItem("profile", JSON.stringify(tempCurrentMetaId));
@@ -185,7 +185,7 @@ const CreateProfile = () => {
 
   const emptyFields = () => {
     setCurrentName("");
-    setCurrentDescription("");
+    setCurrentProfileDescription("");
     setSelectedImage(undefined);
     setCurrentTwitter("");
     setCurrentInstagram("");
@@ -197,7 +197,7 @@ const CreateProfile = () => {
       toastFunction("Please provide a name");
       return false;
     }
-    if (!currentDescription) {
+    if (!currentProfileDescription) {
       toastFunction("Please provide a description");
       return false;
     }
@@ -205,18 +205,18 @@ const CreateProfile = () => {
       toastFunction("Please provide an image");
       return false;
     }
-    if (!currentTwitter) {
-      toastFunction("Please provide twitter");
-      return false;
-    }
-    if (!currentInstagram) {
-      toastFunction("Please provide instagram");
-      return false;
-    }
-    if (!currentYouTube) {
-      toastFunction("Please provide youTube");
-      return false;
-    }
+    // if (!currentTwitter) {
+    //   toastFunction("Please provide twitter");
+    //   return false;
+    // }
+    // if (!currentInstagram) {
+    //   toastFunction("Please provide instagram");
+    //   return false;
+    // }
+    // if (!currentYouTube) {
+    //   toastFunction("Please provide youTube");
+    //   return false;
+    // }
     return true;
   };
 
@@ -255,8 +255,8 @@ const CreateProfile = () => {
                 <textarea
                   cols={30}
                   rows={3}
-                  value={currentDescription ? currentDescription : ""}
-                  onChange={(e: any) => setCurrentDescription(e.target.value)}
+                  value={currentProfileDescription ? currentProfileDescription : ""}
+                  onChange={(e: any) => setCurrentProfileDescription(e.target.value)}
                   style={{ width: "70%", height: "100%" }}
                 />
               </div>
@@ -305,7 +305,7 @@ const CreateProfile = () => {
                   <img
                     className="w-100"
                     src={`https://ipfs.io/ipfs/${returnImageURL(
-                      selectedImageFileCid
+                      selectedProfileImageFileCid
                     )}`}
                   ></img>
                 </div>
