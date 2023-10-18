@@ -93,17 +93,17 @@ const Album = () => {
                 <tbody>
                   {albumMetaData.length > 0
                     ? albumMetaData.map(
-                        (song: AlbumMetadataType, index: number) => (
+                        (album: AlbumMetadataType, index: number) => (
                           <tr key={index}>
-                            <td scope="row">{song.title}</td>
+                            <td scope="row">{album.title}</td>
                             <td>
                               <img
-                                src={song.image}
+                                src={album.image}
                                 alt=""
                                 style={{ width: "60px", height: "60px" }}
                               />
                             </td>
-                            <td>{song.price}</td>
+                            <td>{album.price}</td>
                             <td>09:35 11/02/2023</td>
                             <td>
                               <Link href={`/album/edit?id=${index}`}>

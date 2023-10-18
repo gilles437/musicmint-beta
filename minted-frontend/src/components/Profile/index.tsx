@@ -23,20 +23,38 @@ type ProfileType = {
   youTube: string;
 };
 
+type AlbumMetadataType = {
+  name: string;
+  title: string;
+  description: string;
+  price: string;
+  image: string;
+};
+
+type storageAlbumType = {
+  id: string;
+  metadata: string;
+  songs: [];
+};
+
 const CreateProfile = () => {
   const [currentName, setCurrentName] = useState<string>("");
-  const [currentProfileDescription, setCurrentProfileDescription] = useState<string>("");
+  const [currentProfileDescription, setCurrentProfileDescription] =
+    useState<string>("");
   const [selectedImage, setSelectedImage] = useState<File>();
   const [currentTwitter, setCurrentTwitter] = useState<string>("");
   const [currentInstagram, setCurrentInstagram] = useState<string>("");
   const [currentYouTube, setCurrentYouTube] = useState<string>("");
   const [showImage, setShowImage] = useState(false);
-  const [selectedProfileImageFileCid, setSelectedProfileImageFileCid] = useState<string>("");
+  const [selectedProfileImageFileCid, setSelectedProfileImageFileCid] =
+    useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isImageChanged, setIsImageChanged] = useState(false);
 
+  const [albumMetaData, setAlbumMetaData] = useState<AlbumMetadataType[]>([]);
+
   useEffect(() => {
-    (async () => {
+    const fetchProfiles = async () => {
       const storageProfileData = localStorage.getItem("profile");
       const storageProfile = storageProfileData
         ? JSON.parse(storageProfileData)
@@ -87,7 +105,47 @@ const CreateProfile = () => {
           }
         }
       }
-    })();
+    };
+
+    const fetchAlbums = async () => {
+      const storageAlbumsData = localStorage.getItem("albums");
+      const storageAlbums = storageAlbumsData
+        ? JSON.parse(storageAlbumsData)
+        : [];
+
+      if (storageAlbums.length) {
+        const albumMetaData = (
+          await Promise.all(
+            storageAlbums.map(async (album: storageAlbumType) => {
+              const axiosConfig = {
+                method: "get",
+                url: `https://ipfs.io/ipfs/${album.metadata}`,
+                headers: {
+                  accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+              };
+
+              try {
+                const { data } = await axios(axiosConfig);
+                return data;
+              } catch (error) {
+                console.error(error);
+                return null;
+              }
+            })
+          )
+        ).filter((data) => data !== null);
+        setAlbumMetaData(albumMetaData);
+      }
+    };
+
+    fetchProfiles()
+      .then((result: any) => {})
+      .catch(console.error);
+    fetchAlbums()
+      .then((result: any) => {})
+      .catch(console.error);
   }, []);
 
   const returnImageURL = (url: string) => {
@@ -159,7 +217,9 @@ const CreateProfile = () => {
 
     try {
       setIsLoading(true);
-      let fileImageCid = selectedProfileImageFileCid ? selectedProfileImageFileCid : "";
+      let fileImageCid = selectedProfileImageFileCid
+        ? selectedProfileImageFileCid
+        : "";
       if (isImageChanged) {
         fileImageCid = await uploadNFTImage();
         if (fileImageCid.length == 0) {
@@ -235,92 +295,224 @@ const CreateProfile = () => {
         />
       ) : (
         <div className="container">
-          <div className="text-center mb-3">
+          {/* <div className="text-center mb-3">
             <h2>Your Profile</h2>
-          </div>
-          <div className="row">
-            <div className="col-md-6 col-sm-12">
-              <div className="mt-3">
-                <h5>Name</h5>
-                <input
-                  type="text"
-                  placeholder="Enter Name..."
-                  style={{ width: "70%", height: "100%" }}
-                  value={currentName ? currentName : ""}
-                  onChange={(e: any) => setCurrentName(e.target.value)}
-                />
+          </div> */}
+          <ul className="nav nav-underline">
+            <li className="nav-item">
+              <div
+                className="nav-link active"
+                id="nav-about-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#nav-about"
+                role="tab"
+                aria-controls="nav-about"
+                aria-selected="true"
+              >
+                <h1>About</h1>
               </div>
-              <div className="mt-3">
-                <h5>Description</h5>
-                <textarea
-                  cols={30}
-                  rows={3}
-                  value={currentProfileDescription ? currentProfileDescription : ""}
-                  onChange={(e: any) => setCurrentProfileDescription(e.target.value)}
-                  style={{ width: "70%", height: "100%" }}
-                />
+            </li>
+            <li className="nav-item">
+              <div
+                className="nav-link"
+                id="nav-releases-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#nav-releases"
+                role="tab"
+                aria-controls="nav-releases"
+                aria-selected="false"
+              >
+                <h1>Releases</h1>
               </div>
-              <div className="mt-3">
-                <h5 className="">Image</h5>
-                <input
-                  type="file"
-                  accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                  onChange={(e) => handleImageChange(e)}
-                />
-              </div>
-              <div className="mt-3">
-                <h5>Twitter </h5>
-                <input
-                  type="text"
-                  placeholder="Enter Name..."
-                  style={{ width: "70%", height: "100%" }}
-                  value={currentTwitter ? currentTwitter : ""}
-                  onChange={(e: any) => setCurrentTwitter(e.target.value)}
-                />
-              </div>
-              <div className="mt-3">
-                <h5>Instagram </h5>
-                <input
-                  type="text"
-                  placeholder="Enter Name..."
-                  style={{ width: "70%", height: "100%" }}
-                  value={currentInstagram ? currentInstagram : ""}
-                  onChange={(e: any) => setCurrentInstagram(e.target.value)}
-                />
-              </div>
-              <div className="mt-3">
-                <h5>YouTube </h5>
-                <input
-                  type="text"
-                  placeholder="Enter Name..."
-                  style={{ width: "70%", height: "100%" }}
-                  value={currentYouTube ? currentYouTube : ""}
-                  onChange={(e: any) => setCurrentYouTube(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="col-md-6 col-sm-12">
-              {showImage && (
-                <div>
-                  <img
-                    className="w-100"
-                    src={`https://ipfs.io/ipfs/${returnImageURL(
-                      selectedProfileImageFileCid
-                    )}`}
-                  ></img>
-                </div>
-              )}
-            </div>
-          </div>
+            </li>
+          </ul>
 
-          <div className="text-center mt-5">
-            <button
-              className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-              onClick={(e) => uploadNFTToS3Bucket(e)}
-              disabled={isLoading}
+          <div className="tab-content" id="nav-tabContent">
+            <div
+              className="tab-pane fade show active"
+              id="nav-about"
+              role="tabpanel"
+              aria-labelledby="nav-about-tab"
             >
-              Update Profile
-            </button>
+              <div className="row">
+                <div className="col-md-6 col-sm-12">
+                  <div className="mt-3">
+                    <h5>Name</h5>
+                    <input
+                      type="text"
+                      placeholder="Enter Name..."
+                      style={{ width: "70%", height: "100%" }}
+                      value={currentName ? currentName : ""}
+                      onChange={(e: any) => setCurrentName(e.target.value)}
+                    />
+                  </div>
+                  <div className="mt-3">
+                    <h5>Description</h5>
+                    <textarea
+                      cols={30}
+                      rows={3}
+                      value={
+                        currentProfileDescription
+                          ? currentProfileDescription
+                          : ""
+                      }
+                      onChange={(e: any) =>
+                        setCurrentProfileDescription(e.target.value)
+                      }
+                      style={{ width: "70%", height: "100%" }}
+                    />
+                  </div>
+                  <div className="mt-3">
+                    <h5 className="">Image</h5>
+                    <input
+                      type="file"
+                      accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                      onChange={(e) => handleImageChange(e)}
+                    />
+                  </div>
+                  <div className="mt-3">
+                    <h5>Twitter </h5>
+                    <input
+                      type="text"
+                      placeholder="Enter Name..."
+                      style={{ width: "70%", height: "100%" }}
+                      value={currentTwitter ? currentTwitter : ""}
+                      onChange={(e: any) => setCurrentTwitter(e.target.value)}
+                    />
+                  </div>
+                  <div className="mt-3">
+                    <h5>Instagram </h5>
+                    <input
+                      type="text"
+                      placeholder="Enter Name..."
+                      style={{ width: "70%", height: "100%" }}
+                      value={currentInstagram ? currentInstagram : ""}
+                      onChange={(e: any) => setCurrentInstagram(e.target.value)}
+                    />
+                  </div>
+                  <div className="mt-3">
+                    <h5>YouTube </h5>
+                    <input
+                      type="text"
+                      placeholder="Enter Name..."
+                      style={{ width: "70%", height: "100%" }}
+                      value={currentYouTube ? currentYouTube : ""}
+                      onChange={(e: any) => setCurrentYouTube(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6 col-sm-12">
+                  {showImage && (
+                    <div>
+                      <img
+                        className="w-100"
+                        src={`https://ipfs.io/ipfs/${returnImageURL(
+                          selectedProfileImageFileCid
+                        )}`}
+                      ></img>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="text-center mt-5">
+                <button
+                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                  onClick={(e) => uploadNFTToS3Bucket(e)}
+                  disabled={isLoading}
+                >
+                  Update Profile
+                </button>
+              </div>
+            </div>
+            <div
+              className="tab-pane fade"
+              id="nav-releases"
+              role="tabpanel"
+              aria-labelledby="nav-releases-tab"
+            >
+              {albumMetaData.length > 0
+                ? albumMetaData.map((album: AlbumMetadataType, index: number) =>
+                    index % 2 == 0 ? (
+                      <div
+                        className="row py-5"
+                        key={index}
+                        style={{ borderBottom: "2px solid" }}
+                      >
+                        <div className="col-md-4 col-sm-12">
+                          <img className="w-100" src={album.image} alt="" />
+                        </div>
+                        <div className="col-md-8 col-sm-12">
+                          <div
+                            className="mb-2"
+                            style={{ borderBottom: "1px solid" }}
+                          >
+                            <h2>{album.title}</h2>
+                          </div>
+                          <div
+                            className="mb-2"
+                            style={{ borderBottom: "1px solid" }}
+                          >
+                            <p className="word-limit">{album.description}</p>
+                          </div>
+                          <div
+                            className="mb-2"
+                            style={{ borderBottom: "1px solid" }}
+                          >
+                            <h5>{album.price} AFT</h5>
+                          </div>
+                          <div className="mb-2">
+                            <Link href="/album/detail">
+                              <button
+                                className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                                disabled={isLoading}
+                              >
+                                Explore Album
+                              </button>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="row mt-3" key={index}>
+                        <div className="col-md-8 col-sm-12">
+                          <div
+                            className="mb-2"
+                            style={{ borderBottom: "1px solid" }}
+                          >
+                            <h2>{album.title}</h2>
+                          </div>
+                          <div
+                            className="mb-2"
+                            style={{ borderBottom: "1px solid" }}
+                          >
+                            <p className="word-limit">{album.description}</p>
+                          </div>
+                          <div
+                            className="mb-2"
+                            style={{ borderBottom: "1px solid" }}
+                          >
+                            <h5>{album.price} AFT</h5>
+                          </div>
+                          <div className="mb-2">
+                            <Link href="/album/detail">
+                              <button
+                                className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                                disabled={isLoading}
+                              >
+                                Explore Album
+                              </button>
+                            </Link>
+                          </div>
+                        </div>
+                        <div className="col-md-4 col-sm-12">
+                          <img className="w-100" src={album.image} alt="" />
+                        </div>
+                      </div>
+                    )
+                  )
+                : ""}
+            </div>
           </div>
         </div>
       )}
