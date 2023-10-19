@@ -5,9 +5,9 @@ import {BatchContext, BatchProcessorItem, SubstrateBatchProcessor} from "@subsqu
 import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
 import {In} from "typeorm"
 import * as admin from "./abi/admin"
-import {Owner, Transfer} from "./model"
+import {Owner, Account, Transfer} from "./model"
 import { BigNumber } from "@ethersproject/bignumber"
-import {Account} from "./model/account.model"
+//import {Account} from "./model/account.model"
 
 const CONTRACT_ADDRESS_SS58 = 'Gi87hxpo6FvawjZocgxpUECXznEc1qCveGE7U3tgYChVktA'
 
@@ -96,7 +96,7 @@ processor.run(new TypeormDatabase(), async ctx => {
                 account.transfersFrom = new Owner({id: tx.from, balance: 0n})
                 ownersMapA.set(tx.from, account.transfersFrom)
             }
- //           account.transfersFrom.balance -= tx.amount
+            account.transfersFrom.balance -= tx.amount
         }
  
         if (tx.to) {
@@ -105,16 +105,18 @@ processor.run(new TypeormDatabase(), async ctx => {
                 account.transfersTo = new Owner({id: tx.to, balance: 0n})
                 ownersMapA.set(tx.to, account.transfersTo)
             }
-            //account.to.balance += tx.amount
+            account.transfersTo.balance += tx.amount
         }
  
         return account
     })
 
     console.log('accounts are: ', accounts)
+    console.log('transfers are: ', transfers)
 
     await ctx.store.save([...ownersMap.values()])
     await ctx.store.insert(transfers)
+   // await ctx.store.save([...ownersMapA.values()])
     await ctx.store.insert(accounts)
 })
  
