@@ -7,8 +7,8 @@ import {In} from "typeorm"
 import * as admin from "./abi/admin"
 import {Owner, Account, Transfer} from "./model"
 import { BigNumber } from "@ethersproject/bignumber"
-//import {Account} from "./model/account.model"
 
+//the address of the deployed admins contract
 const CONTRACT_ADDRESS_SS58 = 'Gi87hxpo6FvawjZocgxpUECXznEc1qCveGE7U3tgYChVktA'
 
 const CONTRACT_ADDRESS = toHex(ss58.decode(CONTRACT_ADDRESS_SS58).bytes)
@@ -96,7 +96,6 @@ processor.run(new TypeormDatabase(), async ctx => {
                 account.transfersFrom = new Owner({id: tx.from, balance: 0n})
                 ownersMapA.set(tx.from, account.transfersFrom)
             }
-            account.transfersFrom.balance -= tx.amount
         }
  
         if (tx.to) {
@@ -105,18 +104,13 @@ processor.run(new TypeormDatabase(), async ctx => {
                 account.transfersTo = new Owner({id: tx.to, balance: 0n})
                 ownersMapA.set(tx.to, account.transfersTo)
             }
-            account.transfersTo.balance += tx.amount
         }
  
         return account
     })
 
-    console.log('accounts are: ', accounts)
-    console.log('transfers are: ', transfers)
-
     await ctx.store.save([...ownersMap.values()])
     await ctx.store.insert(transfers)
-   // await ctx.store.save([...ownersMapA.values()])
     await ctx.store.insert(accounts)
 })
  
@@ -138,16 +132,15 @@ function extractTransferRecords(ctx: Ctx): TransferRecord[] {
                 const event = admin.decodeEvent(item.event.args.data)
                 console.log('event',event)
                 console.log('event.contract is ',event.contract && ss58.codec(SS58_PREFIX).encode(event.contract))
-//                if (event.__kind === 'Transfer') {
-                    if (event.__kind === 'Granted') {
-                        records.push({
-                        id: item.event.id,
-                        from: event.from && ss58.codec(SS58_PREFIX).encode(event.from),
-                        to: event.to && ss58.codec(SS58_PREFIX).encode(event.to),
-                        amount:BigInt(255000000000),
-                        block: block.header.height,
-                        timestamp: new Date(block.header.timestamp),
-                        contract: event.contract && ss58.codec(SS58_PREFIX).encode(event.contract)
+                if (event.__kind === 'Granted') {
+                    records.push({
+                    id: item.event.id,
+                    from: event.from && ss58.codec(SS58_PREFIX).encode(event.from),
+                    to: event.to && ss58.codec(SS58_PREFIX).encode(event.to),
+                    amount:BigInt(0),
+                    block: block.header.height,
+                    timestamp: new Date(block.header.timestamp),
+                    contract: event.contract && ss58.codec(SS58_PREFIX).encode(event.contract)
                     })
                 }
             }
