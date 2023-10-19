@@ -86,34 +86,36 @@ processor.run(new TypeormDatabase(), async ctx => {
     const accounts = txs.map(tx => {
         const account = new Account({
             id: tx.id,
-         
+            timestamp: tx.timestamp,
+
         })
  
         if (tx.from) {
-            account.from = ownersMapA.get(tx.from)
-            if (account.from == null) {
-                account.from = new Owner({id: tx.from, balance: 0n})
-                ownersMapA.set(tx.from, account.from)
+            account.transfersFrom = ownersMapA.get(tx.from)
+            if (account.transfersFrom == null) {
+                account.transfersFrom = new Owner({id: tx.from, balance: 0n})
+                ownersMapA.set(tx.from, account.transfersFrom)
             }
-            account.from.balance -= tx.amount
+ //           account.transfersFrom.balance -= tx.amount
         }
  
         if (tx.to) {
-            account.to = ownersMapA.get(tx.to)
-            if (account.to == null) {
-                account.to = new Owner({id: tx.to, balance: 0n})
-                ownersMapA.set(tx.to, account.to)
+            account.transfersTo = ownersMapA.get(tx.to)
+            if (account.transfersTo == null) {
+                account.transfersTo = new Owner({id: tx.to, balance: 0n})
+                ownersMapA.set(tx.to, account.transfersTo)
             }
-            account.to.balance += tx.amount
+            //account.to.balance += tx.amount
         }
  
         return account
     })
 
+    console.log('accounts are: ', accounts)
 
     await ctx.store.save([...ownersMap.values()])
     await ctx.store.insert(transfers)
-  //  await ctx.store.insert(accounts)
+    await ctx.store.insert(accounts)
 })
  
 interface TransferRecord {

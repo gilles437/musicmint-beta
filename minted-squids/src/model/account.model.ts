@@ -13,18 +13,15 @@ export class Account {
 
   @Index_()
   @ManyToOne_(() => Owner, {nullable: true})
-  from!: Owner | undefined | null
+  transfersFrom!: Owner | undefined | null
 
   @Index_()
   @ManyToOne_(() => Owner, {nullable: true})
-  to!: Owner | undefined | null
+  transfersTo!: Owner | undefined | null
 
-  @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-  amount!: bigint
-
+ 
   @Column_("timestamp with time zone", {nullable: false})
   timestamp!: Date
 
-  @Column_("int4", {nullable: false})
-  block!: number
+ 
 }
