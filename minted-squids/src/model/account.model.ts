@@ -3,8 +3,8 @@ import * as marshal from "./marshal"
 import {Owner} from "./owner.model"
 
 @Entity_()
-export class Transfer {
-  constructor(props?: Partial<Transfer>) {
+export class Account {
+  constructor(props?: Partial<Account>) {
     Object.assign(this, props)
   }
 
@@ -27,7 +27,4 @@ export class Transfer {
 
   @Column_("int4", {nullable: false})
   block!: number
-
-  @Column_("varchar", {nullable: false})
-  contract!: string
 }

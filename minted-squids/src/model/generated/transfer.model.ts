@@ -37,4 +37,8 @@ export class Transfer {
 
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
     fee!: bigint
+
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    contract!: Account
 }
