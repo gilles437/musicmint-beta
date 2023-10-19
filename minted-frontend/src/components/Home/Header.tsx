@@ -29,7 +29,7 @@ const Header = () => {
                 <img src="/assets/img/header/header_12_2.png" alt="" />
                 <div className="inf">
                   <h6> Cyber CloneX </h6>
-                  <p> <span className="color-999"> Floor: </span> 1.2 ETH </p>
+                  <p> <span className="color-999"> Floor: </span> 1.2 AFT </p>
                 </div>
               </div>
             </div>
@@ -59,7 +59,7 @@ const Header = () => {
                 <img src="/assets/img/header/header_12_1.png" alt="" />
                 <div className="inf">
                   <h6> Alex Pablo </h6>
-                  <p> <span className="color-999"> Floor: </span> 0.9 ETH </p>
+                  <p> <span className="color-999"> Floor: </span> 0.9 AFT </p>
                 </div>
               </div>
             </div>

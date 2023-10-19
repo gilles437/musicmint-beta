@@ -43,3 +43,10 @@ html, body {
 .album-bottom-border{
   border-bottom: 1px solid;
 }
+
+.word-limit{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 300px;
+}

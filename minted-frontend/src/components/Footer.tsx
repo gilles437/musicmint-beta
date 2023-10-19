@@ -83,7 +83,7 @@ const Footer = () => {
                   </a>
                   <a
                     className="pe-3"
-                    href="https://www.instagram.com/mintedwaves/"
+                    href="https://www.facebook.com/mintedwaves"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -95,7 +95,8 @@ const Footer = () => {
                   </a>
                   <a
                     className="pe-3"
-                    href="https://www.facebook.com/mintedwaves"
+                    href="https://www.instagram.com/mintedwaves/"
+
                     target="_blank"
                     rel="noreferrer"
                   >

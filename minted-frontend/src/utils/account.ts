@@ -61,4 +61,8 @@ export const formatAccount = (
   return encodeAddress(decodeAddress(address), ss58Format);
 };
 
+export function beatifyAddress(address: string | null) {
+  return address ? `${address.slice(0, 5)}...${address.slice(-5)}` : "";
+}
+
 export default toDefaultAddress;
