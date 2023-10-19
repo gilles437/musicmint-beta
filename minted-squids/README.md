@@ -67,12 +67,12 @@ See [docs on database migrations](https://docs.subsquid.io/basics/db-migrations)
 
 ### 4. Import ABI contract and generate interfaces to decode events
 
-It is necessary to import the respective ABI definition to decode WASM logs. For this template we used standard ERC20 interface, see [`abi/erc20.json`](abi/erc20.json).
+It is necessary to import the respective ABI definition to decode WASM logs. For this template we used the Allfeat admin interface, see [`abi/admin.json`](abi/admin.json).
 
 To generate a type-safe facade class to decode EVM logs, use [`squid-ink-typegen(1)`](https://github.com/subsquid/squid-sdk/tree/master/substrate/ink-typegen):
 
 ```bash
-npx squid-ink-typegen --abi abi/erc20.json --output src/abi/erc20.ts
+npx squid-ink-typegen --abi abi/admin.json --output src/abi/admin.ts
 ```
 
 ## Project conventions
