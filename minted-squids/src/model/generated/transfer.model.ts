@@ -32,6 +32,10 @@ export class Transfer {
     to!: Account
 
     @Index_()
+    @Column_("text", {nullable: true})
+    role!: string | undefined | null
+
+    @Index_()
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
     amount!: bigint
 

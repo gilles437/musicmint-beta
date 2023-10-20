@@ -18,6 +18,7 @@ type Transfer @entity {
   extrinsicHash: String @index
   from: Account!
   to: Account!
+  role: String @index
   amount: BigInt! @index
   fee: BigInt! # fee is calculated at the best effort and may be zero for some old extrinsics
   contract: ID!

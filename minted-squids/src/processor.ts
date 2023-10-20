@@ -51,6 +51,7 @@ processor.run(new TypeormDatabase(), async ctx => {
             id: tx.id,
             amount: tx.amount,
             block: tx.block,
+            role: tx.role,
             timestamp: tx.timestamp,
             contract: tx.contract,
         })
@@ -122,6 +123,7 @@ interface TransferRecord {
     block: number
     timestamp: Date
     contract?: string
+    role: string
 }
 
 function extractTransferRecords(ctx: Ctx): TransferRecord[] {
@@ -138,6 +140,7 @@ function extractTransferRecords(ctx: Ctx): TransferRecord[] {
                     from: event.from && ss58.codec(SS58_PREFIX).encode(event.from),
                     to: event.to && ss58.codec(SS58_PREFIX).encode(event.to),
                     amount:BigInt(0),
+                    role: event.role.__kind,
                     block: block.header.height,
                     timestamp: new Date(block.header.timestamp),
                     contract: event.contract && ss58.codec(SS58_PREFIX).encode(event.contract)

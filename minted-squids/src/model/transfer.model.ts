@@ -19,6 +19,10 @@ export class Transfer {
   @ManyToOne_(() => Owner, {nullable: true})
   to!: Owner | undefined | null
 
+  @Index_()
+  @Column_("text", {nullable: true})
+  role!: string | undefined | null
+
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   amount!: bigint
 
