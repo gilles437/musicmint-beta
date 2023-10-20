@@ -115,7 +115,6 @@ processor.run(new TypeormDatabase(), async ctx => {
             id: tx.id,
             block: tx.block,
             timestamp: tx.timestamp,
-            extrinsicHash: "",
             from: tx.from,
             to: tx.to,
             role: tx.role,
