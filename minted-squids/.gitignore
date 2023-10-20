@@ -7,3 +7,9 @@
 
 # IDE files
 /.idea
+
+/db/migrations
+
+package-lock.json
+yarn.lock
+.env
