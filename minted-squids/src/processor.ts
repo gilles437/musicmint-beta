@@ -52,6 +52,7 @@ processor.run(new TypeormDatabase(), async ctx => {
             id: tx.id,
             amount: tx.amount,
             block: tx.block,
+            role: tx.role,
             timestamp: tx.timestamp,
             contract: tx.contract,
         })
