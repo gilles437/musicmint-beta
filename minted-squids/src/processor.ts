@@ -111,7 +111,7 @@ processor.run(new TypeormDatabase(), async ctx => {
     })
 
     const admins = txs.map(tx => {
-        const transfer = new Admin({
+        const admin = new Admin({
             id: tx.id,
             block: tx.block,
             timestamp: tx.timestamp,
@@ -122,8 +122,7 @@ processor.run(new TypeormDatabase(), async ctx => {
             amount: tx.amount,
             contract: tx.contract,
         })
- 
-        return transfer
+        return admin
     })
 
     await ctx.store.save([...ownersMap.values()])

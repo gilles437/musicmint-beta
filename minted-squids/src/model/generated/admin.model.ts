@@ -18,10 +18,6 @@ export class Admin {
     @Column_("timestamp with time zone", {nullable: false})
     timestamp!: Date
 
-    @Index_()
-    @Column_("text", {nullable: true})
-    extrinsicHash!: string | undefined | null
-
     @Column_("text", {nullable: false})
     from!: string
 
