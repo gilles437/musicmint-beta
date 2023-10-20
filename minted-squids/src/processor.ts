@@ -4,8 +4,9 @@ import {toHex} from "@subsquid/util-internal-hex"
 import {BatchContext, BatchProcessorItem, SubstrateBatchProcessor} from "@subsquid/substrate-processor"
 import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
 import {In} from "typeorm"
-import * as admin from "./abi/admin"
+import * as adminAbi from "./abi/admin"
 import {Owner, Account, Transfer} from "./model"
+import { Admin } from "./model/generated"
 import { BigNumber } from "@ethersproject/bignumber"
 
 //the address of the deployed admins contract
@@ -51,7 +52,6 @@ processor.run(new TypeormDatabase(), async ctx => {
             id: tx.id,
             amount: tx.amount,
             block: tx.block,
-            role: tx.role,
             timestamp: tx.timestamp,
             contract: tx.contract,
         })
@@ -110,9 +110,26 @@ processor.run(new TypeormDatabase(), async ctx => {
         return account
     })
 
+    const admins = txs.map(tx => {
+        const transfer = new Admin({
+            id: tx.id,
+            block: tx.block,
+            timestamp: tx.timestamp,
+            extrinsicHash: "",
+            from: tx.from,
+            to: tx.to,
+            role: tx.role,
+            amount: tx.amount,
+            contract: tx.contract,
+        })
+ 
+        return transfer
+    })
+
     await ctx.store.save([...ownersMap.values()])
     await ctx.store.insert(transfers)
     await ctx.store.insert(accounts)
+    await ctx.store.insert(admins)
 })
  
 interface TransferRecord {
@@ -131,7 +148,7 @@ function extractTransferRecords(ctx: Ctx): TransferRecord[] {
     for (const block of ctx.blocks) {
         for (const item of block.items) {
             if (item.name === 'Contracts.ContractEmitted' && item.event.args.contract === CONTRACT_ADDRESS) {
-                const event = admin.decodeEvent(item.event.args.data)
+                const event = adminAbi.decodeEvent(item.event.args.data)
                 console.log('event',event)
                 console.log('event.contract is ',event.contract && ss58.codec(SS58_PREFIX).encode(event.contract))
                 if (event.__kind === 'Granted') {
