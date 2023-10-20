@@ -53,65 +53,15 @@ processor.run(new TypeormDatabase(), async ctx => {
             block: tx.block,
             timestamp: tx.timestamp,
             contract: tx.contract,
+            from: tx.from,
+            to:tx.to
         })
- 
-        if (tx.from) {
-            transfer.from = ownersMap.get(tx.from)
-            if (transfer.from == null) {
-                transfer.from = new Owner({id: tx.from, balance: 0n})
-                ownersMap.set(tx.from, transfer.from)
-            }
-            transfer.from.balance -= tx.amount
-        }
- 
-        if (tx.to) {
-            transfer.to = ownersMap.get(tx.to)
-            if (transfer.to == null) {
-                transfer.to = new Owner({id: tx.to, balance: 0n})
-                ownersMap.set(tx.to, transfer.to)
-            }
-            transfer.to.balance += tx.amount
-        }
  
         return transfer
     })
  
-
-    const ownersMapA = await ctx.store.findBy(Owner, {
-        id: In([...ownerIds])
-    }).then(owners => {
-        return new Map(owners.map(owner => [owner.id, owner]))
-    })
- 
-    const accounts = txs.map(tx => {
-        const account = new Account({
-            id: tx.id,
-            timestamp: tx.timestamp,
-
-        })
- 
-        if (tx.from) {
-            account.transfersFrom = ownersMapA.get(tx.from)
-            if (account.transfersFrom == null) {
-                account.transfersFrom = new Owner({id: tx.from, balance: 0n})
-                ownersMapA.set(tx.from, account.transfersFrom)
-            }
-        }
- 
-        if (tx.to) {
-            account.transfersTo = ownersMapA.get(tx.to)
-            if (account.transfersTo == null) {
-                account.transfersTo = new Owner({id: tx.to, balance: 0n})
-                ownersMapA.set(tx.to, account.transfersTo)
-            }
-        }
- 
-        return account
-    })
-
     await ctx.store.save([...ownersMap.values()])
     await ctx.store.insert(transfers)
-    await ctx.store.insert(accounts)
 })
  
 interface TransferRecord {

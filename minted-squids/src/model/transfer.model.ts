@@ -12,12 +12,12 @@ export class Transfer {
   id!: string
 
   @Index_()
-  @ManyToOne_(() => Owner, {nullable: true})
-  from!: Owner | undefined | null
+  @Column_("text", {nullable: false})
+  from!: string
 
   @Index_()
-  @ManyToOne_(() => Owner, {nullable: true})
-  to!: Owner | undefined | null
+  @Column_("text", {nullable: false})
+  to!: string
 
   @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
   amount!: bigint
