@@ -49,7 +49,7 @@ processor.run(new TypeormDatabase(), async ctx => {
     let transfers: Transfer[] = [];
     txs.map(tx => {
         let findPosition =  transfers.findIndex((transfer:Transfer, index: number)=>transfer.to == tx.to) ;
-        if(tx.role != "none"){
+        if(tx.role != "None"){
             const transfer = new Transfer({
                 id: tx.id,
                 amount: tx.amount,
