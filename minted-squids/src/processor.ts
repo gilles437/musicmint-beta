@@ -46,19 +46,34 @@ processor.run(new TypeormDatabase(), async ctx => {
         return new Map(owners.map(owner => [owner.id, owner]))
     })
  
-    const transfers = txs.map(tx => {
-        const transfer = new Transfer({
-            id: tx.id,
-            amount: tx.amount,
-            block: tx.block,
-            role: tx.role,
-            timestamp: tx.timestamp,
-            contract: tx.contract,
-            from: tx.from,
-            to:tx.to
-        })
- 
-        return transfer
+    let transfers: Transfer[] = [];
+    txs.map(tx => {
+        let findPosition =  transfers.findIndex((transfer:Transfer, index: number)=>transfer.to == tx.to) ;
+        if(tx.role != "none"){
+            const transfer = new Transfer({
+                id: tx.id,
+                amount: tx.amount,
+                block: tx.block,
+                role: tx.role,
+                timestamp: tx.timestamp,
+                contract: tx.contract,
+                from: tx.from,
+                to:tx.to
+            })
+            if(findPosition >= 0){
+                transfers[findPosition] = transfer;
+            }
+            else{
+                transfers.push(transfer);
+            }
+
+        }
+        else{
+            if(findPosition >= 0){
+                transfers.splice(findPosition, 1);
+            }
+        }
+      
     })
  
     await ctx.store.save([...ownersMap.values()])
