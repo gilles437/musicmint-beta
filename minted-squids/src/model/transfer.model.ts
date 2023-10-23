@@ -12,12 +12,16 @@ export class Transfer {
   id!: string
 
   @Index_()
-  @ManyToOne_(() => Owner, {nullable: true})
-  from!: Owner | undefined | null
+  @Column_("text", {nullable: false})
+  from!: string
 
   @Index_()
-  @ManyToOne_(() => Owner, {nullable: true})
-  to!: Owner | undefined | null
+  @Column_("text", {nullable: false})
+  to!: string
+
+  @Index_()
+  @Column_("text", {nullable: true})
+  role!: string | undefined | null
 
   @Index_()
   @Column_("text", {nullable: true})

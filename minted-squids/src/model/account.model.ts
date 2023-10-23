@@ -19,7 +19,6 @@ export class Account {
   @ManyToOne_(() => Owner, {nullable: true})
   transfersTo!: Owner | undefined | null
 
- 
   @Column_("timestamp with time zone", {nullable: false})
   timestamp!: Date
 
