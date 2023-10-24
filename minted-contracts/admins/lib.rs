@@ -129,7 +129,7 @@ mod admin {
         /// Removes the admin role from the given `AccountId`.
         /// The smart contract caller must be a super admin.
         #[ink(message)]
-        pub fn remove_admin(&mut self, admin: AccountId) -> Result<(), Error> {
+        pub fn remove_admin(&mut self, admin: AccountId, contract: AccountId) -> Result<(), Error> {
             self.ensure_super_admins()?;
             self.admins.insert(admin, &Role::None);
             //need to remove admin from vec
@@ -141,7 +141,7 @@ mod admin {
                     from: self.env().caller(),
                     to: admin,
                     role: Role::None,
-                    contract: [0u8; 32].into()
+                    contract: contract
                 }
             });
             Ok(())
