@@ -9,7 +9,7 @@ import {Owner, Account, Transfer} from "./model"
 import { BigNumber } from "@ethersproject/bignumber"
 
 //the address of the deployed admins contract
-const CONTRACT_ADDRESS_SS58 = 'Gi87hxpo6FvawjZocgxpUECXznEc1qCveGE7U3tgYChVktA'
+const CONTRACT_ADDRESS_SS58 = '5CTFboJt1kxwxR2KeTMKp2gmj1VbVnscnsykpfQ63M3krpjm'
 
 const CONTRACT_ADDRESS = toHex(ss58.decode(CONTRACT_ADDRESS_SS58).bytes)
 const SS58_PREFIX = ss58.decode(CONTRACT_ADDRESS_SS58).prefix
@@ -70,16 +70,19 @@ processor.run(new TypeormDatabase(), async ctx => {
     let removeItems: string[] = [];
     txs.map(tx => {
         if(tx.role == "None"){
-            if(tx.to){
-                removeItems.push(tx.to)
+            if(tx.contract){
+                removeItems.push(tx.contract)
             }
         }
     })
     console.log({removeItems})
 
+    const uniqueArray = [...new Set(removeItems)];
+    console.log({uniqueArray})
+
     const transferItem = await ctx.store.find(Transfer, {
         where:{
-            to: In([...removeItems])
+            contract: In([...uniqueArray])
         }
     }).then(data => {
         return data;
