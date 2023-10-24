@@ -46,9 +46,10 @@ processor.run(new TypeormDatabase(), async ctx => {
         return new Map(owners.map(owner => [owner.id, owner]))
     })
  
+    await ctx.store.save([...ownersMap.values()])
+
     let transfers: Transfer[] = [];
     txs.map(tx => {
-        let findPosition =  transfers.findIndex((transfer:Transfer, index: number)=>transfer.to == tx.to) ;
         if(tx.role != "None"){
             const transfer = new Transfer({
                 id: tx.id,
@@ -60,24 +61,37 @@ processor.run(new TypeormDatabase(), async ctx => {
                 from: tx.from,
                 to:tx.to
             })
-            if(findPosition >= 0){
-                transfers[findPosition] = transfer;
-            }
-            else{
-                transfers.push(transfer);
-            }
-
+            transfers.push(transfer);
         }
-        else{
-            if(findPosition >= 0){
-                transfers.splice(findPosition, 1);
-            }
-        }
-      
     })
- 
-    await ctx.store.save([...ownersMap.values()])
+    console.log({transfers})
     await ctx.store.insert(transfers)
+
+    let removeItems: string[] = [];
+    txs.map(tx => {
+        if(tx.role == "None"){
+            if(tx.to){
+                removeItems.push(tx.to)
+            }
+        }
+    })
+    console.log({removeItems})
+
+    const transferItem = await ctx.store.find(Transfer, {
+        where:{
+            to: In([...removeItems])
+        }
+    }).then(data => {
+        return data;
+    })
+    console.log({transferItem})
+
+    await Promise.all(
+        transferItem.map(async (item)=>{
+            await ctx.store.remove(Transfer, item.id)
+        })
+    )
+
 })
  
 interface TransferRecord {
