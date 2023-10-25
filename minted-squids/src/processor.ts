@@ -29,7 +29,6 @@ type Ctx = BatchContext<Store, Item>
  
 processor.run(new TypeormDatabase(), async ctx => {
     const txs = extractTransferRecords(ctx)
- 
     const ownerIds = new Set<string>()
     txs.forEach(tx => {
         if (tx.from) {
@@ -67,34 +66,53 @@ processor.run(new TypeormDatabase(), async ctx => {
     console.log({transfers})
     await ctx.store.insert(transfers)
 
-    let removeItems: string[] = [];
+    let removeAdminItems: string[] = [];
+    let removeSuperAdminItems: string[] = [];
     txs.map(tx => {
         if(tx.role == "None"){
-            if(tx.contract){
-                removeItems.push(tx.contract)
+            if(tx.contract && tx.contract != "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM" ){
+                removeAdminItems.push(tx.contract)
+            }
+            else if(tx.contract == "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM" && tx.to){
+                removeSuperAdminItems.push(tx.to);
             }
         }
     })
-    console.log({removeItems})
+    console.log({removeAdminItems})
+    console.log({removeSuperAdminItems})
 
-    const uniqueArray = [...new Set(removeItems)];
-    console.log({uniqueArray})
+    const uniqueAdminArray = [...new Set(removeAdminItems)];
+    console.log({uniqueAdminArray})
+    const uniqueSuperAdminArray = [...new Set(removeSuperAdminItems)];
+    console.log({uniqueSuperAdminArray})
 
-    const transferItem = await ctx.store.find(Transfer, {
+    const transferAdminRemoveItem = await ctx.store.find(Transfer, {
         where:{
-            contract: In([...uniqueArray])
+            contract: In([...uniqueAdminArray])
         }
     }).then(data => {
         return data;
     })
-    console.log({transferItem})
-
+    console.log({transferAdminRemoveItem})
     await Promise.all(
-        transferItem.map(async (item)=>{
+        transferAdminRemoveItem.map(async (item)=>{
             await ctx.store.remove(Transfer, item.id)
         })
     )
 
+    const transferSuperAdminRemoveItem = await ctx.store.find(Transfer, {
+        where:{
+            to: In([...removeSuperAdminItems]),
+            contract: "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM"
+        }
+    }).then(data => {
+        return data;
+    })
+    await Promise.all(
+        transferSuperAdminRemoveItem.map(async (item)=>{
+            await ctx.store.remove(Transfer, item.id)
+        })
+    )
 })
  
 interface TransferRecord {
