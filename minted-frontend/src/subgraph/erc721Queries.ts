@@ -19,10 +19,22 @@ export const QUERY_ERC721_NOTOWNED_ID = (
   }
 `;
 
-export const QUERY_GET_TRANSFERS = () => gql`
+export const QUERY_GET_ADMIN_TRANSFERS = () => gql`
   query getTransfers {
-    transfers {
-      id
+    transfers(where: {role_eq: "Admin"}) {
+      contract
+      to
+      timestamp
     }
   }
 `;
+
+export const QUERY_GET_SUPER_ADMIN_TRANSFERS = () => gql`
+  query getTransfers {
+    transfers(where: {role_eq: "SuperAdmin"}) {
+      to
+      timestamp
+    }
+  }
+`;
+

@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x5a7dd5455586835ffa08a8e658cce40aa6daa5c86165a1e1c0a8ff404ad53d6f",
+    "hash": "0x9e314b261e76610b61ada4a5e56412b8798ee6c031a3695debe8ca9058aacd2d",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
@@ -258,6 +258,15 @@
         "args": [
           {
             "label": "admin",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "contract",
             "type": {
               "displayName": [
                 "AccountId"

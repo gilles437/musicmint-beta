@@ -28,6 +28,8 @@
     "@polkadot/ui-keyring": "^3.6.2",
     "aws-sdk": "^2.1440.0",
     "axios": "^0.27.2",
+    "graphql": "^16.8.1",
+    "graphql-request": "^6.1.0",
     "lightgallery": "^2.5.0",
     "next": "13.4.13",
     "react": "18.2.0",

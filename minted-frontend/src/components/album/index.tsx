@@ -3,9 +3,6 @@ import { ToastContainer, toast } from "react-toastify";
 import Link from "next/link";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { DEFAULT_CHAIN, MARKETPLACE_SUBGRAPH_URLS } from "@/constants";
-import { request } from "graphql-request";
-import { QUERY_GET_TRANSFERS } from "@/subgraph/erc721Queries";
 
 type storageAlbumType = {
   id: string;
@@ -30,13 +27,6 @@ const Album = () => {
       const storageAlbums = storageAlbumsData
         ? JSON.parse(storageAlbumsData)
         : [];
-
-      // const result = await request(
-      //   MARKETPLACE_SUBGRAPH_URLS[DEFAULT_CHAIN],
-      //   QUERY_GET_TRANSFERS()
-      // );
-
-      // console.log({ result });
 
       if (storageAlbums.length) {
         const albumMetaData = (

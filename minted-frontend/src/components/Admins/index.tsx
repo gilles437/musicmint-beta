@@ -13,6 +13,12 @@ import { useWallets } from "@/contexts/Wallets";
 import { beatifyAddress } from "@/utils/account";
 import Identicon from "@polkadot/react-identicon";
 import { CodeSubmittableResult } from "@polkadot/api-contract/base";
+import { DEFAULT_CHAIN, MARKETPLACE_SUBGRAPH_URLS } from "@/constants";
+import { request } from "graphql-request";
+import {
+  QUERY_GET_ADMIN_TRANSFERS,
+  QUERY_GET_SUPER_ADMIN_TRANSFERS,
+} from "@/subgraph/erc721Queries";
 
 const override: CSSProperties = {
   display: "block",
@@ -27,8 +33,18 @@ interface FetchStringResult {
 }
 
 interface adminListType {
-  adminAddress: string;
-  contractAddress: string;
+  to: string;
+  contract: string;
+  timestamp: string;
+}
+
+interface superAdminListType {
+  to: string;
+  timestamp: string;
+}
+
+interface fetchType {
+  transfers: [];
 }
 
 const ContractAdmin = () => {
@@ -37,13 +53,15 @@ const ContractAdmin = () => {
   const [newAdminInput, setNewAdminInput] = useState<string>("");
   const [newSuperAdminInput, setNewSuperAdminInput] = useState<string>("");
   const [adminList, setAdminList] = useState<adminListType[]>([]);
-  const [superAdminList, setSuperAdminList] = useState<string[]>([]);
+  const [superAdminList, setSuperAdminList] = useState<superAdminListType[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const api = useApi();
   const { wallet } = useWallets();
 
-  const contractAddress = "5GCWTPcxAjEzqHv82usuvWsCPQVzoM22UGRUiomwCjzCkgXb"; // Replace the address of your contract
+  const contractAddress = "5CTFboJt1kxwxR2KeTMKp2gmj1VbVnscnsykpfQ63M3krpjm"; // Replace the address of your contract
   const caller = "5FNj1E5Wxqg1vMo1qd6Zi6XZjrAXB8ECuXCyHDrsRQZSAPHL"; //The address of Contract Owner
   const storageDepositLimit = null;
 
@@ -85,59 +103,88 @@ const ContractAdmin = () => {
   }, [contract]);
 
   const getAdminList = async () => {
-    if (contract) {
-      const allAdmins = await contract.query.getAllAdmins(caller, {
-        value: 0,
-        gasLimit,
-        storageDepositLimit,
-      });
-      console.log({ allAdmins });
-      const stringTemp = allAdmins.output?.toString()
-        ? allAdmins.output?.toString()
-        : "";
-      const temp: FetchResult = JSON.parse(stringTemp);
-      let contractAddressArray: adminListType[] = [];
-      await Promise.all(
-        temp.ok.map(async (admin: string) => {
-          const artistContract = await contract.query.getArtistContract(
-            caller,
-            {
-              value: 0,
-              gasLimit,
-              storageDepositLimit,
-            },
-            admin
-          );
-          const contractStringTemp = artistContract.output?.toString()
-            ? artistContract.output?.toString()
-            : "";
-          const contractTemp: FetchStringResult =
-            JSON.parse(contractStringTemp);
-          contractAddressArray.push({
-            adminAddress: admin,
-            contractAddress: contractTemp.ok,
-          });
-        })
-      );
-      console.log({ contractAddressArray });
-      setAdminList(contractAddressArray);
-    }
+    let result: fetchType = await request(
+      MARKETPLACE_SUBGRAPH_URLS[DEFAULT_CHAIN],
+      QUERY_GET_ADMIN_TRANSFERS()
+    );
+    result = mangeTimes(result);
+    console.log("getAdminList", { result });
+    setAdminList(result.transfers);
+
+    // if (contract) {
+    //   const allAdmins = await contract.query.getAllAdmins(caller, {
+    //     value: 0,
+    //     gasLimit,
+    //     storageDepositLimit,
+    //   });
+    //   console.log({ allAdmins });
+    //   const stringTemp = allAdmins.output?.toString()
+    //     ? allAdmins.output?.toString()
+    //     : "";
+    //   const temp: FetchResult = JSON.parse(stringTemp);
+    //   let contractAddressArray: adminListType[] = [];
+    //   await Promise.all(
+    //     temp.ok.map(async (admin: string) => {
+    //       const artistContract = await contract.query.getArtistContract(
+    //         caller,
+    //         {
+    //           value: 0,
+    //           gasLimit,
+    //           storageDepositLimit,
+    //         },
+    //         admin
+    //       );
+    //       const contractStringTemp = artistContract.output?.toString()
+    //         ? artistContract.output?.toString()
+    //         : "";
+    //       const contractTemp: FetchStringResult =
+    //         JSON.parse(contractStringTemp);
+    //       contractAddressArray.push({
+    //         to: admin,
+    //         contract: contractTemp.ok,
+    //         timestamp: "",
+    //       });
+    //     })
+    //   );
+    //   console.log({ contractAddressArray });
+    //   setAdminList(contractAddressArray);
+    // }
   };
 
   const getSuperAdminList = async () => {
-    if (contract) {
-      const allSuperAdmins = await contract.query.getAllSuperAdmins(caller, {
-        value: 0,
-        gasLimit,
-        storageDepositLimit,
-      });
-      console.log({ allSuperAdmins });
-      const stringTemp = allSuperAdmins.output?.toString()
-        ? allSuperAdmins.output?.toString()
-        : "";
-      const temp: FetchResult = JSON.parse(stringTemp);
-      setSuperAdminList(temp.ok);
-    }
+    let result: fetchType = await request(
+      MARKETPLACE_SUBGRAPH_URLS[DEFAULT_CHAIN],
+      QUERY_GET_SUPER_ADMIN_TRANSFERS()
+    );
+    result = mangeTimes(result);
+    console.log("getSuperAdminList", { result });
+    setSuperAdminList(result.transfers);
+    // if (contract) {
+    //   const allSuperAdmins = await contract.query.getAllSuperAdmins(caller, {
+    //     value: 0,
+    //     gasLimit,
+    //     storageDepositLimit,
+    //   });
+    //   const stringTemp = allSuperAdmins.output?.toString()
+    //   ? allSuperAdmins.output?.toString()
+    //   : "";
+    //   const temp: FetchResult = JSON.parse(stringTemp);
+    //   console.log("getSuperAdminList",{ temp });
+    //   let tempData: superAdminListType[]= [];
+    //   temp.ok.map((item: string)=> {
+    //     tempData.push({to: item, timestamp: ""})
+    //   })
+    //   setSuperAdminList(tempData);
+    // }
+  };
+
+  const mangeTimes = (result: fetchType): fetchType => {
+    result.transfers.map((data: adminListType) => {
+      let date = data.timestamp.split("T");
+      let time = date[1].split(".");
+      data.timestamp = date[0] + " " + time[0];
+    });
+    return result;
   };
 
   const addAdmin = async (newContractAddress: string) => {
@@ -165,9 +212,11 @@ const ContractAdmin = () => {
     const savedAccount = localStorage.getItem("currentAccount");
     const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
     let allAccounts: string[] = [];
-    allAccounts = allAccounts.concat(superAdminList)
+    superAdminList.map((item: superAdminListType) => {
+      allAccounts.push(item.to);
+    });
     adminList.map((item: adminListType) => {
-      allAccounts.push(item.adminAddress);
+      allAccounts.push(item.to);
     });
     if (parsedAccount && caller != parsedAccount) {
       toastFunction("Current selected account is not Contract Owner !");
@@ -200,16 +249,20 @@ const ContractAdmin = () => {
     const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
     if (
       parsedAccount &&
-      superAdminList.findIndex((account: string) => {
-        return account == parsedAccount;
+      superAdminList.findIndex((account: superAdminListType) => {
+        return account.to == parsedAccount;
       }) < 0
     ) {
       toastFunction("Current selected account is not SuperAdmin !");
     } else if (wallet && contract) {
+      let removeItem = adminList.find(
+        (item: adminListType) => item.to == account
+      );
       const options = wallet ? { signer: wallet.signer } : undefined;
       const addAdminResult = await contract.tx.removeAdmin(
         { value: 0, gasLimit, storageDepositLimit },
-        account
+        account,
+        removeItem?.contract
       );
       await addAdminResult.signAndSend(parsedAccount, options);
       setNewAdminInput("");
@@ -255,14 +308,16 @@ const ContractAdmin = () => {
     const savedAccount = localStorage.getItem("currentAccount");
     const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
     let allAccounts: string[] = [];
-    allAccounts = allAccounts.concat(superAdminList)
+    superAdminList.map((item: superAdminListType) => {
+      allAccounts.push(item.to);
+    });
     adminList.map((item: adminListType) => {
-      allAccounts.push(item.adminAddress);
+      allAccounts.push(item.to);
     });
     if (
       parsedAccount &&
-      superAdminList.findIndex((account: string) => {
-        return account == parsedAccount;
+      superAdminList.findIndex((account: superAdminListType) => {
+        return account.to == parsedAccount;
       }) < 0
     ) {
       toastFunction("Current selected account is not SuperAdmin !");
@@ -355,15 +410,13 @@ const ContractAdmin = () => {
                           (adminAccount: adminListType, index: number) => (
                             <tr key={index}>
                               <th scope="row">
-                                {adminAccount.adminAddress ? (
+                                {adminAccount.to ? (
                                   <div className="d-flex">
                                     <p className="ps-1">
-                                      {beatifyAddress(
-                                        adminAccount.adminAddress
-                                      )}
+                                      {beatifyAddress(adminAccount.to)}
                                     </p>
                                     <Identicon
-                                      value={adminAccount.adminAddress}
+                                      value={adminAccount.to}
                                       size={32}
                                       theme="polkadot"
                                       className="pe-1"
@@ -374,15 +427,13 @@ const ContractAdmin = () => {
                                 )}
                               </th>
                               <th scope="row">
-                                {adminAccount.contractAddress ? (
+                                {adminAccount.contract ? (
                                   <div className="d-flex">
                                     <p className="ps-1">
-                                      {beatifyAddress(
-                                        adminAccount.contractAddress
-                                      )}
+                                      {beatifyAddress(adminAccount.contract)}
                                     </p>
                                     <Identicon
-                                      value={adminAccount.contractAddress}
+                                      value={adminAccount.contract}
                                       size={32}
                                       theme="polkadot"
                                       className="pe-1"
@@ -392,12 +443,14 @@ const ContractAdmin = () => {
                                   ""
                                 )}
                               </th>
-                              <td></td>
+                              <td>
+                                {adminAccount.timestamp
+                                  ? adminAccount.timestamp
+                                  : ""}
+                              </td>
                               <td>
                                 <button
-                                  onClick={(e) =>
-                                    removeAdmin(adminAccount.adminAddress)
-                                  }
+                                  onClick={(e) => removeAdmin(adminAccount.to)}
                                   className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
                                 >
                                   Remove Artist
@@ -451,16 +504,19 @@ const ContractAdmin = () => {
                       </thead>
                       <tbody>
                         {superAdminList.map(
-                          (superAdminAccount: string, index: number) => (
+                          (
+                            superAdminAccount: superAdminListType,
+                            index: number
+                          ) => (
                             <tr key={index}>
                               <th scope="row">
-                                {superAdminAccount ? (
+                                {superAdminAccount.to ? (
                                   <div className="d-flex">
                                     <p className="ps-1">
-                                      {beatifyAddress(superAdminAccount)}
+                                      {beatifyAddress(superAdminAccount.to)}
                                     </p>
                                     <Identicon
-                                      value={superAdminAccount}
+                                      value={superAdminAccount.to}
                                       size={32}
                                       theme="polkadot"
                                       className="pe-1"
@@ -470,11 +526,16 @@ const ContractAdmin = () => {
                                   ""
                                 )}
                               </th>
-                              <td></td>
+                              <td>
+                                {" "}
+                                {superAdminAccount.timestamp
+                                  ? superAdminAccount.timestamp
+                                  : ""}
+                              </td>
                               <td>
                                 <button
                                   onClick={(e) =>
-                                    removeSuperAdmin(superAdminAccount)
+                                    removeSuperAdmin(superAdminAccount.to)
                                   }
                                   className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
                                 >
