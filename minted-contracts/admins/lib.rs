@@ -2,9 +2,9 @@
 
 #[ink::contract]
 mod admin {
+    use ink::prelude::vec::Vec;
     use ink::storage::Mapping;
     use scale::{Decode, Encode};
-    use ink::prelude::vec::Vec;
 
     /// Event emitted when a user is granted a role.
     #[ink(event)]
@@ -31,15 +31,15 @@ mod admin {
         SuperAdmin,
     }
 
-
     #[derive(Encode, Decode, Debug, PartialEq, Eq, Copy, Clone)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum Error {
         NotOwner,
         NotSuperAdmin,
+        GivenWalletIsNotSuperAdmin,
+        GivenWalletIsNotAdmin,
         AdminAlreadyExist,
         SuperAdminAlreadyExist,
-
     }
 
     #[ink(storage)]
@@ -50,7 +50,7 @@ mod admin {
         admins_accounts: Vec<AccountId>,
         super_admins_accounts: Vec<AccountId>,
         /// Owner of the smart contract.
-        owner: AccountId
+        owner: AccountId,
     }
 
     impl Admin {
@@ -65,13 +65,14 @@ mod admin {
                 owner,
             }
         }
-        
+
         /// Adds the admin role to the given `AccountId`.
         /// The smart contract caller must be the owner.
         #[ink(message)]
         pub fn add_super_admin(&mut self, new_admin: AccountId) -> Result<(), Error> {
             self.ensure_owner()?;
             self.ensure_admin_do_not_exist(new_admin)?;
+
             self.admins.insert(new_admin, &Role::SuperAdmin);
             self.super_admins_accounts.push(new_admin);
 
@@ -80,19 +81,24 @@ mod admin {
                     from: self.env().caller(),
                     to: new_admin,
                     role: Role::SuperAdmin,
-                    contract: [0u8; 32].into()
+                    contract: [0u8; 32].into(),
                 }
-            }); 
+            });
             Ok(())
         }
-        
+
         /// Removes the super admin role from the given `AccountId`.
         /// The smart contract caller must be the owner.
         #[ink(message)]
         pub fn remove_super_admin(&mut self, admin: AccountId) -> Result<(), Error> {
             self.ensure_owner()?;
+
             self.admins.insert(admin, &Role::None);
-            let index = self.super_admins_accounts.iter().position(|x| *x == admin).unwrap();
+            let index = self
+                .super_admins_accounts
+                .iter()
+                .position(|x| *x == admin)
+                .ok_or(Error::GivenWalletIsNotSuperAdmin)?;
             self.super_admins_accounts.remove(index);
 
             self.env().emit_event({
@@ -100,7 +106,7 @@ mod admin {
                     from: self.env().caller(),
                     to: admin,
                     role: Role::None,
-                    contract: [0u8; 32].into()
+                    contract: [0u8; 32].into(),
                 }
             });
             Ok(())
@@ -109,9 +115,14 @@ mod admin {
         /// Adds the admin role to the given `AccountId`.
         /// The smart contract caller must be a super admin.
         #[ink(message)]
-        pub fn add_admin(&mut self, new_admin: AccountId, new_contract: AccountId) -> Result<(), Error> {
+        pub fn add_admin(
+            &mut self,
+            new_admin: AccountId,
+            new_contract: AccountId,
+        ) -> Result<(), Error> {
             self.ensure_super_admins()?;
             self.ensure_admin_do_not_exist(new_admin)?;
+
             self.admins.insert(new_admin, &Role::Admin);
             self.admins_contracts.insert(new_admin, &new_contract);
             self.admins_accounts.push(new_admin);
@@ -120,7 +131,7 @@ mod admin {
                     from: self.env().caller(),
                     to: new_admin,
                     role: Role::Admin,
-                    contract: new_contract
+                    contract: new_contract,
                 }
             });
             Ok(())
@@ -131,17 +142,21 @@ mod admin {
         #[ink(message)]
         pub fn remove_admin(&mut self, admin: AccountId, contract: AccountId) -> Result<(), Error> {
             self.ensure_super_admins()?;
+
             self.admins.insert(admin, &Role::None);
-            //need to remove admin from vec
-            let index = self.admins_accounts.iter().position(|x| *x == admin).unwrap();
+            let index = self
+                .admins_accounts
+                .iter()
+                .position(|x| *x == admin)
+                .ok_or(Error::GivenWalletIsNotAdmin)?;
             self.admins_accounts.remove(index);
-            
+
             self.env().emit_event({
                 Granted {
                     from: self.env().caller(),
                     to: admin,
                     role: Role::None,
-                    contract: contract
+                    contract,
                 }
             });
             Ok(())
@@ -152,33 +167,27 @@ mod admin {
         #[ink(message)]
         pub fn get_artist_contract(&self, admin: AccountId) -> Option<AccountId> {
             self.admins_contracts.get(admin)
-
-          
         }
 
         /// Gets the smart contract address of the given `AccountId`.
         /// Returns `Role::None` if the given `AccountId` is not is the mapping.
         #[ink(message)]
         pub fn get_role(&self, admin: AccountId) -> Role {
-            match self.admins.get(admin) {
-                Some(role) => role,
-                _ => Role::None,
-            }
+            self.admins.get(admin).unwrap_or_default()
         }
-
 
         /// Gets all admins.
-        /// Returns `Vec<AccountId>` 
+        /// Returns `Vec<AccountId>`
         #[ink(message)]
         pub fn get_all_admins(&self) -> Vec<AccountId> {
-            return self.admins_accounts.clone();
+            self.admins_accounts.clone()
         }
 
-         /// Gets all super admins.
-        /// Returns `Vec<AccountId>` 
+        /// Gets all super admins.
+        /// Returns `Vec<AccountId>`
         #[ink(message)]
         pub fn get_all_super_admins(&self) -> Vec<AccountId> {
-             return self.super_admins_accounts.clone();
+            self.super_admins_accounts.clone()
         }
 
         /// Verifies that the caller is the smart contract's owner.
@@ -190,9 +199,10 @@ mod admin {
         }
 
         /// Verifies that new admin is not in the list already, as Admin or as SuperAdmin.
-        fn ensure_admin_do_not_exist(&self, admin: AccountId) -> Result<(), Error> {        
+        fn ensure_admin_do_not_exist(&self, admin: AccountId) -> Result<(), Error> {
             //match !(self.admins.contains(admin) == true  && self.get_role(admin) == Role::Admin) {
-            match !(self.get_role(admin) == Role::Admin || self.get_role(admin) == Role::SuperAdmin) {
+            match !(self.get_role(admin) == Role::Admin || self.get_role(admin) == Role::SuperAdmin)
+            {
                 true => Ok(()),
                 false => Err(Error::AdminAlreadyExist),
             }
@@ -299,7 +309,7 @@ mod admin {
             // Alice adds Bob to the admin role.
             let bob_account_id = ink_e2e::account_id(ink_e2e::AccountKeyring::Bob);
             let add_admin = build_message::<AdminRef>(contract_acc_id.clone())
-                .call(|admin| admin.add_admin(bob_account_id));
+                .call(|admin| admin.add_admin(bob_account_id, contract_acc_id.clone()));
             let add_admin_res = client
                 .call(&ink_e2e::alice(), add_admin, 0, None)
                 .await
@@ -320,7 +330,7 @@ mod admin {
 
             // Alice removes Bob from the admin role.
             let remove_admin = build_message::<AdminRef>(contract_acc_id.clone())
-                .call(|admin| admin.remove_admin(bob_account_id));
+                .call(|admin| admin.remove_admin(bob_account_id, contract_acc_id.clone()));
             let remove_admin_res = client
                 .call(&ink_e2e::alice(), remove_admin, 0, None)
                 .await
