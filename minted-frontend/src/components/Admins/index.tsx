@@ -61,7 +61,7 @@ const ContractAdmin = () => {
   const api = useApi();
   const { wallet } = useWallets();
 
-  const contractAddress = "5CTFboJt1kxwxR2KeTMKp2gmj1VbVnscnsykpfQ63M3krpjm"; // Replace the address of your contract
+  const contractAddress = "5D5G8y4Gusc89E2XjetuwuNAN5GdhnQKUByQJ9NxkCdFwwBG"; // Replace the address of your contract
   const caller = "5FNj1E5Wxqg1vMo1qd6Zi6XZjrAXB8ECuXCyHDrsRQZSAPHL"; //The address of Contract Owner
   const storageDepositLimit = null;
 

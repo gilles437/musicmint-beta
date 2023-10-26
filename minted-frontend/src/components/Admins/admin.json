@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x9e314b261e76610b61ada4a5e56412b8798ee6c031a3695debe8ca9058aacd2d",
+    "hash": "0x3fc8aa851b05a4626aa83b99c93c35ea8e9850e98dde439e674daafe2b1839f6",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.70.0-nightly",
     "build_info": {
@@ -355,7 +355,7 @@
         "default": false,
         "docs": [
           " Gets all admins.",
-          " Returns `Vec<AccountId>` "
+          " Returns `Vec<AccountId>`"
         ],
         "label": "get_all_admins",
         "mutates": false,
@@ -374,7 +374,7 @@
         "default": false,
         "docs": [
           " Gets all super admins.",
-          " Returns `Vec<AccountId>` "
+          " Returns `Vec<AccountId>`"
         ],
         "label": "get_all_super_admins",
         "mutates": false,
@@ -690,10 +690,18 @@
               },
               {
                 "index": 2,
-                "name": "AdminAlreadyExist"
+                "name": "GivenWalletIsNotSuperAdmin"
               },
               {
                 "index": 3,
+                "name": "GivenWalletIsNotAdmin"
+              },
+              {
+                "index": 4,
+                "name": "AdminAlreadyExist"
+              },
+              {
+                "index": 5,
                 "name": "SuperAdminAlreadyExist"
               }
             ]

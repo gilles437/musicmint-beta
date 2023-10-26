@@ -9,7 +9,7 @@ import {Owner, Account, Transfer} from "./model"
 import { BigNumber } from "@ethersproject/bignumber"
 
 //the address of the deployed admins contract
-const CONTRACT_ADDRESS_SS58 = '5CTFboJt1kxwxR2KeTMKp2gmj1VbVnscnsykpfQ63M3krpjm'
+const CONTRACT_ADDRESS_SS58 = '5D5G8y4Gusc89E2XjetuwuNAN5GdhnQKUByQJ9NxkCdFwwBG'
 
 const CONTRACT_ADDRESS = toHex(ss58.decode(CONTRACT_ADDRESS_SS58).bytes)
 const SS58_PREFIX = ss58.decode(CONTRACT_ADDRESS_SS58).prefix
