@@ -253,7 +253,7 @@ mod admin {
 
             // Alice adds Bob to the super admin role.
             let bob_account_id = ink_e2e::account_id(ink_e2e::AccountKeyring::Bob);
-            let add_super_admin = build_message::<AdminRef>(contract_acc_id.clone())
+            let add_super_admin = build_message::<AdminRef>(contract_acc_id)
                 .call(|admin| admin.add_super_admin(bob_account_id));
             let add_super_admin_res = client
                 .call(&ink_e2e::alice(), add_super_admin, 0, None)
@@ -263,7 +263,7 @@ mod admin {
             assert_eq!(add_super_admin_res.return_value(), Ok(()));
 
             // Fetchs the role of Bob
-            let bob_role = build_message::<AdminRef>(contract_acc_id.clone())
+            let bob_role = build_message::<AdminRef>(contract_acc_id)
                 .call(|admin| admin.get_role(bob_account_id));
             let bob_role_res = client
                 .call(&ink_e2e::alice(), bob_role, 0, None)
@@ -274,7 +274,7 @@ mod admin {
             assert_eq!(bob_role_res.return_value(), Role::SuperAdmin);
 
             // Alice removes Bob from the super admin role.
-            let remove_super_admin = build_message::<AdminRef>(contract_acc_id.clone())
+            let remove_super_admin = build_message::<AdminRef>(contract_acc_id)
                 .call(|admin| admin.remove_super_admin(bob_account_id));
             let remove_super_admin_res = client
                 .call(&ink_e2e::alice(), remove_super_admin, 0, None)
@@ -284,7 +284,7 @@ mod admin {
             assert_eq!(remove_super_admin_res.return_value(), Ok(()));
 
             // Fetchs the role of Bob
-            let bob_role = build_message::<AdminRef>(contract_acc_id.clone())
+            let bob_role = build_message::<AdminRef>(contract_acc_id)
                 .call(|admin| admin.get_role(bob_account_id));
             let bob_role_res = client
                 .call(&ink_e2e::alice(), bob_role, 0, None)
@@ -308,8 +308,8 @@ mod admin {
 
             // Alice adds Bob to the admin role.
             let bob_account_id = ink_e2e::account_id(ink_e2e::AccountKeyring::Bob);
-            let add_admin = build_message::<AdminRef>(contract_acc_id.clone())
-                .call(|admin| admin.add_admin(bob_account_id, contract_acc_id.clone()));
+            let add_admin = build_message::<AdminRef>(contract_acc_id)
+                .call(|admin| admin.add_admin(bob_account_id, contract_acc_id));
             let add_admin_res = client
                 .call(&ink_e2e::alice(), add_admin, 0, None)
                 .await
@@ -318,7 +318,7 @@ mod admin {
             assert_eq!(add_admin_res.return_value(), Ok(()));
 
             // Fetchs the role of Bob
-            let bob_role = build_message::<AdminRef>(contract_acc_id.clone())
+            let bob_role = build_message::<AdminRef>(contract_acc_id)
                 .call(|admin| admin.get_role(bob_account_id));
             let bob_role_res = client
                 .call(&ink_e2e::alice(), bob_role, 0, None)
@@ -329,8 +329,8 @@ mod admin {
             assert_eq!(bob_role_res.return_value(), Role::Admin);
 
             // Alice removes Bob from the admin role.
-            let remove_admin = build_message::<AdminRef>(contract_acc_id.clone())
-                .call(|admin| admin.remove_admin(bob_account_id, contract_acc_id.clone()));
+            let remove_admin = build_message::<AdminRef>(contract_acc_id)
+                .call(|admin| admin.remove_admin(bob_account_id, contract_acc_id));
             let remove_admin_res = client
                 .call(&ink_e2e::alice(), remove_admin, 0, None)
                 .await
@@ -339,7 +339,7 @@ mod admin {
             assert_eq!(remove_admin_res.return_value(), Ok(()));
 
             // Fetchs the role of Bob
-            let bob_role = build_message::<AdminRef>(contract_acc_id.clone())
+            let bob_role = build_message::<AdminRef>(contract_acc_id)
                 .call(|admin| admin.get_role(bob_account_id));
             let bob_role_res = client
                 .call(&ink_e2e::alice(), bob_role, 0, None)
