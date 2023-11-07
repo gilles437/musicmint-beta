@@ -161,7 +161,7 @@ pub mod albums {
 
         /// Creates an album.
         #[ink(message)]
-        pub fn create_album(&mut self, max_supply: Balance) -> Result<(), Error> {
+        pub fn create_album(&mut self, max_supply: Balance) -> Result<AlbumId, Error> {
             // Ensures caller is owner
             self.ensure_owner()?;
 
@@ -175,12 +175,16 @@ pub mod albums {
             self.data
                 .supply
                 .insert(&Some(&combine_ids(self.current_album_id, 0)), &max_supply);
-            Ok(())
+            Ok(self.current_album_id)
         }
 
         /// Creates a song within an album.
         #[ink(message)]
-        pub fn create_song(&mut self, album_id: AlbumId, max_supply: Balance) -> Result<(), Error> {
+        pub fn create_song(
+            &mut self,
+            album_id: AlbumId,
+            max_supply: Balance,
+        ) -> Result<SongId, Error> {
             // Ensures caller is owner
             self.ensure_owner()?;
 
@@ -194,7 +198,7 @@ pub mod albums {
             self.data
                 .supply
                 .insert(&Some(&combine_ids(album_id, song_id)), &max_supply);
-            Ok(())
+            Ok(song_id)
         }
 
         /// Deletes an album.
@@ -236,15 +240,15 @@ pub mod albums {
 
         /// Mintes a new album to the caller.
         #[ink(message)]
-        pub fn mint_album(&mut self, album_id: AlbumId, amount: Balance) -> Result<(), AFT37Error> {
+        pub fn mint_album(&mut self, album_id: AlbumId, amount: Balance) -> Result<Id, AFT37Error> {
             let id = combine_ids(album_id, 0);
 
             if !is_album(&id) || self.denied_ids.get(&id).is_some() {
                 return Err(AFT37Error::Custom(String::from("Id is denied")));
             }
 
-            aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id, amount)])?;
-            Ok(())
+            aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id.clone(), amount)])?;
+            Ok(id)
         }
 
         /// Mintes a new song to the caller.
@@ -254,13 +258,15 @@ pub mod albums {
             album_id: AlbumId,
             song_id: SongId,
             amount: Balance,
-        ) -> Result<(), AFT37Error> {
+        ) -> Result<Id, AFT37Error> {
             let id = combine_ids(album_id, song_id);
 
             if self.denied_ids.get(&id).is_some() {
                 return Err(AFT37Error::Custom(String::from("Id is denied")));
             }
-            aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id, amount)])
+
+            aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id.clone(), amount)])?;
+            Ok(id)
         }
 
         /// Verifies that the caller is the smart contract's owner.
