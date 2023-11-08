@@ -15,7 +15,7 @@ scale-info = { version = "2.6", default-features = false, features = [
 ], optional = true }
 
 # These dependencies
-allfeat-contracts = { git = "https://github.com/Allfeat/allfeat-contracts", branch = "feat/aft37-uri-storage", default-features = false, features = [
+allfeat-contracts = { git = "https://github.com/Allfeat/allfeat-contracts", branch = "feat/aft37-payable-mint", default-features = false, features = [
     "aft37",
 ] }
 openbrush = { git = "https://github.com/Brushfam/openbrush-contracts", tag = "4.0.0", default-features = false }

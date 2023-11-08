@@ -33,21 +33,27 @@
 ///     }
 /// }
 /// ```
-#[allfeat_contracts::implementation(AFT37, AFT37URIStorage)]
+#[openbrush::implementation(Ownable)]
+#[allfeat_contracts::implementation(AFT37, AFT37URIStorage, AFT37PayableMint)]
 #[allfeat_contracts::contract]
 pub mod albums {
-    use allfeat_contracts::aft37::{self, extensions::uri_storage::URI};
+    use allfeat_contracts::aft37::{
+        self,
+        extensions::{payable_mint, uri_storage::URI},
+    };
     use ink::{prelude::vec, storage::Mapping};
-    use openbrush::traits::{Storage, String};
+    use openbrush::{
+        contracts::ownable::OwnableError,
+        traits::{Storage, String},
+    };
     use scale::{Decode, Encode};
-
 
     /// Event emitted when an artist creates or deletes a creation (song or album).
     #[ink(event)]
     pub struct ItemCreated {
         /// The Artist.
         from: AccountId,
-        /// Album id and song Id. 
+        /// Album id and song Id.
         album_id: AlbumId,
         song_id: SongId,
         /// The type of creation.
@@ -60,7 +66,7 @@ pub mod albums {
     pub struct ItemMinted {
         /// The Artist.
         from: AccountId,
-        /// Album id and song Id. 
+        /// Album id and song Id.
         album_id: AlbumId,
         song_id: SongId,
         /// The type of creation.
@@ -68,19 +74,19 @@ pub mod albums {
         amount: Balance,
     }
 
-     /// The type of action (album/song created/removed).
-     #[derive(Encode, Decode, Eq, PartialEq, Default, Debug)]
-     #[cfg_attr(
-         feature = "std",
-         derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
-     )]
+    /// The type of action (album/song created/removed).
+    #[derive(Encode, Decode, Eq, PartialEq, Default, Debug)]
+    #[cfg_attr(
+        feature = "std",
+        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
     pub enum ActionType {
         #[default]
         None,
         AddAlbum,
         AddSong,
         DeleteAlbum,
-        DeleteSong
+        DeleteSong,
     }
 
     /// The type of mint (song or album).
@@ -104,10 +110,13 @@ pub mod albums {
         data: aft37::Data,
 
         #[storage_field]
-        uris: uri_storage::Data,
+        payable_mint: payable_mint::Data,
 
-        /// The owner of the contract.
-        owner: AccountId,
+        #[storage_field]
+        ownable: ownable::Data,
+
+        #[storage_field]
+        uris: uri_storage::Data,
 
         /// A mapping of denied IDs. These IDs are not allowed to be used.
         /// Can be useful if you want to disable minting a specific song/entire album.
@@ -184,19 +193,28 @@ pub mod albums {
         InvalidSongId,
     }
 
+    impl From<OwnableError> for Error {
+        fn from(_: OwnableError) -> Self {
+            Error::NotOwner
+        }
+    }
+
     impl Contract {
         #[ink(constructor)]
         pub fn new(base_uri: Option<URI>, owner: AccountId) -> Self {
             let mut instance = Self {
-                owner,
                 data: aft37::Data::default(),
                 denied_ids: Mapping::default(),
                 songs: Mapping::default(),
-                current_album_id: 0,
                 uris: uri_storage::Data::default(),
+                ownable: ownable::Data::default(),
+                payable_mint: payable_mint::Data::default(),
+                current_album_id: 0,
             };
 
             uri_storage::Internal::_set_base_uri(&mut instance, base_uri);
+            ownable::InternalImpl::_init_with_owner(&mut instance, owner);
+
             instance
         }
 
@@ -204,21 +222,23 @@ pub mod albums {
         pub fn set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), Error> {
             // PANIC: unwrap is okay cause we are sure _set_token_uri will not fail
             uri_storage::Internal::_set_token_uri(self, token_id, token_uri).unwrap();
+
             Ok(())
         }
 
         /// Denies an ID from being used.
         #[ink(message)]
-        pub fn deny(&mut self, album_id: AlbumId, song_id: SongId) {
+        #[openbrush::modifiers(only_owner)]
+        pub fn deny(&mut self, album_id: AlbumId, song_id: SongId) -> Result<(), Error> {
             self.denied_ids.insert(&combine_ids(album_id, song_id), &());
+
+            Ok(())
         }
 
         /// Creates an album.
         #[ink(message)]
+        #[openbrush::modifiers(only_owner)]
         pub fn create_album(&mut self, max_supply: Balance) -> Result<AlbumId, Error> {
-            // Ensures caller is owner
-            self.ensure_owner()?;
-
             // Increment current AlbumId counter
             self.current_album_id += 1;
             // Insert new album into songs mapping
@@ -233,10 +253,10 @@ pub mod albums {
             self.env().emit_event({
                 ItemCreated {
                     from: self.env().caller(),
-                    album_id: self.current_album_id,
-                    song_id:0,
                     item: ActionType::AddAlbum,
-                    max_supply: max_supply,
+                    album_id: self.current_album_id,
+                    song_id: 0,
+                    max_supply,
                 }
             });
 
@@ -245,14 +265,12 @@ pub mod albums {
 
         /// Creates a song within an album.
         #[ink(message)]
+        #[openbrush::modifiers(only_owner)]
         pub fn create_song(
             &mut self,
             album_id: AlbumId,
             max_supply: Balance,
         ) -> Result<SongId, Error> {
-            // Ensures caller is owner
-            self.ensure_owner()?;
-
             let mut album = self.songs.get(album_id).ok_or(Error::InvalidAlbumId)?;
             let song_id = album.len() as SongId;
 
@@ -264,25 +282,23 @@ pub mod albums {
                 .supply
                 .insert(&Some(&combine_ids(album_id, song_id)), &max_supply);
 
-                self.env().emit_event({
-                    ItemCreated {
-                        from: self.env().caller(),
-                        album_id: album_id,
-                        song_id:song_id,
-                        item: ActionType::AddSong,
-                        max_supply: max_supply,
-                    }
-                });
+            self.env().emit_event({
+                ItemCreated {
+                    from: self.env().caller(),
+                    item: ActionType::AddSong,
+                    album_id,
+                    song_id,
+                    max_supply,
+                }
+            });
 
             Ok(song_id)
         }
 
         /// Deletes an album.
         #[ink(message)]
+        #[openbrush::modifiers(only_owner)]
         pub fn delete_album(&mut self, album_id: AlbumId) -> Result<(), Error> {
-            // Ensures caller is owner
-            self.ensure_owner()?;
-
             // Check if album id exists
             if self.songs.get(album_id).is_none() {
                 return Err(Error::InvalidAlbumId);
@@ -296,9 +312,9 @@ pub mod albums {
             self.env().emit_event({
                 ItemCreated {
                     from: self.env().caller(),
-                    album_id: self.current_album_id,
-                    song_id:0,
                     item: ActionType::DeleteAlbum,
+                    album_id: self.current_album_id,
+                    song_id: 0,
                     max_supply: 0,
                 }
             });
@@ -308,10 +324,8 @@ pub mod albums {
 
         /// Deletes a song from an album.
         #[ink(message)]
+        #[openbrush::modifiers(only_owner)]
         pub fn delete_song(&mut self, album_id: AlbumId, song_id: SongId) -> Result<(), Error> {
-            // Ensures caller is owner
-            self.ensure_owner()?;
-
             if let Some(album) = self.songs.get(album_id) {
                 if album.get(song_id as usize).is_some() {
                     // Remove song from songs mapping
@@ -319,13 +333,13 @@ pub mod albums {
                     self.env().emit_event({
                         ItemCreated {
                             from: self.env().caller(),
-                            album_id: album_id,
-                            song_id:song_id,
                             item: ActionType::DeleteSong,
                             max_supply: 0,
+                            album_id,
+                            song_id,
                         }
                     });
-        
+
                     Ok(())
                 } else {
                     Err(Error::InvalidSongId)
@@ -333,8 +347,6 @@ pub mod albums {
             } else {
                 Err(Error::InvalidAlbumId)
             }
-
-   
         }
 
         /// Mintes a new album to the caller.
@@ -351,10 +363,10 @@ pub mod albums {
             self.env().emit_event({
                 ItemMinted {
                     from: self.env().caller(),
-                    album_id: album_id,
-                    song_id:0,
                     mint_type: MintType::MintedAlbum,
-                    amount: amount,
+                    song_id: 0,
+                    album_id,
+                    amount,
                 }
             });
 
@@ -372,31 +384,23 @@ pub mod albums {
             let id = combine_ids(album_id, song_id);
 
             if self.denied_ids.get(&id).is_some() {
-                return Err(AFT37Error::Custom(String::from("Id is denied")));
-            }
+                Err(AFT37Error::Custom(String::from("Id is denied")))
+            } else {
+                aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id.clone(), amount)])?;
+                self.env().emit_event({
+                    ItemMinted {
+                        from: self.env().caller(),
+                        mint_type: MintType::MintedSong,
+                        album_id,
+                        song_id,
+                        amount,
+                    }
+                });
 
-            aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id.clone(), amount)])?;
-            self.env().emit_event({
-                ItemMinted {
-                    from: self.env().caller(),
-                    album_id: album_id,
-                    song_id:song_id,
-                    mint_type: MintType::MintedSong,
-                    amount: amount,
-                }
-            });
-            Ok(id)
-        }
-
-        /// Verifies that the caller is the smart contract's owner.
-        fn ensure_owner(&self) -> Result<(), Error> {
-            match self.env().caller() == self.owner {
-                true => Ok(()),
-                false => Err(Error::NotOwner),
+                Ok(id)
             }
         }
     }
-
     // #[cfg(all(test, feature = "e2e-tests"))]
     // pub mod tests {
     //     use allfeat_contracts::aft37::aft37_external::AFT37;
