@@ -41,6 +41,60 @@ pub mod albums {
     use openbrush::traits::{Storage, String};
     use scale::{Decode, Encode};
 
+
+    /// Event emitted when an artist creates or deletes a creation (song or album).
+    #[ink(event)]
+    pub struct ItemCreated {
+        /// The Artist.
+        from: AccountId,
+        /// Album id and song Id. 
+        album_id: AlbumId,
+        song_id: SongId,
+        /// The type of creation.
+        item: ActionType,
+        max_supply: Balance,
+    }
+
+    /// Event emitted when a user mints a creation (song or album).
+    #[ink(event)]
+    pub struct ItemMinted {
+        /// The Artist.
+        from: AccountId,
+        /// Album id and song Id. 
+        album_id: AlbumId,
+        song_id: SongId,
+        /// The type of creation.
+        mint_type: MintType,
+        amount: Balance,
+    }
+
+     /// The type of action (album/song created/removed).
+     #[derive(Encode, Decode, Eq, PartialEq, Default, Debug)]
+     #[cfg_attr(
+         feature = "std",
+         derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+     )]
+    pub enum ActionType {
+        #[default]
+        None,
+        AddAlbum,
+        AddSong,
+        DeleteAlbum,
+        DeleteSong
+    }
+
+    /// The type of mint (song or album).
+    #[derive(Encode, Decode, Eq, PartialEq, Default, Debug)]
+    #[cfg_attr(
+        feature = "std",
+        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    pub enum MintType {
+        #[default]
+        MintedAlbum,
+        MintedSong,
+    }
+
     /// The main contract structure.
     #[derive(Storage)]
     #[ink(storage)]
@@ -175,6 +229,17 @@ pub mod albums {
             self.data
                 .supply
                 .insert(&Some(&combine_ids(self.current_album_id, 0)), &max_supply);
+
+            self.env().emit_event({
+                ItemCreated {
+                    from: self.env().caller(),
+                    album_id: self.current_album_id,
+                    song_id:0,
+                    item: ActionType::AddAlbum,
+                    max_supply: max_supply,
+                }
+            });
+
             Ok(self.current_album_id)
         }
 
@@ -198,6 +263,17 @@ pub mod albums {
             self.data
                 .supply
                 .insert(&Some(&combine_ids(album_id, song_id)), &max_supply);
+
+                self.env().emit_event({
+                    ItemCreated {
+                        from: self.env().caller(),
+                        album_id: album_id,
+                        song_id:song_id,
+                        item: ActionType::AddSong,
+                        max_supply: max_supply,
+                    }
+                });
+
             Ok(song_id)
         }
 
@@ -216,6 +292,17 @@ pub mod albums {
 
             // Remove album from songs mapping
             self.songs.remove(self.current_album_id);
+
+            self.env().emit_event({
+                ItemCreated {
+                    from: self.env().caller(),
+                    album_id: self.current_album_id,
+                    song_id:0,
+                    item: ActionType::DeleteAlbum,
+                    max_supply: 0,
+                }
+            });
+
             Ok(())
         }
 
@@ -229,6 +316,16 @@ pub mod albums {
                 if album.get(song_id as usize).is_some() {
                     // Remove song from songs mapping
                     self.songs.remove(song_id);
+                    self.env().emit_event({
+                        ItemCreated {
+                            from: self.env().caller(),
+                            album_id: album_id,
+                            song_id:song_id,
+                            item: ActionType::DeleteSong,
+                            max_supply: 0,
+                        }
+                    });
+        
                     Ok(())
                 } else {
                     Err(Error::InvalidSongId)
@@ -236,6 +333,8 @@ pub mod albums {
             } else {
                 Err(Error::InvalidAlbumId)
             }
+
+   
         }
 
         /// Mintes a new album to the caller.
@@ -248,6 +347,17 @@ pub mod albums {
             }
 
             aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id.clone(), amount)])?;
+
+            self.env().emit_event({
+                ItemMinted {
+                    from: self.env().caller(),
+                    album_id: album_id,
+                    song_id:0,
+                    mint_type: MintType::MintedAlbum,
+                    amount: amount,
+                }
+            });
+
             Ok(id)
         }
 
@@ -266,6 +376,15 @@ pub mod albums {
             }
 
             aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id.clone(), amount)])?;
+            self.env().emit_event({
+                ItemMinted {
+                    from: self.env().caller(),
+                    album_id: album_id,
+                    song_id:song_id,
+                    mint_type: MintType::MintedSong,
+                    amount: amount,
+                }
+            });
             Ok(id)
         }
 
