@@ -39,7 +39,10 @@
 pub mod albums {
     use allfeat_contracts::aft37::{
         self,
-        extensions::{payable_mint, uri_storage::URI},
+        extensions::{
+            payable_mint::{self, AFT37PayableMintImpl},
+            uri_storage::URI,
+        },
     };
     use ink::{prelude::vec, storage::Mapping};
     use openbrush::{
@@ -48,57 +51,43 @@ pub mod albums {
     };
     use scale::{Decode, Encode};
 
-    /// Event emitted when an artist creates or deletes a creation (song or album).
+    /// Event emitted when an artist creates a song or an album.
     #[ink(event)]
     pub struct ItemCreated {
-        /// The Artist.
+        /// The artist.
         from: AccountId,
-        /// Album id and song Id.
+        /// Album id.
         album_id: AlbumId,
+        /// Song id.
         song_id: SongId,
-        /// The type of creation.
-        item: ActionType,
+        /// Max supply of the creation.
         max_supply: Balance,
+        /// The URI of the creation.
+        uri: URI,
+    }
+
+    /// Event emitted when an artist deletes an album or a song.
+    #[ink(event)]
+    pub struct ItemDeleted {
+        /// Album id.
+        album_id: AlbumId,
+        /// Song id.
+        song_id: SongId,
     }
 
     /// Event emitted when a user mints a creation (song or album).
     #[ink(event)]
     pub struct ItemMinted {
-        /// The Artist.
+        /// The artist.
         from: AccountId,
-        /// Album id and song Id.
+        /// The fan.
+        to: AccountId,
+        /// Album id.
         album_id: AlbumId,
+        /// Song id.
         song_id: SongId,
-        /// The type of creation.
-        mint_type: MintType,
+        /// Amount minted
         amount: Balance,
-    }
-
-    /// The type of action (album/song created/removed).
-    #[derive(Encode, Decode, Eq, PartialEq, Default, Debug)]
-    #[cfg_attr(
-        feature = "std",
-        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
-    )]
-    pub enum ActionType {
-        #[default]
-        None,
-        AddAlbum,
-        AddSong,
-        DeleteAlbum,
-        DeleteSong,
-    }
-
-    /// The type of mint (song or album).
-    #[derive(Encode, Decode, Eq, PartialEq, Default, Debug)]
-    #[cfg_attr(
-        feature = "std",
-        derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
-    )]
-    pub enum MintType {
-        #[default]
-        MintedAlbum,
-        MintedSong,
     }
 
     /// The main contract structure.
@@ -256,14 +245,13 @@ pub mod albums {
             self.payable_mint
                 .max_supply
                 .insert(&token_id, &(max_supply as u64));
-
-            self.set_token_uri(token_id.clone(), album_uri)?;
+            self.set_token_uri(token_id.clone(), album_uri.clone())?;
 
             self.env().emit_event({
                 ItemCreated {
                     from: self.env().caller(),
-                    item: ActionType::AddAlbum,
                     album_id: self.current_album_id,
+                    uri: album_uri,
                     song_id: 0,
                     max_supply,
                 }
@@ -284,23 +272,21 @@ pub mod albums {
         ) -> Result<Id, Error> {
             let mut album = self.songs.get(album_id).ok_or(Error::InvalidAlbumId)?;
             let song_id = album.len() as SongId;
+            let token_id = combine_ids(album_id, song_id);
 
             // Add song into album
             album.push(song_id);
-
-            let token_id = combine_ids(album_id, song_id);
 
             self.payable_mint.price_per_mint.insert(&token_id, &price);
             self.payable_mint
                 .max_supply
                 .insert(&token_id, &(max_supply as u64));
-
-            self.set_token_uri(token_id.clone(), song_uri)?;
+            self.set_token_uri(token_id.clone(), song_uri.clone())?;
 
             self.env().emit_event({
                 ItemCreated {
                     from: self.env().caller(),
-                    item: ActionType::AddSong,
+                    uri: song_uri,
                     album_id,
                     song_id,
                     max_supply,
@@ -325,12 +311,9 @@ pub mod albums {
             self.songs.remove(self.current_album_id);
 
             self.env().emit_event({
-                ItemCreated {
-                    from: self.env().caller(),
-                    item: ActionType::DeleteAlbum,
+                ItemDeleted {
                     album_id: self.current_album_id,
                     song_id: 0,
-                    max_supply: 0,
                 }
             });
 
@@ -345,15 +328,7 @@ pub mod albums {
                 if album.get(song_id as usize).is_some() {
                     // Remove song from songs mapping
                     self.songs.remove(song_id);
-                    self.env().emit_event({
-                        ItemCreated {
-                            from: self.env().caller(),
-                            item: ActionType::DeleteSong,
-                            max_supply: 0,
-                            album_id,
-                            song_id,
-                        }
-                    });
+                    self.env().emit_event(ItemDeleted { album_id, song_id });
 
                     Ok(())
                 } else {
@@ -370,22 +345,27 @@ pub mod albums {
             let id = combine_ids(album_id, 0);
 
             if !is_album(&id) || self.denied_ids.get(&id).is_some() {
-                return Err(AFT37Error::Custom(String::from("Id is denied")));
+                Err(AFT37Error::Custom(String::from("Id is denied")))
+            } else {
+                let caller = self.env().caller();
+
+                allfeat_contracts::aft37::extensions::payable_mint::AFT37PayableMintImpl::mint(
+                    self,
+                    caller,
+                    vec![(id.clone(), amount)],
+                )?;
+                self.env().emit_event({
+                    ItemMinted {
+                        from: self.ownable.owner.get().unwrap().unwrap(),
+                        to: caller,
+                        song_id: 0,
+                        album_id,
+                        amount,
+                    }
+                });
+
+                Ok(id)
             }
-
-            aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id.clone(), amount)])?;
-
-            self.env().emit_event({
-                ItemMinted {
-                    from: self.env().caller(),
-                    mint_type: MintType::MintedAlbum,
-                    song_id: 0,
-                    album_id,
-                    amount,
-                }
-            });
-
-            Ok(id)
         }
 
         /// Mintes a new song to the caller.
@@ -401,11 +381,17 @@ pub mod albums {
             if self.denied_ids.get(&id).is_some() {
                 Err(AFT37Error::Custom(String::from("Id is denied")))
             } else {
-                aft37::Internal::_mint_to(self, Self::env().caller(), vec![(id.clone(), amount)])?;
+                let caller = self.env().caller();
+
+                allfeat_contracts::aft37::extensions::payable_mint::AFT37PayableMintImpl::mint(
+                    self,
+                    caller,
+                    vec![(id.clone(), amount)],
+                )?;
                 self.env().emit_event({
                     ItemMinted {
-                        from: self.env().caller(),
-                        mint_type: MintType::MintedSong,
+                        from: self.ownable.owner.get().unwrap().unwrap(),
+                        to: caller,
                         album_id,
                         song_id,
                         amount,
