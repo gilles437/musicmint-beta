@@ -86,8 +86,6 @@ pub mod albums {
         album_id: AlbumId,
         /// Song id.
         song_id: SongId,
-        /// Amount minted
-        amount: Balance,
     }
 
     /// The main contract structure.
@@ -189,7 +187,7 @@ pub mod albums {
     }
 
     impl Contract {
-        #[ink(constructor)]
+        #[ink(constructor, payable)]
         pub fn new(base_uri: Option<URI>, owner: AccountId) -> Self {
             let mut instance = Self {
                 data: aft37::Data::default(),
@@ -225,7 +223,7 @@ pub mod albums {
         }
 
         /// Creates an album.
-        #[ink(message)]
+        #[ink(message, payable)]
         #[openbrush::modifiers(only_owner)]
         pub fn create_album(
             &mut self,
@@ -261,7 +259,7 @@ pub mod albums {
         }
 
         /// Creates a song within an album.
-        #[ink(message)]
+        #[ink(message, payable)]
         #[openbrush::modifiers(only_owner)]
         pub fn create_song(
             &mut self,
@@ -340,8 +338,8 @@ pub mod albums {
         }
 
         /// Mintes a new album to the caller.
-        #[ink(message)]
-        pub fn mint_album(&mut self, album_id: AlbumId, amount: Balance) -> Result<Id, AFT37Error> {
+        #[ink(message, payable)]
+        pub fn mint_album(&mut self, album_id: AlbumId) -> Result<Id, AFT37Error> {
             let id = combine_ids(album_id, 0);
 
             if !is_album(&id) || self.denied_ids.get(&id).is_some() {
@@ -352,7 +350,7 @@ pub mod albums {
                 allfeat_contracts::aft37::extensions::payable_mint::AFT37PayableMintImpl::mint(
                     self,
                     caller,
-                    vec![(id.clone(), amount)],
+                    vec![(id.clone(), 1)],
                 )?;
                 self.env().emit_event({
                     ItemMinted {
@@ -360,7 +358,6 @@ pub mod albums {
                         to: caller,
                         song_id: 0,
                         album_id,
-                        amount,
                     }
                 });
 
@@ -369,13 +366,8 @@ pub mod albums {
         }
 
         /// Mintes a new song to the caller.
-        #[ink(message)]
-        pub fn mint_song(
-            &mut self,
-            album_id: AlbumId,
-            song_id: SongId,
-            amount: Balance,
-        ) -> Result<Id, AFT37Error> {
+        #[ink(message, payable)]
+        pub fn mint_song(&mut self, album_id: AlbumId, song_id: SongId) -> Result<Id, AFT37Error> {
             let id = combine_ids(album_id, song_id);
 
             if self.denied_ids.get(&id).is_some() {
@@ -386,7 +378,7 @@ pub mod albums {
                 allfeat_contracts::aft37::extensions::payable_mint::AFT37PayableMintImpl::mint(
                     self,
                     caller,
-                    vec![(id.clone(), amount)],
+                    vec![(id.clone(), 1)],
                 )?;
                 self.env().emit_event({
                     ItemMinted {
@@ -394,7 +386,6 @@ pub mod albums {
                         to: caller,
                         album_id,
                         song_id,
-                        amount,
                     }
                 });
 
