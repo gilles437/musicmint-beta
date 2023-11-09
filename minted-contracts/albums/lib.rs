@@ -238,17 +238,23 @@ pub mod albums {
         /// Creates an album.
         #[ink(message)]
         #[openbrush::modifiers(only_owner)]
-        pub fn create_album(&mut self, max_supply: Balance) -> Result<AlbumId, Error> {
+        pub fn create_album(
+            &mut self,
+            max_supply: Balance,
+            album_uri: URI,
+        ) -> Result<AlbumId, Error> {
             // Increment current AlbumId counter
             self.current_album_id += 1;
             // Insert new album into songs mapping
             self.songs
                 .insert(self.current_album_id, &Vec::<SongId>::new());
 
+            let token_id = combine_ids(self.current_album_id, 0);
+
             // Mint max supply of album
-            self.data
-                .supply
-                .insert(&Some(&combine_ids(self.current_album_id, 0)), &max_supply);
+            self.data.supply.insert(&Some(&token_id), &max_supply);
+
+            self.set_token_uri(token_id, album_uri)?;
 
             self.env().emit_event({
                 ItemCreated {
@@ -270,6 +276,7 @@ pub mod albums {
             &mut self,
             album_id: AlbumId,
             max_supply: Balance,
+            song_uri: URI,
         ) -> Result<SongId, Error> {
             let mut album = self.songs.get(album_id).ok_or(Error::InvalidAlbumId)?;
             let song_id = album.len() as SongId;
@@ -277,10 +284,12 @@ pub mod albums {
             // Add song into album
             album.push(song_id);
 
+            let token_id = combine_ids(album_id, song_id);
+
             // Mint max supply of song
-            self.data
-                .supply
-                .insert(&Some(&combine_ids(album_id, song_id)), &max_supply);
+            self.data.supply.insert(&Some(&token_id), &max_supply);
+
+            self.set_token_uri(token_id, song_uri)?;
 
             self.env().emit_event({
                 ItemCreated {
