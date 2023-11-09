@@ -241,8 +241,9 @@ pub mod albums {
         pub fn create_album(
             &mut self,
             max_supply: Balance,
+            price: Balance,
             album_uri: URI,
-        ) -> Result<AlbumId, Error> {
+        ) -> Result<Id, Error> {
             // Increment current AlbumId counter
             self.current_album_id += 1;
             // Insert new album into songs mapping
@@ -251,10 +252,12 @@ pub mod albums {
 
             let token_id = combine_ids(self.current_album_id, 0);
 
-            // Mint max supply of album
-            self.data.supply.insert(&Some(&token_id), &max_supply);
+            self.payable_mint.price_per_mint.insert(&token_id, &price);
+            self.payable_mint
+                .max_supply
+                .insert(&token_id, &(max_supply as u64));
 
-            self.set_token_uri(token_id, album_uri)?;
+            self.set_token_uri(token_id.clone(), album_uri)?;
 
             self.env().emit_event({
                 ItemCreated {
@@ -266,7 +269,7 @@ pub mod albums {
                 }
             });
 
-            Ok(self.current_album_id)
+            Ok(token_id)
         }
 
         /// Creates a song within an album.
@@ -276,8 +279,9 @@ pub mod albums {
             &mut self,
             album_id: AlbumId,
             max_supply: Balance,
+            price: Balance,
             song_uri: URI,
-        ) -> Result<SongId, Error> {
+        ) -> Result<Id, Error> {
             let mut album = self.songs.get(album_id).ok_or(Error::InvalidAlbumId)?;
             let song_id = album.len() as SongId;
 
@@ -286,10 +290,12 @@ pub mod albums {
 
             let token_id = combine_ids(album_id, song_id);
 
-            // Mint max supply of song
-            self.data.supply.insert(&Some(&token_id), &max_supply);
+            self.payable_mint.price_per_mint.insert(&token_id, &price);
+            self.payable_mint
+                .max_supply
+                .insert(&token_id, &(max_supply as u64));
 
-            self.set_token_uri(token_id, song_uri)?;
+            self.set_token_uri(token_id.clone(), song_uri)?;
 
             self.env().emit_event({
                 ItemCreated {
@@ -301,7 +307,7 @@ pub mod albums {
                 }
             });
 
-            Ok(song_id)
+            Ok(token_id)
         }
 
         /// Deletes an album.
