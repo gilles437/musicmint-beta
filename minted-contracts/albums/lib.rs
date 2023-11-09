@@ -205,7 +205,7 @@ pub mod albums {
             instance
         }
 
-        #[ink(message)]
+        #[ink(message, payable)]
         pub fn set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), Error> {
             // PANIC: unwrap is okay cause we are sure _set_token_uri will not fail
             uri_storage::Internal::_set_token_uri(self, token_id, token_uri).unwrap();
