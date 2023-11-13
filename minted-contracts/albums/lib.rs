@@ -1,12 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
-///! Album smart contract prototype for Allfeat
-///* TODO
-///* - Replace u16 by u8?
-///
-///* This contract integrates the functionality of the aft37 token standard
-///* and metadata handling for each token, along with specific structures to manage albums and songs.
-///* It is only a prototype, might be changed in the future by a new type of contract ( AFT38 specifically designed for albums )
+//! Album smart contract prototype for Allfeat
 
 /// Possible design for ipfs storage
 /// ```json
@@ -93,12 +87,15 @@ pub mod albums {
         #[storage_field]
         data: aft37::Data,
 
+        /// The payable mint data structure, managing the price and max supply of each token.
         #[storage_field]
         payable_mint: payable_mint::Data,
 
+        /// The ownable data structure, managing the owner of the contract.
         #[storage_field]
         ownable: ownable::Data,
 
+        /// The URI storage data structure, managing the base URI and token URIs.
         #[storage_field]
         uris: uri_storage::Data,
 
@@ -169,6 +166,7 @@ pub mod albums {
         }
     }
 
+    /// Errors that can occur during execution of the contract.
     #[derive(Encode, Decode, Debug, PartialEq, Eq)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum Error {
@@ -336,8 +334,11 @@ pub mod albums {
         #[ink(message, payable)]
         pub fn mint_album(&mut self, album_id: AlbumId) -> Result<Id, Error> {
             let id = combine_ids(album_id, 0);
-            self.denied_ids.get(&id).ok_or(Error::DeniedId)?;
             let caller = self.env().caller();
+
+            if self.denied_ids.get(&id).is_some() {
+                return Err(Error::DeniedId);
+            }
 
             allfeat_contracts::aft37::extensions::payable_mint::AFT37PayableMintImpl::mint(
                 self,
@@ -361,8 +362,11 @@ pub mod albums {
         #[ink(message, payable)]
         pub fn mint_song(&mut self, album_id: AlbumId, song_id: SongId) -> Result<Id, Error> {
             let id = combine_ids(album_id, song_id);
-            self.denied_ids.get(&id).ok_or(Error::DeniedId)?;
             let caller = self.env().caller();
+
+            if self.denied_ids.get(&id).is_some() {
+                return Err(Error::DeniedId);
+            }
 
             allfeat_contracts::aft37::extensions::payable_mint::AFT37PayableMintImpl::mint(
                 self,
