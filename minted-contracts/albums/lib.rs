@@ -210,13 +210,6 @@ pub mod albums {
             instance
         }
 
-        /// Sets the URI for the given token
-        #[ink(message)]
-        pub fn set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), Error> {
-            self.uris.token_uris.insert(&token_id, &token_uri);
-            Ok(())
-        }
-
         /// Denies an ID from being used.
         #[ink(message)]
         #[openbrush::modifiers(only_owner)]
@@ -235,8 +228,6 @@ pub mod albums {
             price: Balance,
             album_uri: URI,
         ) -> Result<Id, Error> {
-            // Increment current AlbumId counter
-            self.current_album_id += 1;
             // Insert new album into songs mapping
             self.songs
                 .insert(self.current_album_id, &Vec::<SongId>::new());
@@ -247,7 +238,7 @@ pub mod albums {
             self.payable_mint
                 .max_supply
                 .insert(&token_id, &(max_supply as u64));
-            self.set_token_uri(token_id.clone(), album_uri.clone())?;
+            self.uris.token_uris.insert(&token_id, &album_uri);
 
             self.env().emit_event({
                 ItemCreated {
@@ -258,6 +249,9 @@ pub mod albums {
                     max_supply,
                 }
             });
+
+            // Increment current AlbumId counter
+            self.current_album_id += 1;
 
             Ok(token_id)
         }
@@ -273,17 +267,18 @@ pub mod albums {
             song_uri: URI,
         ) -> Result<Id, Error> {
             let mut album = self.songs.get(album_id).ok_or(Error::InvalidAlbumId)?;
-            let song_id = album.len() as SongId;
+            let song_id = (album.len() + 1) as SongId;
             let token_id = combine_ids(album_id, song_id);
 
             // Add song into album
             album.push(song_id);
+            self.songs.insert(album_id, &album);
 
             self.payable_mint.price_per_mint.insert(&token_id, &price);
             self.payable_mint
                 .max_supply
                 .insert(&token_id, &(max_supply as u64));
-            self.set_token_uri(token_id.clone(), song_uri.clone())?;
+            self.uris.token_uris.insert(&token_id, &song_uri);
 
             self.env().emit_event({
                 ItemCreated {
