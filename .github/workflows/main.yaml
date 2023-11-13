@@ -8,9 +8,9 @@ jobs:
   deploy:
     runs-on: ubuntu-20.04
     steps:
+      - uses: appleboy/ssh-action@master
       - name: Deploy Frontend
         if: ${{ github.ref == 'refs/heads/frontend' }}
-        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.MAIN_HOST }}
           username: ${{ secrets.MAIN_USER }}
@@ -28,7 +28,6 @@ jobs:
             pm2 restart test
       - name: Deploy Subsquid
         if: ${{ github.ref == 'refs/heads/subsquid' }}
-        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.MAIN_HOST }}
           username: ${{ secrets.MAIN_USER }}
