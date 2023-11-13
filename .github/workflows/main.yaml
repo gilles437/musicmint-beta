@@ -35,10 +35,4 @@ jobs:
           password: ${{ secrets.MAIN_PASSWORD }}
           port: "22"
           script: |
-            cd workspace/minted
-            git checkout subsquid
-            git fetch
-            git pull
-            cd minted-squids
             pm2 stop serve
-            pm2 stop process
