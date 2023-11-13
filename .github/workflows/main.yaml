@@ -2,15 +2,14 @@ name: MintedWave
 on:
   push:
     branches:
-      branches: [frontend, subsquid]
-  workflow_dispatch:
+      - frontend
+  workflow_dispatch: 
 jobs:
   deploy:
     runs-on: ubuntu-20.04
     steps:
-      - uses: appleboy/ssh-action@master
-      - name: Deploy Frontend
-        if: ${{ github.ref == 'refs/heads/frontend' }}
+      - name: Deploy
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.MAIN_HOST }}
           username: ${{ secrets.MAIN_USER }}
@@ -26,12 +25,3 @@ jobs:
             rm -rf .next out
             yarn build
             pm2 restart test
-      - name: Deploy Subsquid
-        if: ${{ github.ref == 'refs/heads/subsquid' }}
-        with:
-          host: ${{ secrets.MAIN_HOST }}
-          username: ${{ secrets.MAIN_USER }}
-          password: ${{ secrets.MAIN_PASSWORD }}
-          port: "22"
-          script: |
-            pm2 stop serve
