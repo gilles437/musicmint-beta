@@ -1,11 +1,14 @@
 import { useState, useEffect, CSSProperties } from "react";
 import { ContractPromise } from "@polkadot/api-contract";
-import contractAbi from "./admin.json"; // Replace by your contract ABI
 import { BN, BN_ONE, BN_TEN } from "@polkadot/util";
 import { WeightV2 } from "@polkadot/types/interfaces";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ContractFile } from "./admin";
+import contractAbi from "@/contracts/admin/admin.json"; // Replace by your contract ABI
+// import { ContractFile as AlbumContract } from "@/contracts/album/albums";
+// import { ContractFile as AdminContract } from "@/contracts/admin/admin";
+import { ContractFile as AlbumContract } from "@/contracts/album/albums1";
+import { ContractFile as AdminContract } from "@/contracts/admin/admin1";
 import { CodePromise } from "@polkadot/api-contract";
 import CircleLoader from "react-spinners/ClipLoader";
 import { useApi } from "@/hooks/useApi";
@@ -304,7 +307,8 @@ const ContractAdmin = () => {
   };
 
   const deployAdminContract = async () => {
-    const __contract = JSON.parse(ContractFile);
+    // const __albumContract = JSON.parse(AdminContract);
+    const __albumContract = AlbumContract;
     const savedAccount = localStorage.getItem("currentAccount");
     const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
     let allAccounts: string[] = [];
@@ -330,10 +334,11 @@ const ContractAdmin = () => {
     ) {
       toastFunction("Account is already added !");
     } else if (newAdminInput && contract && wallet && api) {
-      const code = new CodePromise(api, __contract, __contract.source.wasm);
+      const code = new CodePromise(api, __albumContract, __albumContract.source.wasm);
       const tx = code.tx.new(
         { value: 0, gasLimit, storageDepositLimit: null },
-        parsedAccount
+        "",
+        parsedAccount,
       );
       const unsub = await tx.signAndSend(
         parsedAccount,
