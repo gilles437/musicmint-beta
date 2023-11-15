@@ -3,7 +3,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ContractPromise } from "@polkadot/api-contract";
 import { WeightV2 } from "@polkadot/types/interfaces";
-import { BN, BN_ONE, BN_TEN } from "@polkadot/util";
+import { BN, BN_ONE, BN_TEN, formatBalance } from "@polkadot/util";
+import { CodeSubmittableResult } from "@polkadot/api-contract/base";
 import { useWallets } from "@/contexts/Wallets";
 import contractAbi from "@/contracts/album/albums.json";
 import { useApi } from "@/hooks/useApi";
@@ -32,12 +33,14 @@ type SongMetadataType = {
 const CreateAlbum = () => {
   const [currentTitle, setCurrentTitle] = useState<string>("");
   const [currentDescription, setCurrentDescription] = useState<string>("");
+  const [maxSupply, setMaxSupply] = useState<number>(0);
   const [currentPrice, setCurrentPrice] = useState<string>("");
   const [selectedImage, setSelectedImage] = useState<File>();
   const [currentSoundTitle, setCurrentSoundTitle] = useState<string>("");
   const [currentSoundPrice, setCurrentSoundPrice] = useState<string>("");
   const [currentSoundMaxSupply, setCurrentSoundMaxSupply] =
     useState<string>("");
+  const [currentAlbumId, setCurrentAlbumId] = useState<string>("");
   const [selectedSound, setSelectedSound] = useState<File>();
   const [selectedSoundImage, setSelectedSoundImage] = useState<File>();
   const [showSongs, setShowSongs] = useState(false);
@@ -47,15 +50,16 @@ const CreateAlbum = () => {
 
   const [contract, setContract] = useState<ContractPromise>();
   const [gasLimit, setGasLimit] = useState<WeightV2>();
+  const [chainDecimals, setChainDecimals] = useState<number>(10);
   const api = useApi();
   const { wallet } = useWallets();
   const { query } = useRouter();
 
   useEffect(() => {
+    console.log({api, query})
     if (api && query?.contract) {
       //Contract Create
       const contractAddress = query.contract as string;
-      console.log('contractAddress', contractAddress)
       const contract = new ContractPromise(api, contractAbi, contractAddress);
       setContract(contract);
 
@@ -65,9 +69,11 @@ const CreateAlbum = () => {
         proofSize: new BN("10000000000"),
       }) as WeightV2;
       setGasLimit(gasLimit);
-      console.log('gasLimit', gasLimit)
+
+      const chainDecimals = api.registry.chainDecimals[0];
+      setChainDecimals(chainDecimals);
     }
-  }, [api, query?.contract])
+  }, [api, query?.contract]);
 
   const handleImageChange = (e: any) => {
     e.preventDefault();
@@ -140,7 +146,11 @@ const CreateAlbum = () => {
   const uploadNFTToS3Bucket = async (e: any) => {
     e.preventDefault();
     if (!validateFields()) return;
+    console.log("validateFields passed");
+    if (!wallet) return;
+    console.log("wallet passed", { contract, gasLimit });
     if (!contract || !gasLimit) return;
+    console.log("contract passed");
 
     try {
       setIsLoading(true);
@@ -151,18 +161,29 @@ const CreateAlbum = () => {
       }
       setSelectedImageFileCid(fileImageCid);
       const tempCurrentMetaId = await uploadMetadata(fileImageCid);
-      console.log('tempCurrentMetaId', tempCurrentMetaId)
       if (tempCurrentMetaId) {
-        const options = wallet ? { signer: wallet.signer } : undefined;
         const addAlbumResult = await contract.tx.createAlbum(
           { value: 0, gasLimit, storageDepositLimit: null },
-          100, //max_supply
-          currentPrice, //price,
-          `https://ipfs.io/ipfs/${tempCurrentMetaId}`, //album_uri,
+          maxSupply, //max_supply
+          Number(currentPrice) * 10 ** chainDecimals, //price,
+          `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
         );
+        console.log("addAlbumResult", addAlbumResult);
         const savedAccount = localStorage.getItem("currentAccount");
         const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-        await addAlbumResult.signAndSend(parsedAccount, options);
+        const tx = await addAlbumResult.signAndSend(
+          parsedAccount,
+          { signer: wallet.signer },
+          (result) => {
+            if (result.status.isInBlock || result.status.isFinalized) {
+              setCurrentAlbumId("111111111111");
+              const res = result.toHuman();
+              console.log("result-res", res);
+              const dataResult: CodeSubmittableResult<"promise"> = result;
+              console.log({ dataResult });
+            }
+          }
+        );
 
         const storageSongsData = localStorage.getItem("albums");
         const storageSongs = storageSongsData
@@ -316,6 +337,7 @@ const CreateAlbum = () => {
   const uploadSoundNFTToS3Bucket = async (e: any) => {
     e.preventDefault();
     if (!validateSoundFields()) return;
+    if (!contract) return;
 
     try {
       setIsLoading(true);
@@ -355,6 +377,19 @@ const CreateAlbum = () => {
           console.log({ storageAlbums });
 
           localStorage.setItem("albums", JSON.stringify(storageAlbums));
+
+          const options = wallet ? { signer: wallet.signer } : undefined;
+
+          const addAlbumResult = await contract.tx.createSong(
+            { value: 0, gasLimit, storageDepositLimit: null },
+            currentSoundMaxSupply, //max_supply
+            Number(currentSoundPrice) * 10 ** chainDecimals, //price,
+            `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
+          );
+          const savedAccount = localStorage.getItem("currentAccount");
+          const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
+          await addAlbumResult.signAndSend(parsedAccount, options);
+
           toastFunction(`New Song created on ${tempCurrentMetaId}`);
           await fetchSongsFromStorage();
           emptySoundFields();
@@ -471,6 +506,16 @@ const CreateAlbum = () => {
                   type="file"
                   accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
                   onChange={(e) => handleImageChange(e)}
+                />
+              </div>
+              <div className="mt-3">
+                <h5>Max Supply</h5>
+                <input
+                  type="number"
+                  min={1}
+                  placeholder="Enter Max Supply..."
+                  value={maxSupply ? maxSupply : ""}
+                  onChange={(e: any) => setMaxSupply(e.target.value)}
                 />
               </div>
               <div className="mt-3">
