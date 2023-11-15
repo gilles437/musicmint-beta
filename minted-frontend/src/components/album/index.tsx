@@ -33,6 +33,7 @@ interface adminListType {
 const Album = () => {
   const [albumMetaData, setAlbumMetaData] = useState<AlbumMetadataType[]>([]);
   const [isArtist, setIsArtist] = useState<Boolean>(false);
+  const [contractAddress, setContractAddress] = useState<string | null>(null);
   // const [adminList, setAdminList] = useState<adminListType[]>([]);
 
   useEffect(() => {
@@ -87,13 +88,16 @@ const Album = () => {
     const savedAccount = localStorage.getItem("currentAccount");
     const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
     let checkArtist = false;
+    let contract = null;
     result.transfers.map((data: adminListType) => {
       if (data.to == parsedAccount) {
         checkArtist = true;
+        contract = data.contract;
       }
     });
     console.log({ checkArtist });
     setIsArtist(checkArtist);
+    setContractAddress(contract);
     if (!checkArtist) {
       toastFunction("Current selected account is not Artist !");
     }
@@ -121,7 +125,7 @@ const Album = () => {
         </div>
         <div className="mb-5">
           {isArtist ? (
-            <Link href="/album/create" className="d-flex">
+            <Link className="d-flex" href={{ pathname: "/album/create", query: { contract: contractAddress }}} >
               <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
                 Create Album
               </button>

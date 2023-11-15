@@ -1,12 +1,19 @@
-import React, { useState, CSSProperties } from "react";
+import React, { useState, CSSProperties, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ContractPromise } from "@polkadot/api-contract";
+import { WeightV2 } from "@polkadot/types/interfaces";
+import { BN, BN_ONE, BN_TEN } from "@polkadot/util";
+import { useWallets } from "@/contexts/Wallets";
+import contractAbi from "@/contracts/album/albums.json";
+import { useApi } from "@/hooks/useApi";
 import configureAWS from "@/utils/ipfs/awsConfig";
 import { v4 as uuidv4 } from "uuid";
 import S3 from "aws-sdk/clients/s3";
 import axios from "axios";
 import Link from "next/link";
 import CircleLoader from "react-spinners/ClipLoader";
+import { useRouter } from "next/router";
 
 const s3 = configureAWS();
 const override: CSSProperties = {
@@ -37,6 +44,30 @@ const CreateAlbum = () => {
   const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>("");
   const [songMetaData, setSongMetaData] = useState<SongMetadataType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [contract, setContract] = useState<ContractPromise>();
+  const [gasLimit, setGasLimit] = useState<WeightV2>();
+  const api = useApi();
+  const { wallet } = useWallets();
+  const { query } = useRouter();
+
+  useEffect(() => {
+    if (api && query?.contract) {
+      //Contract Create
+      const contractAddress = query.contract as string;
+      console.log('contractAddress', contractAddress)
+      const contract = new ContractPromise(api, contractAbi, contractAddress);
+      setContract(contract);
+
+      //GasLimit
+      const gasLimit = api.registry.createType("WeightV2", {
+        refTime: new BN("10000000000"),
+        proofSize: new BN("10000000000"),
+      }) as WeightV2;
+      setGasLimit(gasLimit);
+      console.log('gasLimit', gasLimit)
+    }
+  }, [api, query?.contract])
 
   const handleImageChange = (e: any) => {
     e.preventDefault();
@@ -109,6 +140,7 @@ const CreateAlbum = () => {
   const uploadNFTToS3Bucket = async (e: any) => {
     e.preventDefault();
     if (!validateFields()) return;
+    if (!contract || !gasLimit) return;
 
     try {
       setIsLoading(true);
@@ -119,7 +151,19 @@ const CreateAlbum = () => {
       }
       setSelectedImageFileCid(fileImageCid);
       const tempCurrentMetaId = await uploadMetadata(fileImageCid);
+      console.log('tempCurrentMetaId', tempCurrentMetaId)
       if (tempCurrentMetaId) {
+        const options = wallet ? { signer: wallet.signer } : undefined;
+        const addAlbumResult = await contract.tx.createAlbum(
+          { value: 0, gasLimit, storageDepositLimit: null },
+          100, //max_supply
+          currentPrice, //price,
+          `https://ipfs.io/ipfs/${tempCurrentMetaId}`, //album_uri,
+        );
+        const savedAccount = localStorage.getItem("currentAccount");
+        const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
+        await addAlbumResult.signAndSend(parsedAccount, options);
+
         const storageSongsData = localStorage.getItem("albums");
         const storageSongs = storageSongsData
           ? JSON.parse(storageSongsData)
