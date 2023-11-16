@@ -52,9 +52,11 @@ pub mod albums {
         /// Song id.
         song_id: SongId,
         /// Max supply of the creation.
-        max_supply: Balance,
+        max_supply: u32,
         /// The URI of the creation.
         uri: URI,
+        /// The price of the creation.
+        price: Balance,
     }
 
     /// Event emitted when an artist deletes an album or a song.
@@ -222,7 +224,7 @@ pub mod albums {
         #[openbrush::modifiers(only_owner)]
         pub fn create_album(
             &mut self,
-            max_supply: Balance,
+            max_supply: u32,
             price: Balance,
             album_uri: URI,
         ) -> Result<Id, Error> {
@@ -233,9 +235,7 @@ pub mod albums {
             let token_id = combine_ids(self.current_album_id, 0);
 
             self.payable_mint.price_per_mint.insert(&token_id, &price);
-            self.payable_mint
-                .max_supply
-                .insert(&token_id, &(max_supply as u64));
+            self.payable_mint.max_supply.insert(&token_id, &max_supply);
             self.uris.token_uris.insert(&token_id, &album_uri);
 
             self.env().emit_event({
@@ -245,6 +245,7 @@ pub mod albums {
                     uri: album_uri,
                     song_id: 0,
                     max_supply,
+                    price,
                 }
             });
 
@@ -260,7 +261,7 @@ pub mod albums {
         pub fn create_song(
             &mut self,
             album_id: AlbumId,
-            max_supply: Balance,
+            max_supply: u32,
             price: Balance,
             song_uri: URI,
         ) -> Result<Id, Error> {
@@ -273,9 +274,7 @@ pub mod albums {
             self.songs.insert(album_id, &album);
 
             self.payable_mint.price_per_mint.insert(&token_id, &price);
-            self.payable_mint
-                .max_supply
-                .insert(&token_id, &(max_supply as u64));
+            self.payable_mint.max_supply.insert(&token_id, &max_supply);
             self.uris.token_uris.insert(&token_id, &song_uri);
 
             self.env().emit_event({
@@ -285,6 +284,7 @@ pub mod albums {
                     album_id,
                     song_id,
                     max_supply,
+                    price,
                 }
             });
 
