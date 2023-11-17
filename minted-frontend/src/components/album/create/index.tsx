@@ -3,8 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ContractPromise } from "@polkadot/api-contract";
 import { WeightV2 } from "@polkadot/types/interfaces";
-import { BN, BN_ONE, BN_TEN, formatBalance } from "@polkadot/util";
-import { CodeSubmittableResult } from "@polkadot/api-contract/base";
+import { BN } from "@polkadot/util";
 import { useWallets } from "@/contexts/Wallets";
 import contractAbi from "@/contracts/album/albums.json";
 import { useApi } from "@/hooks/useApi";
@@ -29,6 +28,23 @@ type SongMetadataType = {
   image: string;
   sound: string;
 };
+
+interface contractEventsType {
+  dispatchInfo: {};
+  events: [];
+  status: {};
+  txHash: string;
+  txIndex: number;
+  blockNumber: string;
+  contractEvents: [
+    {
+      args: string[];
+      docs: [];
+      identifier: string;
+      index: number;
+    }
+  ];
+}
 
 const CreateAlbum = () => {
   const [currentTitle, setCurrentTitle] = useState<string>("");
@@ -56,7 +72,6 @@ const CreateAlbum = () => {
   const { query } = useRouter();
 
   useEffect(() => {
-    console.log({api, query})
     if (api && query?.contract) {
       //Contract Create
       const contractAddress = query.contract as string;
@@ -159,48 +174,69 @@ const CreateAlbum = () => {
       setSelectedImageFileCid(fileImageCid);
       const tempCurrentMetaId = await uploadMetadata(fileImageCid);
       if (tempCurrentMetaId) {
-        const addAlbumResult = await contract.tx.createAlbum(
-          { value: 0, gasLimit: 100000 * 1000000, storageDepositLimit: null },
+        const savedAccount = localStorage.getItem("currentAccount");
+        const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
+
+        const queryCurrentAlbumId = await contract.query.createAlbum(
+          parsedAccount,
+          { value: 0, gasLimit: gasLimit, storageDepositLimit: null },
           maxSupply, //max_supply
           Number(currentPrice) * 10 ** chainDecimals, //price,
           `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
         );
-        console.log("addAlbumResult", addAlbumResult);
-        const savedAccount = localStorage.getItem("currentAccount");
-        const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-        const tx = await addAlbumResult.signAndSend(
-          parsedAccount,
-          { signer: wallet.signer },
-          (result) => {
-            if (result.status.isFinalized) {
-              setCurrentAlbumId("111111111111");
-              console.log("\nResult is : ", JSON.stringify(result, null, 2));
-              const res = result.toHuman();
-              console.log("result-res", res);
-              const dataResult: CodeSubmittableResult<"promise"> = result;
-              console.log({ dataResult });
+        console.log({ queryCurrentAlbumId });
+
+        if (queryCurrentAlbumId.result && queryCurrentAlbumId.result.isOk) {
+          const addAlbumResult = await contract.tx.createAlbum(
+            { value: 0, gasLimit: gasLimit, storageDepositLimit: null },
+            maxSupply, //max_supply
+            Number(currentPrice) * 10 ** chainDecimals, //price,
+            `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
+          );
+
+          const tx = await addAlbumResult.signAndSend(
+            parsedAccount,
+            { signer: wallet.signer },
+            (result) => {
+              if (result.status.isFinalized) {
+                const resultJson: contractEventsType = JSON.parse(
+                  JSON.stringify(result, null, 2)
+                );
+                console.log("\nResult is : ", resultJson);
+                if (
+                  resultJson.contractEvents.length &&
+                  resultJson.contractEvents[0].args[1]
+                ) {
+                  setCurrentAlbumId(resultJson.contractEvents[0].args[1]);
+                  toastFunction(
+                    `New Album TokenId is: ${resultJson.contractEvents[0].args[1]}`
+                  );
+                } else {
+                  toastFunction(`Something wrong to create Album`);
+                  setCurrentAlbumId("");
+                }
+              }
             }
-          }
-        );
+          );
 
-        console.log("~~~~~~~~~~~~~~~~tx====", tx)
-
-        const storageSongsData = localStorage.getItem("albums");
-        const storageSongs = storageSongsData
-          ? JSON.parse(storageSongsData)
-          : [];
-        storageSongs.push({
-          id: storageSongs.length + 1,
-          metadata: tempCurrentMetaId,
-          songs: [],
-        });
-        setShowSongs(true);
-        localStorage.setItem("albums", JSON.stringify(storageSongs));
-        // emptyFields();
-        toastFunction(`New Album created on ${tempCurrentMetaId}`);
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
+          const storageSongsData = localStorage.getItem("albums");
+          const storageSongs = storageSongsData
+            ? JSON.parse(storageSongsData)
+            : [];
+          storageSongs.push({
+            id: storageSongs.length + 1,
+            metadata: tempCurrentMetaId,
+            songs: [],
+          });
+          setShowSongs(true);
+          localStorage.setItem("albums", JSON.stringify(storageSongs));
+          // emptyFields();
+          toastFunction(`New Album Metadata saved on https://ipfs.io/ipfs/${tempCurrentMetaId}`);
+          setIsLoading(false);
+        } else {
+          toastFunction(`Something wrong to save Album Metadata`);
+          setIsLoading(false);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -337,66 +373,102 @@ const CreateAlbum = () => {
   const uploadSoundNFTToS3Bucket = async (e: any) => {
     e.preventDefault();
     if (!validateSoundFields()) return;
+    if (!wallet) return;
     if (!contract) return;
 
     try {
       setIsLoading(true);
-      const fileSoundImageCid = await uploadNFTSoundImage();
-      console.log({ fileSoundImageCid });
+      if (currentAlbumId != "") {
+        const fileSoundImageCid = await uploadNFTSoundImage();
+        if (fileSoundImageCid.length == 0) {
+          console.error("error when uploading image nft");
+          return;
+        }
 
-      if (fileSoundImageCid.length == 0) {
-        console.error("error when uploading image nft");
-        return;
-      }
-      const fileSoundCid = await uploadNFTSound();
-      console.log({ fileSoundCid });
+        const fileSoundCid = await uploadNFTSound();
+        if (fileSoundCid.length == 0) {
+          console.error("error when uploading sound nft");
+          return;
+        }
 
-      if (fileSoundCid.length == 0) {
-        console.error("error when uploading sound nft");
-        return;
-      }
-      const tempCurrentMetaId = await uploadSoundMetadata(
-        fileSoundImageCid,
-        fileSoundCid
-      );
-      console.log({ tempCurrentMetaId });
-
-      if (tempCurrentMetaId) {
-        const storageAlbumsData = localStorage.getItem("albums");
-        const storageAlbums = storageAlbumsData
-          ? JSON.parse(storageAlbumsData)
-          : [];
-
-        if (storageAlbums.length) {
-          const storageSongs = storageAlbums[storageAlbums.length - 1].songs
-            ? storageAlbums[storageAlbums.length - 1].songs
+        const tempCurrentMetaId = await uploadSoundMetadata(
+          fileSoundImageCid,
+          fileSoundCid
+        );
+        if (tempCurrentMetaId) {
+          const storageAlbumsData = localStorage.getItem("albums");
+          const storageAlbums = storageAlbumsData
+            ? JSON.parse(storageAlbumsData)
             : [];
 
-          storageSongs.push(tempCurrentMetaId);
-          storageAlbums[storageAlbums.length - 1].songs = storageSongs;
-          console.log({ storageAlbums });
+          if (storageAlbums.length) {
+            const storageSongs = storageAlbums[storageAlbums.length - 1].songs
+              ? storageAlbums[storageAlbums.length - 1].songs
+              : [];
 
-          localStorage.setItem("albums", JSON.stringify(storageAlbums));
+            storageSongs.push(tempCurrentMetaId);
+            storageAlbums[storageAlbums.length - 1].songs = storageSongs;
+            console.log({ storageAlbums });
 
-          const options = wallet ? { signer: wallet.signer } : undefined;
+            localStorage.setItem("albums", JSON.stringify(storageAlbums));
 
-          const addAlbumResult = await contract.tx.createSong(
-            { value: 0, gasLimit, storageDepositLimit: null },
-            currentSoundMaxSupply, //max_supply
-            Number(currentSoundPrice) * 10 ** chainDecimals, //price,
-            `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
-          );
-          const savedAccount = localStorage.getItem("currentAccount");
-          const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-          await addAlbumResult.signAndSend(parsedAccount, options);
+            const options = wallet ? { signer: wallet.signer } : undefined;
+            const savedAccount = localStorage.getItem("currentAccount");
+            const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
 
-          toastFunction(`New Song created on ${tempCurrentMetaId}`);
-          await fetchSongsFromStorage();
-          emptySoundFields();
-          setIsLoading(false);
-        } else {
-          setIsLoading(false);
+            const queryAlbumResult = await contract.query.createSong(
+              parsedAccount,
+              { value: 0, gasLimit, storageDepositLimit: null },
+              currentAlbumId, //album_id
+              currentSoundMaxSupply, //max_supply
+              Number(currentSoundPrice) * 10 ** chainDecimals, //price,
+              `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
+            );
+
+            if (queryAlbumResult.result && queryAlbumResult.result.isOk) {
+              const addSongResult = await contract.tx.createSong(
+                { value: 0, gasLimit, storageDepositLimit: null },
+                currentAlbumId, //album_id
+                currentSoundMaxSupply, //max_supply
+                Number(currentSoundPrice) * 10 ** chainDecimals, //price,
+                `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
+              );
+
+              const tx = await addSongResult.signAndSend(
+                parsedAccount,
+                { signer: wallet.signer },
+                (result) => {
+                  if (result.status.isFinalized) {
+                    const resultJson: contractEventsType = JSON.parse(
+                      JSON.stringify(result, null, 2)
+                    );
+                    console.log("\nResult is : ", resultJson);
+                    if (
+                      resultJson.contractEvents.length &&
+                      resultJson.contractEvents[0].args[1]
+                    ) {
+                      toastFunction(
+                        `New Song tokenID is: ${resultJson.contractEvents[0].args[1]}`
+                      );
+                    } else {
+                      toastFunction(`Something wrong to create Song`);
+                    }
+                  }
+                }
+              );
+
+              toastFunction(`New Song Metadata saved on https://ipfs.io/ipfs/${tempCurrentMetaId}`);
+              await fetchSongsFromStorage();
+              setIsLoading(false);
+            } else {
+              toastFunction(`Something wrong on save Song Metadata`);
+              setIsLoading(false);
+            }
+          }
         }
+      } else {
+        toastFunction(`There is no selected Album`);
+        setIsLoading(false);
       }
     } catch (error) {
       console.log(error);

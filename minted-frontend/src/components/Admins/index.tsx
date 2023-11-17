@@ -341,7 +341,7 @@ const ContractAdmin = () => {
       const tx = code.tx.new(
         { value: 0, gasLimit, storageDepositLimit: null },
         "",
-        parsedAccount
+        newAdminInput
       );
       const unsub = await tx.signAndSend(
         parsedAccount,
