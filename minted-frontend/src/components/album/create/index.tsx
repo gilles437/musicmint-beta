@@ -146,11 +146,8 @@ const CreateAlbum = () => {
   const uploadNFTToS3Bucket = async (e: any) => {
     e.preventDefault();
     if (!validateFields()) return;
-    console.log("validateFields passed");
     if (!wallet) return;
-    console.log("wallet passed", { contract, gasLimit });
     if (!contract || !gasLimit) return;
-    console.log("contract passed");
 
     try {
       setIsLoading(true);
@@ -163,7 +160,7 @@ const CreateAlbum = () => {
       const tempCurrentMetaId = await uploadMetadata(fileImageCid);
       if (tempCurrentMetaId) {
         const addAlbumResult = await contract.tx.createAlbum(
-          { value: 0, gasLimit, storageDepositLimit: null },
+          { value: 0, gasLimit: 100000 * 1000000, storageDepositLimit: null },
           maxSupply, //max_supply
           Number(currentPrice) * 10 ** chainDecimals, //price,
           `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
@@ -175,8 +172,9 @@ const CreateAlbum = () => {
           parsedAccount,
           { signer: wallet.signer },
           (result) => {
-            if (result.status.isInBlock || result.status.isFinalized) {
+            if (result.status.isFinalized) {
               setCurrentAlbumId("111111111111");
+              console.log("\nResult is : ", JSON.stringify(result, null, 2));
               const res = result.toHuman();
               console.log("result-res", res);
               const dataResult: CodeSubmittableResult<"promise"> = result;
@@ -184,6 +182,8 @@ const CreateAlbum = () => {
             }
           }
         );
+
+        console.log("~~~~~~~~~~~~~~~~tx====", tx)
 
         const storageSongsData = localStorage.getItem("albums");
         const storageSongs = storageSongsData

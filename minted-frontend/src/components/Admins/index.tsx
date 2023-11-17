@@ -307,7 +307,6 @@ const ContractAdmin = () => {
   };
 
   const deployAdminContract = async () => {
-    // const __albumContract = JSON.parse(AdminContract);
     const __albumContract = AlbumContract;
     const savedAccount = localStorage.getItem("currentAccount");
     const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
@@ -334,18 +333,21 @@ const ContractAdmin = () => {
     ) {
       toastFunction("Account is already added !");
     } else if (newAdminInput && contract && wallet && api) {
-      const code = new CodePromise(api, __albumContract, __albumContract.source.wasm);
+      const code = new CodePromise(
+        api,
+        __albumContract,
+        __albumContract.source.wasm
+      );
       const tx = code.tx.new(
         { value: 0, gasLimit, storageDepositLimit: null },
         "",
-        parsedAccount,
+        parsedAccount
       );
       const unsub = await tx.signAndSend(
         parsedAccount,
         { signer: wallet.signer },
         (result) => {
-          if (result.status.isInBlock || result.status.isFinalized) {
-            console.log({ result });
+          if (result.status.isFinalized) {
             const dataResult: CodeSubmittableResult<"promise"> = result;
             if (dataResult.contract) {
               let address = dataResult.contract.address.toString();
