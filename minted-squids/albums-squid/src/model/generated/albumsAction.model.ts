@@ -32,7 +32,19 @@ export class AlbumsAction {
 
     @Index_()
     @Column_("text", {nullable: true})
-    role!: string | undefined | null
+    uri!: string | undefined | null
+
+    @Index_()
+    @Column_("text", {nullable: true})
+    albumid!: string | undefined | null
+
+    @Index_()
+    @Column_("text", {nullable: true})
+    songid!: string | undefined | null
+
+    @Index_()
+    @Column_("text", {nullable: true})
+    maxsupply!: string | undefined | null
 
     @Index_()
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})

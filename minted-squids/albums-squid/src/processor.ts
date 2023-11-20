@@ -33,7 +33,7 @@ type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
  
 processor.run(new TypeormDatabase(), async ctx => {
-    const txs = extractAlbumsActionRecords(ctx)
+    const txs = extractTransferRecords(ctx)
     const ownerIds = new Set<string>()
     txs.forEach(tx => {
         if (tx.from) {
@@ -120,7 +120,7 @@ processor.run(new TypeormDatabase(), async ctx => {
     )
 })
  
-interface AlbumsActionRecord {
+interface TransferRecord {
     id: string
     from?: string
     to?: string
@@ -131,10 +131,9 @@ interface AlbumsActionRecord {
     role: string
 }
 
-function extractAlbumsActionRecords(ctx: Ctx): AlbumsActionRecord[] {
-    const records: AlbumsActionRecord[] = []
+function extractTransferRecords(ctx: Ctx): TransferRecord[] {
+    const records: TransferRecord[] = []
     for (const block of ctx.blocks) {
-        console.log('block', block)
         for (const item of block.items) {
             console.log('item block', item.name)
             if (item.name === 'Contracts.ContractEmitted' && item.event.args.contract === CONTRACT_ADDRESS) {

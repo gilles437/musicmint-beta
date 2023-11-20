@@ -3,9 +3,6 @@ type Owner @entity {
   balance: BigInt!
 }
  
-
-
-
 type AlbumsAction @entity {
   id: ID!
   block: Int! @index
@@ -13,7 +10,10 @@ type AlbumsAction @entity {
   extrinsicHash: String @index
   from: String! @index
   to: String! @index
-  role: String @index
+  uri: String @index
+  albumid: String @index
+  songid: String @index
+  maxsupply: String @index
   amount: BigInt! @index
   fee: BigInt! # fee is calculated at the best effort and may be zero for some old extrinsics
   contract: ID!

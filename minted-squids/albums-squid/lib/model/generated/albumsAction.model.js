@@ -73,7 +73,22 @@ __decorate([
     (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("text", { nullable: true }),
     __metadata("design:type", Object)
-], AlbumsAction.prototype, "role", void 0);
+], AlbumsAction.prototype, "uri", void 0);
+__decorate([
+    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Column)("text", { nullable: true }),
+    __metadata("design:type", Object)
+], AlbumsAction.prototype, "albumid", void 0);
+__decorate([
+    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Column)("text", { nullable: true }),
+    __metadata("design:type", Object)
+], AlbumsAction.prototype, "songid", void 0);
+__decorate([
+    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Column)("text", { nullable: true }),
+    __metadata("design:type", Object)
+], AlbumsAction.prototype, "maxsupply", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("numeric", { transformer: marshal.bigintTransformer, nullable: false }),

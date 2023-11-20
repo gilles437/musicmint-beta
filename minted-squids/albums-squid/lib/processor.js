@@ -125,7 +125,6 @@ processor.run(new typeorm_store_1.TypeormDatabase(), async (ctx) => {
 function extractTransferRecords(ctx) {
     const records = [];
     for (const block of ctx.blocks) {
-        console.log('block', block);
         for (const item of block.items) {
             console.log('item block', item.name);
             if (item.name === 'Contracts.ContractEmitted' && item.event.args.contract === CONTRACT_ADDRESS) {
