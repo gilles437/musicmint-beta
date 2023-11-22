@@ -62,48 +62,55 @@ const ContractAdmin = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const api = useApi();
+  console.log({ api });
+  if (api) {
+    console.log("api.query", api.query)
+    const data = api.query.artists.get_artist_by_id;
+    console.log({ data });
+  }
+
   const { wallet } = useWallets();
 
   const contractAddress = "5D5G8y4Gusc89E2XjetuwuNAN5GdhnQKUByQJ9NxkCdFwwBG"; // Replace the address of your contract
   const caller = "5FNj1E5Wxqg1vMo1qd6Zi6XZjrAXB8ECuXCyHDrsRQZSAPHL"; //The address of Contract Owner
   const storageDepositLimit = null;
 
-  useEffect(() => {
-    const connectChain = async () => {
-      if (api == null) return;
-      setIsLoading(true);
-      const { chainSS58, chainDecimals, chainTokens } = api.registry;
-      localStorage.setItem("chainSS58", JSON.stringify(chainSS58));
+  // useEffect(() => {
+  //   const connectChain = async () => {
+  //     if (api == null) return;
+  //     setIsLoading(true);
+  //     const { chainSS58, chainDecimals, chainTokens } = api.registry;
+  //     localStorage.setItem("chainSS58", JSON.stringify(chainSS58));
 
-      //Contract Create
-      const contract = new ContractPromise(api, contractAbi, contractAddress);
-      setContract(contract);
+  //     //Contract Create
+  //     const contract = new ContractPromise(api, contractAbi, contractAddress);
+  //     setContract(contract);
 
-      //GasLimit
-      const gasLimit = api.registry.createType("WeightV2", {
-        refTime: new BN("10000000000"),
-        proofSize: new BN("10000000000"),
-      }) as WeightV2;
-      setGasLimit(gasLimit);
-    };
-    connectChain()
-      .then(() => {
-        if (api == null) return;
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
-  }, [api]);
+  //     //GasLimit
+  //     const gasLimit = api.registry.createType("WeightV2", {
+  //       refTime: new BN("10000000000"),
+  //       proofSize: new BN("10000000000"),
+  //     }) as WeightV2;
+  //     setGasLimit(gasLimit);
+  //   };
+  //   connectChain()
+  //     .then(() => {
+  //       if (api == null) return;
+  //       setIsLoading(false);
+  //     })
+  //     .catch(() => {
+  //       setIsLoading(false);
+  //     });
+  // }, [api]);
 
-  useEffect(() => {
-    getAdminList()
-      .then((result: any) => {})
-      .catch(console.error);
-    getSuperAdminList()
-      .then((result: any) => {})
-      .catch(console.error);
-  }, [contract]);
+  // useEffect(() => {
+  //   getAdminList()
+  //     .then((result: any) => {})
+  //     .catch(console.error);
+  //   getSuperAdminList()
+  //     .then((result: any) => {})
+  //     .catch(console.error);
+  // }, [contract]);
 
   const getAdminList = async () => {
     let result: fetchType = await request(
