@@ -297,15 +297,11 @@ pub mod albums {
         pub fn delete_album(&mut self, album_id: AlbumId) -> Result<(), Error> {
             self.songs.get(album_id).ok_or(Error::InvalidAlbumId)?;
 
-            if (album_id == self.current_album_id) && (self.current_album_id > 0) {
-                self.current_album_id -= 1;
-            }
-
             // Remove album from songs mapping
-            self.songs.remove(self.current_album_id);
+            self.songs.remove(album_id);
             self.env().emit_event({
                 ItemDeleted {
-                    album_id: self.current_album_id,
+                    album_id,
                     song_id: 0,
                 }
             });
@@ -317,14 +313,16 @@ pub mod albums {
         #[ink(message)]
         #[openbrush::modifiers(only_owner)]
         pub fn delete_song(&mut self, album_id: AlbumId, song_id: SongId) -> Result<(), Error> {
-            self.songs
-                .get(album_id)
-                .ok_or(Error::InvalidAlbumId)?
-                .get(song_id as usize)
-                .ok_or(Error::InvalidSongId)?;
+            let mut album = self.songs.get(album_id).ok_or(Error::InvalidAlbumId)?;
 
             // Remove song from songs mapping
-            self.songs.remove(song_id);
+            album.remove(
+                album
+                    .iter()
+                    .position(|s| *s == song_id)
+                    .ok_or(Error::InvalidSongId)?,
+            );
+            self.songs.insert(album_id, &album);
             self.env().emit_event(ItemDeleted { album_id, song_id });
 
             Ok(())
