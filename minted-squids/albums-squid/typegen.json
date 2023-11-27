@@ -2,7 +2,10 @@
   "outDir": "src/types",
   "specVersions": "https://kusama.archive.subsquid.io/graphql",
   "events": [
-    "Balances.Transfer"
+    "Balances.Transfer",
+    "ItemCreated",
+    "ItemDeleted",
+    "ItemMinted"
   ],
   "calls": [ 
   ],

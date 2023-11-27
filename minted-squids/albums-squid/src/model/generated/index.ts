@@ -1,2 +1,2 @@
 export * from "./owner.model"
-export * from "./albumsAction.model"
+export * from "./collections.model"

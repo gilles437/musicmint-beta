@@ -30,11 +30,8 @@ const typeorm_store_1 = require("@subsquid/typeorm-store");
 const typeorm_1 = require("typeorm");
 const albums = __importStar(require("./abi/albums"));
 const model_1 = require("./model");
-//address of a 0x0 address
-const CONTRACT_OxO = '5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM';
 //the address of the deployed admins contract
-//const CONTRACT_ADDRESS_SS58 = '5D5G8y4Gusc89E2XjetuwuNAN5GdhnQKUByQJ9NxkCdFwwBG'
-const CONTRACT_ADDRESS_SS58 = '5FVLyN1XCPwxEzxmVKRCArwa5yoqGZF4ABqf81HVaz1wPDsh';
+const CONTRACT_ADDRESS_SS58 = '5FtcJFDK2TPAoAKx6gDMNR7cKmRZXgckHrW3txmev1fpvsCM';
 const CONTRACT_ADDRESS = (0, util_internal_hex_1.toHex)(ss58.decode(CONTRACT_ADDRESS_SS58).bytes);
 const SS58_PREFIX = ss58.decode(CONTRACT_ADDRESS_SS58).prefix;
 const processor = new substrate_processor_1.SubstrateBatchProcessor()
@@ -47,7 +44,7 @@ const processor = new substrate_processor_1.SubstrateBatchProcessor()
     }
 });
 processor.run(new typeorm_store_1.TypeormDatabase(), async (ctx) => {
-    const txs = extractTransferRecords(ctx);
+    const txs = extractCollectionsRecords(ctx);
     const ownerIds = new Set();
     txs.forEach(tx => {
         if (tx.from) {
@@ -65,16 +62,19 @@ processor.run(new typeorm_store_1.TypeormDatabase(), async (ctx) => {
     await ctx.store.save([...ownersMap.values()]);
     let transfers = [];
     txs.map(tx => {
-        if (tx.role != "None") {
-            const transfer = new model_1.AlbumsAction({
+        if (tx.action == 'add') {
+            const transfer = new model_1.Collections({
                 id: tx.id,
-                amount: tx.amount,
                 block: tx.block,
-                role: tx.role,
+                uri: tx.uri,
                 timestamp: tx.timestamp,
-                contract: tx.contract,
                 from: tx.from,
-                to: tx.to
+                to: tx.to,
+                songid: tx.song_id,
+                albumid: tx.album_id,
+                maxsupply: tx.max_supply,
+                price: tx.price,
+                contract: tx.contract
             });
             transfers.push(transfer);
         }
@@ -84,13 +84,13 @@ processor.run(new typeorm_store_1.TypeormDatabase(), async (ctx) => {
     let removeAdminItems = [];
     let removeSuperAdminItems = [];
     txs.map(tx => {
-        if (tx.role == "None") {
-            if (tx.contract && tx.contract != CONTRACT_OxO) {
-                removeAdminItems.push(tx.contract);
-            }
-            else if (tx.contract == CONTRACT_OxO && tx.to) {
-                removeSuperAdminItems.push(tx.to);
-            }
+        if (tx.action == "delete") {
+            //    if(tx.contract && tx.contract != "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM" ){
+            removeAdminItems.push(tx.contract);
+            //  }
+            // else if(tx.contract == "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM" && tx.to){
+            //   removeSuperAdminItems.push(tx.to);
+            //}
         }
     });
     console.log({ removeAdminItems });
@@ -99,7 +99,7 @@ processor.run(new typeorm_store_1.TypeormDatabase(), async (ctx) => {
     console.log({ uniqueAdminArray });
     const uniqueSuperAdminArray = [...new Set(removeSuperAdminItems)];
     console.log({ uniqueSuperAdminArray });
-    const transferAdminRemoveItem = await ctx.store.find(model_1.AlbumsAction, {
+    const transferAdminRemoveItem = await ctx.store.find(model_1.Transfer, {
         where: {
             contract: (0, typeorm_1.In)([...uniqueAdminArray])
         }
@@ -108,21 +108,10 @@ processor.run(new typeorm_store_1.TypeormDatabase(), async (ctx) => {
     });
     console.log({ transferAdminRemoveItem });
     await Promise.all(transferAdminRemoveItem.map(async (item) => {
-        await ctx.store.remove(model_1.AlbumsAction, item.id);
-    }));
-    const transferSuperAdminRemoveItem = await ctx.store.find(model_1.AlbumsAction, {
-        where: {
-            to: (0, typeorm_1.In)([...removeSuperAdminItems]),
-            contract: CONTRACT_OxO
-        }
-    }).then(data => {
-        return data;
-    });
-    await Promise.all(transferSuperAdminRemoveItem.map(async (item) => {
-        await ctx.store.remove(model_1.AlbumsAction, item.id);
+        await ctx.store.remove(model_1.Transfer, item.id);
     }));
 });
-function extractTransferRecords(ctx) {
+function extractCollectionsRecords(ctx) {
     const records = [];
     for (const block of ctx.blocks) {
         for (const item of block.items) {
@@ -130,19 +119,54 @@ function extractTransferRecords(ctx) {
             if (item.name === 'Contracts.ContractEmitted' && item.event.args.contract === CONTRACT_ADDRESS) {
                 const event = albums.decodeEvent(item.event.args.data);
                 console.log('event', event);
-                //     console.log('event.contract is ',event.contract && ss58.codec(SS58_PREFIX).encode(event.contract))
                 console.log('event', event.__kind);
                 console.log('event', event.albumId, event.songId);
                 if (event.__kind === 'ItemCreated') {
                     records.push({
                         id: item.event.id,
                         from: event.from && ss58.codec(SS58_PREFIX).encode(event.from),
-                        //    to: event.to && ss58.codec(SS58_PREFIX).encode(event.to),
-                        amount: BigInt(0),
-                        role: "hello",
+                        to: 'toto',
                         block: block.header.height,
                         timestamp: new Date(block.header.timestamp),
-                        //     contract: event.contract && ss58.codec(SS58_PREFIX).encode(event.contract)
+                        uri: event.uri,
+                        song_id: event.songId,
+                        album_id: event.albumId,
+                        max_supply: event.maxSupply,
+                        price: event.price,
+                        action: "add",
+                        contract: "contract id"
+                    });
+                }
+                if (event.__kind === 'ItemDeleted') {
+                    records.push({
+                        id: item.event.id,
+                        from: '',
+                        to: 'toto',
+                        block: block.header.height,
+                        timestamp: new Date(block.header.timestamp),
+                        uri: '',
+                        song_id: event.songId,
+                        album_id: event.albumId,
+                        max_supply: 0,
+                        price: BigInt(0),
+                        action: "delete",
+                        contract: "contract id"
+                    });
+                }
+                if (event.__kind === 'ItemMinted') {
+                    records.push({
+                        id: item.event.id,
+                        from: event.from && ss58.codec(SS58_PREFIX).encode(event.from),
+                        to: event.to && ss58.codec(SS58_PREFIX).encode(event.to),
+                        block: block.header.height,
+                        timestamp: new Date(block.header.timestamp),
+                        uri: '',
+                        song_id: event.songId,
+                        album_id: event.albumId,
+                        max_supply: 0,
+                        price: BigInt(0),
+                        action: "mint",
+                        contract: "contract id"
                     });
                 }
             }

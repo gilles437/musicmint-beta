@@ -4,9 +4,9 @@ exports.Contract = exports.decodeConstructor = exports.decodeMessage = exports.d
 const ink_abi_1 = require("@subsquid/ink-abi");
 exports.metadata = {
     "source": {
-        "hash": "0x3448773c50d88a9606f9b943c72ad35b09819f59df0da98146fdd838cb9faa3a",
+        "hash": "0x4c6b58b8292ff6c7b7ec621d14a507f3663d1ea29d92c1e6ffc67030415d9956",
         "language": "ink! 4.3.0",
-        "compiler": "rustc 1.75.0-nightly",
+        "compiler": "rustc 1.76.0-nightly",
         "build_info": {
             "build_mode": "Release",
             "cargo_contract_version": "3.2.0",
@@ -585,6 +585,22 @@ exports.metadata = {
                 "selector": "0x79815f7b"
             },
             {
+                "args": [],
+                "default": false,
+                "docs": [],
+                "label": "Ownable::owner",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 21
+                },
+                "selector": "0x4fa43c8c"
+            },
+            {
                 "args": [
                     {
                         "label": "new_owner",
@@ -593,7 +609,7 @@ exports.metadata = {
                                 "ownable_external",
                                 "TransferOwnershipInput1"
                             ],
-                            "type": 21
+                            "type": 22
                         }
                     }
                 ],
@@ -607,25 +623,9 @@ exports.metadata = {
                         "ink",
                         "MessageResult"
                     ],
-                    "type": 22
+                    "type": 23
                 },
                 "selector": "0x11f43efd"
-            },
-            {
-                "args": [],
-                "default": false,
-                "docs": [],
-                "label": "Ownable::owner",
-                "mutates": false,
-                "payable": false,
-                "returnType": {
-                    "displayName": [
-                        "ink",
-                        "MessageResult"
-                    ],
-                    "type": 25
-                },
-                "selector": "0x4fa43c8c"
             },
             {
                 "args": [],
@@ -639,76 +639,9 @@ exports.metadata = {
                         "ink",
                         "MessageResult"
                     ],
-                    "type": 22
+                    "type": 23
                 },
                 "selector": "0x5e228753"
-            },
-            {
-                "args": [
-                    {
-                        "label": "from",
-                        "type": {
-                            "displayName": [
-                                "aft37_external",
-                                "TransferFromInput1"
-                            ],
-                            "type": 2
-                        }
-                    },
-                    {
-                        "label": "to",
-                        "type": {
-                            "displayName": [
-                                "aft37_external",
-                                "TransferFromInput2"
-                            ],
-                            "type": 2
-                        }
-                    },
-                    {
-                        "label": "id",
-                        "type": {
-                            "displayName": [
-                                "aft37_external",
-                                "TransferFromInput3"
-                            ],
-                            "type": 18
-                        }
-                    },
-                    {
-                        "label": "amount",
-                        "type": {
-                            "displayName": [
-                                "aft37_external",
-                                "TransferFromInput4"
-                            ],
-                            "type": 0
-                        }
-                    },
-                    {
-                        "label": "data",
-                        "type": {
-                            "displayName": [
-                                "aft37_external",
-                                "TransferFromInput5"
-                            ],
-                            "type": 20
-                        }
-                    }
-                ],
-                "default": false,
-                "docs": [],
-                "label": "AFT37::transfer_from",
-                "mutates": true,
-                "payable": false,
-                "returnType": {
-                    "displayName": [
-                        "ink",
-                        "MessageResult"
-                    ],
-                    "type": 26
-                },
-                "selector": "0x842da239"
             },
             {
                 "args": [
@@ -834,53 +767,6 @@ exports.metadata = {
             {
                 "args": [
                     {
-                        "label": "operator",
-                        "type": {
-                            "displayName": [
-                                "aft37_external",
-                                "ApproveInput1"
-                            ],
-                            "type": 2
-                        }
-                    },
-                    {
-                        "label": "id",
-                        "type": {
-                            "displayName": [
-                                "aft37_external",
-                                "ApproveInput2"
-                            ],
-                            "type": 28
-                        }
-                    },
-                    {
-                        "label": "value",
-                        "type": {
-                            "displayName": [
-                                "aft37_external",
-                                "ApproveInput3"
-                            ],
-                            "type": 0
-                        }
-                    }
-                ],
-                "default": false,
-                "docs": [],
-                "label": "AFT37::approve",
-                "mutates": true,
-                "payable": false,
-                "returnType": {
-                    "displayName": [
-                        "ink",
-                        "MessageResult"
-                    ],
-                    "type": 26
-                },
-                "selector": "0xc432e7a4"
-            },
-            {
-                "args": [
-                    {
                         "label": "owner",
                         "type": {
                             "displayName": [
@@ -928,6 +814,136 @@ exports.metadata = {
             {
                 "args": [
                     {
+                        "label": "from",
+                        "type": {
+                            "displayName": [
+                                "aft37_external",
+                                "TransferFromInput1"
+                            ],
+                            "type": 2
+                        }
+                    },
+                    {
+                        "label": "to",
+                        "type": {
+                            "displayName": [
+                                "aft37_external",
+                                "TransferFromInput2"
+                            ],
+                            "type": 2
+                        }
+                    },
+                    {
+                        "label": "id",
+                        "type": {
+                            "displayName": [
+                                "aft37_external",
+                                "TransferFromInput3"
+                            ],
+                            "type": 18
+                        }
+                    },
+                    {
+                        "label": "amount",
+                        "type": {
+                            "displayName": [
+                                "aft37_external",
+                                "TransferFromInput4"
+                            ],
+                            "type": 0
+                        }
+                    },
+                    {
+                        "label": "data",
+                        "type": {
+                            "displayName": [
+                                "aft37_external",
+                                "TransferFromInput5"
+                            ],
+                            "type": 20
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": [],
+                "label": "AFT37::transfer_from",
+                "mutates": true,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 26
+                },
+                "selector": "0x842da239"
+            },
+            {
+                "args": [
+                    {
+                        "label": "operator",
+                        "type": {
+                            "displayName": [
+                                "aft37_external",
+                                "ApproveInput1"
+                            ],
+                            "type": 2
+                        }
+                    },
+                    {
+                        "label": "id",
+                        "type": {
+                            "displayName": [
+                                "aft37_external",
+                                "ApproveInput2"
+                            ],
+                            "type": 28
+                        }
+                    },
+                    {
+                        "label": "value",
+                        "type": {
+                            "displayName": [
+                                "aft37_external",
+                                "ApproveInput3"
+                            ],
+                            "type": 0
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": [],
+                "label": "AFT37::approve",
+                "mutates": true,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 26
+                },
+                "selector": "0xc432e7a4"
+            },
+            {
+                "args": [],
+                "default": false,
+                "docs": [],
+                "label": "AFT37URIStorage::base_uri",
+                "mutates": false,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 30
+                },
+                "selector": "0xadff9bda"
+            },
+            {
+                "args": [
+                    {
                         "label": "token_id",
                         "type": {
                             "displayName": [
@@ -948,34 +964,18 @@ exports.metadata = {
                         "ink",
                         "MessageResult"
                     ],
-                    "type": 30
+                    "type": 31
                 },
                 "selector": "0x7fd773dc"
             },
             {
-                "args": [],
-                "default": false,
-                "docs": [],
-                "label": "AFT37URIStorage::base_uri",
-                "mutates": false,
-                "payable": false,
-                "returnType": {
-                    "displayName": [
-                        "ink",
-                        "MessageResult"
-                    ],
-                    "type": 32
-                },
-                "selector": "0xadff9bda"
-            },
-            {
                 "args": [
                     {
-                        "label": "token_id",
+                        "label": "id",
                         "type": {
                             "displayName": [
                                 "aft37payablemint_external",
-                                "PriceInput1"
+                                "MaxSupplyInput1"
                             ],
                             "type": 18
                         }
@@ -983,7 +983,7 @@ exports.metadata = {
                 ],
                 "default": false,
                 "docs": [],
-                "label": "AFT37PayableMint::price",
+                "label": "AFT37PayableMint::max_supply",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
@@ -993,23 +993,7 @@ exports.metadata = {
                     ],
                     "type": 33
                 },
-                "selector": "0x0b76ebea"
-            },
-            {
-                "args": [],
-                "default": false,
-                "docs": [],
-                "label": "AFT37PayableMint::withdraw",
-                "mutates": true,
-                "payable": false,
-                "returnType": {
-                    "displayName": [
-                        "ink",
-                        "MessageResult"
-                    ],
-                    "type": 26
-                },
-                "selector": "0x0698a062"
+                "selector": "0xa7da8816"
             },
             {
                 "args": [
@@ -1055,43 +1039,6 @@ exports.metadata = {
                         "type": {
                             "displayName": [
                                 "aft37payablemint_external",
-                                "SetPriceInput1"
-                            ],
-                            "type": 18
-                        }
-                    },
-                    {
-                        "label": "price",
-                        "type": {
-                            "displayName": [
-                                "aft37payablemint_external",
-                                "SetPriceInput2"
-                            ],
-                            "type": 0
-                        }
-                    }
-                ],
-                "default": false,
-                "docs": [],
-                "label": "AFT37PayableMint::set_price",
-                "mutates": true,
-                "payable": false,
-                "returnType": {
-                    "displayName": [
-                        "ink",
-                        "MessageResult"
-                    ],
-                    "type": 26
-                },
-                "selector": "0xc5317b9a"
-            },
-            {
-                "args": [
-                    {
-                        "label": "id",
-                        "type": {
-                            "displayName": [
-                                "aft37payablemint_external",
                                 "SetMaxSupplyInput1"
                             ],
                             "type": 18
@@ -1129,7 +1076,44 @@ exports.metadata = {
                         "type": {
                             "displayName": [
                                 "aft37payablemint_external",
-                                "MaxSupplyInput1"
+                                "SetPriceInput1"
+                            ],
+                            "type": 18
+                        }
+                    },
+                    {
+                        "label": "price",
+                        "type": {
+                            "displayName": [
+                                "aft37payablemint_external",
+                                "SetPriceInput2"
+                            ],
+                            "type": 0
+                        }
+                    }
+                ],
+                "default": false,
+                "docs": [],
+                "label": "AFT37PayableMint::set_price",
+                "mutates": true,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 26
+                },
+                "selector": "0xc5317b9a"
+            },
+            {
+                "args": [
+                    {
+                        "label": "token_id",
+                        "type": {
+                            "displayName": [
+                                "aft37payablemint_external",
+                                "PriceInput1"
                             ],
                             "type": 18
                         }
@@ -1137,7 +1121,7 @@ exports.metadata = {
                 ],
                 "default": false,
                 "docs": [],
-                "label": "AFT37PayableMint::max_supply",
+                "label": "AFT37PayableMint::price",
                 "mutates": false,
                 "payable": false,
                 "returnType": {
@@ -1147,7 +1131,23 @@ exports.metadata = {
                     ],
                     "type": 37
                 },
-                "selector": "0xa7da8816"
+                "selector": "0x0b76ebea"
+            },
+            {
+                "args": [],
+                "default": false,
+                "docs": [],
+                "label": "AFT37PayableMint::withdraw",
+                "mutates": true,
+                "payable": false,
+                "returnType": {
+                    "displayName": [
+                        "ink",
+                        "MessageResult"
+                    ],
+                    "type": 26
+                },
+                "selector": "0x0698a062"
             }
         ]
     },
@@ -1941,6 +1941,48 @@ exports.metadata = {
                     "variant": {
                         "variants": [
                             {
+                                "fields": [
+                                    {
+                                        "type": 22
+                                    }
+                                ],
+                                "index": 0,
+                                "name": "Ok"
+                            },
+                            {
+                                "fields": [
+                                    {
+                                        "type": 11
+                                    }
+                                ],
+                                "index": 1,
+                                "name": "Err"
+                            }
+                        ]
+                    }
+                },
+                "params": [
+                    {
+                        "name": "T",
+                        "type": 22
+                    },
+                    {
+                        "name": "E",
+                        "type": 11
+                    }
+                ],
+                "path": [
+                    "Result"
+                ]
+            }
+        },
+        {
+            "id": 22,
+            "type": {
+                "def": {
+                    "variant": {
+                        "variants": [
+                            {
                                 "index": 0,
                                 "name": "None"
                             },
@@ -1968,7 +2010,7 @@ exports.metadata = {
             }
         },
         {
-            "id": 22,
+            "id": 23,
             "type": {
                 "def": {
                     "variant": {
@@ -1976,7 +2018,7 @@ exports.metadata = {
                             {
                                 "fields": [
                                     {
-                                        "type": 23
+                                        "type": 24
                                     }
                                 ],
                                 "index": 0,
@@ -1997,7 +2039,7 @@ exports.metadata = {
                 "params": [
                     {
                         "name": "T",
-                        "type": 23
+                        "type": 24
                     },
                     {
                         "name": "E",
@@ -2010,7 +2052,7 @@ exports.metadata = {
             }
         },
         {
-            "id": 23,
+            "id": 24,
             "type": {
                 "def": {
                     "variant": {
@@ -2027,7 +2069,7 @@ exports.metadata = {
                             {
                                 "fields": [
                                     {
-                                        "type": 24
+                                        "type": 25
                                     }
                                 ],
                                 "index": 1,
@@ -2043,7 +2085,7 @@ exports.metadata = {
                     },
                     {
                         "name": "E",
-                        "type": 24
+                        "type": 25
                     }
                 ],
                 "path": [
@@ -2052,7 +2094,7 @@ exports.metadata = {
             }
         },
         {
-            "id": 24,
+            "id": 25,
             "type": {
                 "def": {
                     "variant": {
@@ -2074,48 +2116,6 @@ exports.metadata = {
                     "errors",
                     "ownable",
                     "OwnableError"
-                ]
-            }
-        },
-        {
-            "id": 25,
-            "type": {
-                "def": {
-                    "variant": {
-                        "variants": [
-                            {
-                                "fields": [
-                                    {
-                                        "type": 21
-                                    }
-                                ],
-                                "index": 0,
-                                "name": "Ok"
-                            },
-                            {
-                                "fields": [
-                                    {
-                                        "type": 11
-                                    }
-                                ],
-                                "index": 1,
-                                "name": "Err"
-                            }
-                        ]
-                    }
-                },
-                "params": [
-                    {
-                        "name": "T",
-                        "type": 21
-                    },
-                    {
-                        "name": "E",
-                        "type": 11
-                    }
-                ],
-                "path": [
-                    "Result"
                 ]
             }
         },
@@ -2287,7 +2287,7 @@ exports.metadata = {
                             {
                                 "fields": [
                                     {
-                                        "type": 31
+                                        "type": 9
                                     }
                                 ],
                                 "index": 0,
@@ -2308,7 +2308,7 @@ exports.metadata = {
                 "params": [
                     {
                         "name": "T",
-                        "type": 31
+                        "type": 9
                     },
                     {
                         "name": "E",
@@ -2322,6 +2322,48 @@ exports.metadata = {
         },
         {
             "id": 31,
+            "type": {
+                "def": {
+                    "variant": {
+                        "variants": [
+                            {
+                                "fields": [
+                                    {
+                                        "type": 32
+                                    }
+                                ],
+                                "index": 0,
+                                "name": "Ok"
+                            },
+                            {
+                                "fields": [
+                                    {
+                                        "type": 11
+                                    }
+                                ],
+                                "index": 1,
+                                "name": "Err"
+                            }
+                        ]
+                    }
+                },
+                "params": [
+                    {
+                        "name": "T",
+                        "type": 32
+                    },
+                    {
+                        "name": "E",
+                        "type": 11
+                    }
+                ],
+                "path": [
+                    "Result"
+                ]
+            }
+        },
+        {
+            "id": 32,
             "type": {
                 "def": {
                     "variant": {
@@ -2355,48 +2397,6 @@ exports.metadata = {
                     {
                         "name": "E",
                         "type": 15
-                    }
-                ],
-                "path": [
-                    "Result"
-                ]
-            }
-        },
-        {
-            "id": 32,
-            "type": {
-                "def": {
-                    "variant": {
-                        "variants": [
-                            {
-                                "fields": [
-                                    {
-                                        "type": 9
-                                    }
-                                ],
-                                "index": 0,
-                                "name": "Ok"
-                            },
-                            {
-                                "fields": [
-                                    {
-                                        "type": 11
-                                    }
-                                ],
-                                "index": 1,
-                                "name": "Err"
-                            }
-                        ]
-                    }
-                },
-                "params": [
-                    {
-                        "name": "T",
-                        "type": 9
-                    },
-                    {
-                        "name": "E",
-                        "type": 11
                     }
                 ],
                 "path": [
@@ -2455,7 +2455,7 @@ exports.metadata = {
                             {
                                 "fields": [
                                     {
-                                        "type": 0
+                                        "type": 1
                                     }
                                 ],
                                 "index": 0,
@@ -2476,7 +2476,7 @@ exports.metadata = {
                 "params": [
                     {
                         "name": "T",
-                        "type": 0
+                        "type": 1
                     },
                     {
                         "name": "E",
@@ -2560,7 +2560,7 @@ exports.metadata = {
                             {
                                 "fields": [
                                     {
-                                        "type": 1
+                                        "type": 0
                                     }
                                 ],
                                 "index": 0,
@@ -2581,7 +2581,7 @@ exports.metadata = {
                 "params": [
                     {
                         "name": "T",
-                        "type": 1
+                        "type": 0
                     },
                     {
                         "name": "E",
@@ -2660,17 +2660,17 @@ class Contract {
     AFT37_allowance(owner, operator, id) {
         return this.stateCall('0x893600ca', [owner, operator, id]);
     }
-    AFT37URIStorage_token_uri(token_id) {
-        return this.stateCall('0x7fd773dc', [token_id]);
-    }
     AFT37URIStorage_base_uri() {
         return this.stateCall('0xadff9bda', []);
     }
-    AFT37PayableMint_price(token_id) {
-        return this.stateCall('0x0b76ebea', [token_id]);
+    AFT37URIStorage_token_uri(token_id) {
+        return this.stateCall('0x7fd773dc', [token_id]);
     }
     AFT37PayableMint_max_supply(id) {
         return this.stateCall('0xa7da8816', [id]);
+    }
+    AFT37PayableMint_price(token_id) {
+        return this.stateCall('0x0b76ebea', [token_id]);
     }
     async stateCall(selector, args) {
         let input = _abi.encodeMessageInput(selector, args);

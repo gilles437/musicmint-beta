@@ -2,9 +2,9 @@ import {Abi, encodeCall, decodeResult} from "@subsquid/ink-abi"
 
 export const metadata = {
   "source": {
-    "hash": "0x3448773c50d88a9606f9b943c72ad35b09819f59df0da98146fdd838cb9faa3a",
+    "hash": "0x4c6b58b8292ff6c7b7ec621d14a507f3663d1ea29d92c1e6ffc67030415d9956",
     "language": "ink! 4.3.0",
-    "compiler": "rustc 1.75.0-nightly",
+    "compiler": "rustc 1.76.0-nightly",
     "build_info": {
       "build_mode": "Release",
       "cargo_contract_version": "3.2.0",
@@ -583,6 +583,22 @@ export const metadata = {
         "selector": "0x79815f7b"
       },
       {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "Ownable::owner",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 21
+        },
+        "selector": "0x4fa43c8c"
+      },
+      {
         "args": [
           {
             "label": "new_owner",
@@ -591,7 +607,7 @@ export const metadata = {
                 "ownable_external",
                 "TransferOwnershipInput1"
               ],
-              "type": 21
+              "type": 22
             }
           }
         ],
@@ -605,25 +621,9 @@ export const metadata = {
             "ink",
             "MessageResult"
           ],
-          "type": 22
+          "type": 23
         },
         "selector": "0x11f43efd"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "Ownable::owner",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 25
-        },
-        "selector": "0x4fa43c8c"
       },
       {
         "args": [],
@@ -637,76 +637,9 @@ export const metadata = {
             "ink",
             "MessageResult"
           ],
-          "type": 22
+          "type": 23
         },
         "selector": "0x5e228753"
-      },
-      {
-        "args": [
-          {
-            "label": "from",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "TransferFromInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "to",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "TransferFromInput2"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "id",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "TransferFromInput3"
-              ],
-              "type": 18
-            }
-          },
-          {
-            "label": "amount",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "TransferFromInput4"
-              ],
-              "type": 0
-            }
-          },
-          {
-            "label": "data",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "TransferFromInput5"
-              ],
-              "type": 20
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AFT37::transfer_from",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0x842da239"
       },
       {
         "args": [
@@ -832,53 +765,6 @@ export const metadata = {
       {
         "args": [
           {
-            "label": "operator",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "ApproveInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "id",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "ApproveInput2"
-              ],
-              "type": 28
-            }
-          },
-          {
-            "label": "value",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "ApproveInput3"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AFT37::approve",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0xc432e7a4"
-      },
-      {
-        "args": [
-          {
             "label": "owner",
             "type": {
               "displayName": [
@@ -926,6 +812,136 @@ export const metadata = {
       {
         "args": [
           {
+            "label": "from",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "TransferFromInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "to",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "TransferFromInput2"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "id",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "TransferFromInput3"
+              ],
+              "type": 18
+            }
+          },
+          {
+            "label": "amount",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "TransferFromInput4"
+              ],
+              "type": 0
+            }
+          },
+          {
+            "label": "data",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "TransferFromInput5"
+              ],
+              "type": 20
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AFT37::transfer_from",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 26
+        },
+        "selector": "0x842da239"
+      },
+      {
+        "args": [
+          {
+            "label": "operator",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "ApproveInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "id",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "ApproveInput2"
+              ],
+              "type": 28
+            }
+          },
+          {
+            "label": "value",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "ApproveInput3"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AFT37::approve",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 26
+        },
+        "selector": "0xc432e7a4"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AFT37URIStorage::base_uri",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 30
+        },
+        "selector": "0xadff9bda"
+      },
+      {
+        "args": [
+          {
             "label": "token_id",
             "type": {
               "displayName": [
@@ -946,34 +962,18 @@ export const metadata = {
             "ink",
             "MessageResult"
           ],
-          "type": 30
+          "type": 31
         },
         "selector": "0x7fd773dc"
       },
       {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AFT37URIStorage::base_uri",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 32
-        },
-        "selector": "0xadff9bda"
-      },
-      {
         "args": [
           {
-            "label": "token_id",
+            "label": "id",
             "type": {
               "displayName": [
                 "aft37payablemint_external",
-                "PriceInput1"
+                "MaxSupplyInput1"
               ],
               "type": 18
             }
@@ -981,7 +981,7 @@ export const metadata = {
         ],
         "default": false,
         "docs": [],
-        "label": "AFT37PayableMint::price",
+        "label": "AFT37PayableMint::max_supply",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -991,23 +991,7 @@ export const metadata = {
           ],
           "type": 33
         },
-        "selector": "0x0b76ebea"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AFT37PayableMint::withdraw",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0x0698a062"
+        "selector": "0xa7da8816"
       },
       {
         "args": [
@@ -1053,43 +1037,6 @@ export const metadata = {
             "type": {
               "displayName": [
                 "aft37payablemint_external",
-                "SetPriceInput1"
-              ],
-              "type": 18
-            }
-          },
-          {
-            "label": "price",
-            "type": {
-              "displayName": [
-                "aft37payablemint_external",
-                "SetPriceInput2"
-              ],
-              "type": 0
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AFT37PayableMint::set_price",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 26
-        },
-        "selector": "0xc5317b9a"
-      },
-      {
-        "args": [
-          {
-            "label": "id",
-            "type": {
-              "displayName": [
-                "aft37payablemint_external",
                 "SetMaxSupplyInput1"
               ],
               "type": 18
@@ -1127,7 +1074,44 @@ export const metadata = {
             "type": {
               "displayName": [
                 "aft37payablemint_external",
-                "MaxSupplyInput1"
+                "SetPriceInput1"
+              ],
+              "type": 18
+            }
+          },
+          {
+            "label": "price",
+            "type": {
+              "displayName": [
+                "aft37payablemint_external",
+                "SetPriceInput2"
+              ],
+              "type": 0
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AFT37PayableMint::set_price",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 26
+        },
+        "selector": "0xc5317b9a"
+      },
+      {
+        "args": [
+          {
+            "label": "token_id",
+            "type": {
+              "displayName": [
+                "aft37payablemint_external",
+                "PriceInput1"
               ],
               "type": 18
             }
@@ -1135,7 +1119,7 @@ export const metadata = {
         ],
         "default": false,
         "docs": [],
-        "label": "AFT37PayableMint::max_supply",
+        "label": "AFT37PayableMint::price",
         "mutates": false,
         "payable": false,
         "returnType": {
@@ -1145,7 +1129,23 @@ export const metadata = {
           ],
           "type": 37
         },
-        "selector": "0xa7da8816"
+        "selector": "0x0b76ebea"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AFT37PayableMint::withdraw",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 26
+        },
+        "selector": "0x0698a062"
       }
     ]
   },
@@ -1939,6 +1939,48 @@ export const metadata = {
           "variant": {
             "variants": [
               {
+                "fields": [
+                  {
+                    "type": 22
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 11
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 22
+          },
+          {
+            "name": "E",
+            "type": 11
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
                 "index": 0,
                 "name": "None"
               },
@@ -1966,7 +2008,7 @@ export const metadata = {
       }
     },
     {
-      "id": 22,
+      "id": 23,
       "type": {
         "def": {
           "variant": {
@@ -1974,7 +2016,7 @@ export const metadata = {
               {
                 "fields": [
                   {
-                    "type": 23
+                    "type": 24
                   }
                 ],
                 "index": 0,
@@ -1995,7 +2037,7 @@ export const metadata = {
         "params": [
           {
             "name": "T",
-            "type": 23
+            "type": 24
           },
           {
             "name": "E",
@@ -2008,7 +2050,7 @@ export const metadata = {
       }
     },
     {
-      "id": 23,
+      "id": 24,
       "type": {
         "def": {
           "variant": {
@@ -2025,7 +2067,7 @@ export const metadata = {
               {
                 "fields": [
                   {
-                    "type": 24
+                    "type": 25
                   }
                 ],
                 "index": 1,
@@ -2041,7 +2083,7 @@ export const metadata = {
           },
           {
             "name": "E",
-            "type": 24
+            "type": 25
           }
         ],
         "path": [
@@ -2050,7 +2092,7 @@ export const metadata = {
       }
     },
     {
-      "id": 24,
+      "id": 25,
       "type": {
         "def": {
           "variant": {
@@ -2072,48 +2114,6 @@ export const metadata = {
           "errors",
           "ownable",
           "OwnableError"
-        ]
-      }
-    },
-    {
-      "id": 25,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 21
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 11
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 21
-          },
-          {
-            "name": "E",
-            "type": 11
-          }
-        ],
-        "path": [
-          "Result"
         ]
       }
     },
@@ -2285,7 +2285,7 @@ export const metadata = {
               {
                 "fields": [
                   {
-                    "type": 31
+                    "type": 9
                   }
                 ],
                 "index": 0,
@@ -2306,7 +2306,7 @@ export const metadata = {
         "params": [
           {
             "name": "T",
-            "type": 31
+            "type": 9
           },
           {
             "name": "E",
@@ -2320,6 +2320,48 @@ export const metadata = {
     },
     {
       "id": 31,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
+                "fields": [
+                  {
+                    "type": 32
+                  }
+                ],
+                "index": 0,
+                "name": "Ok"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 11
+                  }
+                ],
+                "index": 1,
+                "name": "Err"
+              }
+            ]
+          }
+        },
+        "params": [
+          {
+            "name": "T",
+            "type": 32
+          },
+          {
+            "name": "E",
+            "type": 11
+          }
+        ],
+        "path": [
+          "Result"
+        ]
+      }
+    },
+    {
+      "id": 32,
       "type": {
         "def": {
           "variant": {
@@ -2353,48 +2395,6 @@ export const metadata = {
           {
             "name": "E",
             "type": 15
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 32,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 9
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 11
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 9
-          },
-          {
-            "name": "E",
-            "type": 11
           }
         ],
         "path": [
@@ -2453,7 +2453,7 @@ export const metadata = {
               {
                 "fields": [
                   {
-                    "type": 0
+                    "type": 1
                   }
                 ],
                 "index": 0,
@@ -2474,7 +2474,7 @@ export const metadata = {
         "params": [
           {
             "name": "T",
-            "type": 0
+            "type": 1
           },
           {
             "name": "E",
@@ -2558,7 +2558,7 @@ export const metadata = {
               {
                 "fields": [
                   {
-                    "type": 1
+                    "type": 0
                   }
                 ],
                 "index": 0,
@@ -2579,7 +2579,7 @@ export const metadata = {
         "params": [
           {
             "name": "T",
-            "type": 1
+            "type": 0
           },
           {
             "name": "E",
@@ -2671,20 +2671,20 @@ export class Contract {
         return this.stateCall('0x893600ca', [owner, operator, id])
     }
 
-    AFT37URIStorage_token_uri(token_id: Id): Promise<Result<Result<(URI | undefined), AFT37Error>, LangError>> {
-        return this.stateCall('0x7fd773dc', [token_id])
-    }
-
     AFT37URIStorage_base_uri(): Promise<Result<(URI | undefined), LangError>> {
         return this.stateCall('0xadff9bda', [])
     }
 
-    AFT37PayableMint_price(token_id: Id): Promise<Result<Result<bigint, AFT37Error>, LangError>> {
-        return this.stateCall('0x0b76ebea', [token_id])
+    AFT37URIStorage_token_uri(token_id: Id): Promise<Result<Result<(URI | undefined), AFT37Error>, LangError>> {
+        return this.stateCall('0x7fd773dc', [token_id])
     }
 
     AFT37PayableMint_max_supply(id: Id): Promise<Result<Result<number, AFT37Error>, LangError>> {
         return this.stateCall('0xa7da8816', [id])
+    }
+
+    AFT37PayableMint_price(token_id: Id): Promise<Result<Result<bigint, AFT37Error>, LangError>> {
+        return this.stateCall('0x0b76ebea', [token_id])
     }
 
     private async stateCall<T>(selector: string, args: any[]): Promise<T> {
@@ -2758,7 +2758,7 @@ export interface Event_ItemMinted {
     songId: number
 }
 
-export type Message = Message_deny | Message_create_album | Message_create_song | Message_delete_album | Message_delete_song | Message_mint_album | Message_mint_song | Message_Ownable_transfer_ownership | Message_Ownable_owner | Message_Ownable_renounce_ownership | Message_AFT37_transfer_from | Message_AFT37_transfer | Message_AFT37_balance_of | Message_AFT37_total_supply | Message_AFT37_approve | Message_AFT37_allowance | Message_AFT37URIStorage_token_uri | Message_AFT37URIStorage_base_uri | Message_AFT37PayableMint_price | Message_AFT37PayableMint_withdraw | Message_AFT37PayableMint_mint | Message_AFT37PayableMint_set_price | Message_AFT37PayableMint_set_max_supply | Message_AFT37PayableMint_max_supply
+export type Message = Message_deny | Message_create_album | Message_create_song | Message_delete_album | Message_delete_song | Message_mint_album | Message_mint_song | Message_Ownable_owner | Message_Ownable_transfer_ownership | Message_Ownable_renounce_ownership | Message_AFT37_transfer | Message_AFT37_balance_of | Message_AFT37_total_supply | Message_AFT37_allowance | Message_AFT37_transfer_from | Message_AFT37_approve | Message_AFT37URIStorage_base_uri | Message_AFT37URIStorage_token_uri | Message_AFT37PayableMint_max_supply | Message_AFT37PayableMint_mint | Message_AFT37PayableMint_set_max_supply | Message_AFT37PayableMint_set_price | Message_AFT37PayableMint_price | Message_AFT37PayableMint_withdraw
 
 /**
  *  Denies an ID from being used.
@@ -2824,26 +2824,17 @@ export interface Message_mint_song {
     songId: number
 }
 
+export interface Message_Ownable_owner {
+    __kind: 'Ownable_owner'
+}
+
 export interface Message_Ownable_transfer_ownership {
     __kind: 'Ownable_transfer_ownership'
     newOwner: TransferOwnershipInput1
 }
 
-export interface Message_Ownable_owner {
-    __kind: 'Ownable_owner'
-}
-
 export interface Message_Ownable_renounce_ownership {
     __kind: 'Ownable_renounce_ownership'
-}
-
-export interface Message_AFT37_transfer_from {
-    __kind: 'AFT37_transfer_from'
-    from: Uint8Array
-    to: Uint8Array
-    id: Id
-    amount: bigint
-    data: Uint8Array
 }
 
 export interface Message_AFT37_transfer {
@@ -2865,13 +2856,6 @@ export interface Message_AFT37_total_supply {
     id: (Id | undefined)
 }
 
-export interface Message_AFT37_approve {
-    __kind: 'AFT37_approve'
-    operator: Uint8Array
-    id: (Id | undefined)
-    value: bigint
-}
-
 export interface Message_AFT37_allowance {
     __kind: 'AFT37_allowance'
     owner: Uint8Array
@@ -2879,13 +2863,52 @@ export interface Message_AFT37_allowance {
     id: (Id | undefined)
 }
 
+export interface Message_AFT37_transfer_from {
+    __kind: 'AFT37_transfer_from'
+    from: Uint8Array
+    to: Uint8Array
+    id: Id
+    amount: bigint
+    data: Uint8Array
+}
+
+export interface Message_AFT37_approve {
+    __kind: 'AFT37_approve'
+    operator: Uint8Array
+    id: (Id | undefined)
+    value: bigint
+}
+
+export interface Message_AFT37URIStorage_base_uri {
+    __kind: 'AFT37URIStorage_base_uri'
+}
+
 export interface Message_AFT37URIStorage_token_uri {
     __kind: 'AFT37URIStorage_token_uri'
     tokenId: Id
 }
 
-export interface Message_AFT37URIStorage_base_uri {
-    __kind: 'AFT37URIStorage_base_uri'
+export interface Message_AFT37PayableMint_max_supply {
+    __kind: 'AFT37PayableMint_max_supply'
+    id: Id
+}
+
+export interface Message_AFT37PayableMint_mint {
+    __kind: 'AFT37PayableMint_mint'
+    to: Uint8Array
+    idsAmounts: MintInput2
+}
+
+export interface Message_AFT37PayableMint_set_max_supply {
+    __kind: 'AFT37PayableMint_set_max_supply'
+    id: Id
+    maxSupply: number
+}
+
+export interface Message_AFT37PayableMint_set_price {
+    __kind: 'AFT37PayableMint_set_price'
+    id: Id
+    price: bigint
 }
 
 export interface Message_AFT37PayableMint_price {
@@ -2895,29 +2918,6 @@ export interface Message_AFT37PayableMint_price {
 
 export interface Message_AFT37PayableMint_withdraw {
     __kind: 'AFT37PayableMint_withdraw'
-}
-
-export interface Message_AFT37PayableMint_mint {
-    __kind: 'AFT37PayableMint_mint'
-    to: Uint8Array
-    idsAmounts: MintInput2
-}
-
-export interface Message_AFT37PayableMint_set_price {
-    __kind: 'AFT37PayableMint_set_price'
-    id: Id
-    price: bigint
-}
-
-export interface Message_AFT37PayableMint_set_max_supply {
-    __kind: 'AFT37PayableMint_set_max_supply'
-    id: Id
-    maxSupply: number
-}
-
-export interface Message_AFT37PayableMint_max_supply {
-    __kind: 'AFT37PayableMint_max_supply'
-    id: Id
 }
 
 export type Constructor = Constructor_new

@@ -2,8 +2,8 @@ import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, I
 import * as marshal from "./marshal"
 
 @Entity_()
-export class AlbumsAction {
-    constructor(props?: Partial<AlbumsAction>) {
+export class Collections {
+    constructor(props?: Partial<Collections>) {
         Object.assign(this, props)
     }
 
@@ -35,23 +35,20 @@ export class AlbumsAction {
     uri!: string | undefined | null
 
     @Index_()
-    @Column_("text", {nullable: true})
-    albumid!: string | undefined | null
-
-    @Index_()
-    @Column_("text", {nullable: true})
-    songid!: string | undefined | null
-
-    @Index_()
-    @Column_("text", {nullable: true})
-    maxsupply!: string | undefined | null
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+    albumid!: bigint
 
     @Index_()
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-    amount!: bigint
+    songid!: bigint
 
+    @Index_()
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-    fee!: bigint
+    maxsupply!: bigint
+
+    @Index_()
+    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
+    price!: bigint
 
     @Column_("text", {nullable: false})
     contract!: string

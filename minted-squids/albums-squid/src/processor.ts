@@ -4,17 +4,14 @@ import {toHex} from "@subsquid/util-internal-hex"
 import {BatchContext, BatchProcessorItem, SubstrateBatchProcessor} from "@subsquid/substrate-processor"
 import {Store, TypeormDatabase} from "@subsquid/typeorm-store"
 import {In} from "typeorm"
-import * as admin from "./abi/admin"
 import * as albums from "./abi/albums"
-import {Owner, Account, AlbumsAction, Transfer} from "./model"
+import {Owner, Account, Collections, Transfer} from "./model"
 import { BigNumber } from "@ethersproject/bignumber"
+import { text } from "stream/consumers"
 
-//address of a 0x0 address
-const CONTRACT_OxO = '5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM'
 
 //the address of the deployed admins contract
-//const CONTRACT_ADDRESS_SS58 = '5D5G8y4Gusc89E2XjetuwuNAN5GdhnQKUByQJ9NxkCdFwwBG'
-const CONTRACT_ADDRESS_SS58 = '5FVLyN1XCPwxEzxmVKRCArwa5yoqGZF4ABqf81HVaz1wPDsh'
+const CONTRACT_ADDRESS_SS58 = '5FtcJFDK2TPAoAKx6gDMNR7cKmRZXgckHrW3txmev1fpvsCM'
 
 const CONTRACT_ADDRESS = toHex(ss58.decode(CONTRACT_ADDRESS_SS58).bytes)
 const SS58_PREFIX = ss58.decode(CONTRACT_ADDRESS_SS58).prefix
@@ -33,7 +30,7 @@ type Item = BatchProcessorItem<typeof processor>
 type Ctx = BatchContext<Store, Item>
  
 processor.run(new TypeormDatabase(), async ctx => {
-    const txs = extractTransferRecords(ctx)
+    const txs = extractCollectionsRecords(ctx)
     const ownerIds = new Set<string>()
     txs.forEach(tx => {
         if (tx.from) {
@@ -52,21 +49,26 @@ processor.run(new TypeormDatabase(), async ctx => {
  
     await ctx.store.save([...ownersMap.values()])
 
-    let transfers: AlbumsAction[] = [];
+    let transfers: Collections[] = [];
     txs.map(tx => {
-        if(tx.role != "None"){
-            const transfer = new AlbumsAction({
+        if (tx.action == 'add') { 
+            const transfer = new Collections({
                 id: tx.id,
-                amount: tx.amount,
                 block: tx.block,
-                role: tx.role,
+                uri: tx.uri,
                 timestamp: tx.timestamp,
-                contract: tx.contract,
                 from: tx.from,
-                to:tx.to
+                to: tx.to,
+                songid: tx.song_id,
+                albumid: tx.album_id,
+                maxsupply: tx.max_supply,
+                price: tx.price,
+                contract: tx.contract
+
             })
             transfers.push(transfer);
         }
+        
     })
     console.log({transfers})
     await ctx.store.insert(transfers)
@@ -74,13 +76,13 @@ processor.run(new TypeormDatabase(), async ctx => {
     let removeAdminItems: string[] = [];
     let removeSuperAdminItems: string[] = [];
     txs.map(tx => {
-        if(tx.role == "None"){
-            if(tx.contract && tx.contract != CONTRACT_OxO ){
+        if(tx.action == "delete"){
+        //    if(tx.contract && tx.contract != "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM" ){
                 removeAdminItems.push(tx.contract)
-            }
-            else if(tx.contract == CONTRACT_OxO && tx.to){
-                removeSuperAdminItems.push(tx.to);
-            }
+          //  }
+           // else if(tx.contract == "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM" && tx.to){
+             //   removeSuperAdminItems.push(tx.to);
+            //}
         }
     })
     console.log({removeAdminItems})
@@ -91,7 +93,7 @@ processor.run(new TypeormDatabase(), async ctx => {
     const uniqueSuperAdminArray = [...new Set(removeSuperAdminItems)];
     console.log({uniqueSuperAdminArray})
 
-    const transferAdminRemoveItem = await ctx.store.find(AlbumsAction, {
+    const transferAdminRemoveItem = await ctx.store.find(Transfer, {
         where:{
             contract: In([...uniqueAdminArray])
         }
@@ -101,64 +103,96 @@ processor.run(new TypeormDatabase(), async ctx => {
     console.log({transferAdminRemoveItem})
     await Promise.all(
         transferAdminRemoveItem.map(async (item)=>{
-            await ctx.store.remove(AlbumsAction, item.id)
+            await ctx.store.remove(Transfer, item.id)
         })
     )
 
-    const transferSuperAdminRemoveItem = await ctx.store.find(AlbumsAction, {
-        where:{
-            to: In([...removeSuperAdminItems]),
-            contract: CONTRACT_OxO
-        }
-    }).then(data => {
-        return data;
-    })
-    await Promise.all(
-        transferSuperAdminRemoveItem.map(async (item)=>{
-            await ctx.store.remove(AlbumsAction, item.id)
-        })
-    )
+   
+  
 })
  
-interface TransferRecord {
+interface CollectionsRecord {
     id: string
     from?: string
     to?: string
-    amount: bigint
     block: number
     timestamp: Date
-    contract?: string
-    role: string
+    uri: string
+    song_id: number
+    album_id: number
+    max_supply: number
+    price: bigint
+    action:string
+    contract: string
 }
 
-function extractTransferRecords(ctx: Ctx): TransferRecord[] {
-    const records: TransferRecord[] = []
+function extractCollectionsRecords(ctx: Ctx): CollectionsRecord[] {
+    const records: CollectionsRecord[] = []
     for (const block of ctx.blocks) {
         for (const item of block.items) {
             console.log('item block', item.name)
             if (item.name === 'Contracts.ContractEmitted' && item.event.args.contract === CONTRACT_ADDRESS) {
                 const event = albums.decodeEvent(item.event.args.data)
                 console.log('event',event)
-           //     console.log('event.contract is ',event.contract && ss58.codec(SS58_PREFIX).encode(event.contract))
-
               
                 console.log ('event', event.__kind)
                 console.log ('event', event.albumId, event.songId)
-
-              
 
                 if (event.__kind === 'ItemCreated') {
                     records.push({
                     id: item.event.id,
                     from: event.from && ss58.codec(SS58_PREFIX).encode(event.from),
-                //    to: event.to && ss58.codec(SS58_PREFIX).encode(event.to),
-                    amount:BigInt(0),
-                    role: "hello",
+                    to: 'toto',
                     block: block.header.height,
                     timestamp: new Date(block.header.timestamp),
-               //     contract: event.contract && ss58.codec(SS58_PREFIX).encode(event.contract)
+                    uri:event.uri,
+                    song_id:event.songId,
+                    album_id:event.albumId,
+                    max_supply:event.maxSupply,
+                    price: event.price,
+                    action:"add",
+                    contract:"contract id"
+
                     })
                 }
+                if (event.__kind === 'ItemDeleted') {
+                    records.push({
+                    id: item.event.id,
+                    from: '',
+                    to: 'toto',
+                    block: block.header.height,
+                    timestamp: new Date(block.header.timestamp),
+                    uri:'',
+                    song_id:event.songId,
+                    album_id:event.albumId,
+                    max_supply:0,
+                    price: BigInt(0),
+                    action:"delete",
+                    contract:"contract id"
+
+                    })
+                }
+
+                if (event.__kind === 'ItemMinted') {
+                    records.push({
+                    id: item.event.id,
+                    from: event.from && ss58.codec(SS58_PREFIX).encode(event.from),
+                    to: event.to && ss58.codec(SS58_PREFIX).encode(event.to),
+                    block: block.header.height,
+                    timestamp: new Date(block.header.timestamp),
+                    uri:'',
+                    song_id:event.songId,
+                    album_id:event.albumId,
+                    max_supply:0,
+                    price: BigInt(0),
+                    action:"mint",
+                                        contract:"contract id"
+
+
+                    })
+                }                
+
+
             }
         }
     }

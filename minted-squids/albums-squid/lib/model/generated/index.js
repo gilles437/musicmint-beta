@@ -15,5 +15,5 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./owner.model"), exports);
-__exportStar(require("./albumsAction.model"), exports);
+__exportStar(require("./collections.model"), exports);
 //# sourceMappingURL=index.js.map

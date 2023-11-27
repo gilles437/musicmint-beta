@@ -32,10 +32,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AlbumsAction = void 0;
+exports.Collections = void 0;
 const typeorm_1 = require("typeorm");
 const marshal = __importStar(require("./marshal"));
-let AlbumsAction = class AlbumsAction {
+let Collections = class Collections {
     constructor(props) {
         Object.assign(this, props);
     }
@@ -43,68 +43,64 @@ let AlbumsAction = class AlbumsAction {
 __decorate([
     (0, typeorm_1.PrimaryColumn)(),
     __metadata("design:type", String)
-], AlbumsAction.prototype, "id", void 0);
+], Collections.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("int4", { nullable: false }),
     __metadata("design:type", Number)
-], AlbumsAction.prototype, "block", void 0);
+], Collections.prototype, "block", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("timestamp with time zone", { nullable: false }),
     __metadata("design:type", Date)
-], AlbumsAction.prototype, "timestamp", void 0);
+], Collections.prototype, "timestamp", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("text", { nullable: true }),
     __metadata("design:type", Object)
-], AlbumsAction.prototype, "extrinsicHash", void 0);
+], Collections.prototype, "extrinsicHash", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("text", { nullable: false }),
     __metadata("design:type", String)
-], AlbumsAction.prototype, "from", void 0);
+], Collections.prototype, "from", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("text", { nullable: false }),
     __metadata("design:type", String)
-], AlbumsAction.prototype, "to", void 0);
+], Collections.prototype, "to", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("text", { nullable: true }),
     __metadata("design:type", Object)
-], AlbumsAction.prototype, "uri", void 0);
-__decorate([
-    (0, typeorm_1.Index)(),
-    (0, typeorm_1.Column)("text", { nullable: true }),
-    __metadata("design:type", Object)
-], AlbumsAction.prototype, "albumid", void 0);
-__decorate([
-    (0, typeorm_1.Index)(),
-    (0, typeorm_1.Column)("text", { nullable: true }),
-    __metadata("design:type", Object)
-], AlbumsAction.prototype, "songid", void 0);
-__decorate([
-    (0, typeorm_1.Index)(),
-    (0, typeorm_1.Column)("text", { nullable: true }),
-    __metadata("design:type", Object)
-], AlbumsAction.prototype, "maxsupply", void 0);
+], Collections.prototype, "uri", void 0);
 __decorate([
     (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("numeric", { transformer: marshal.bigintTransformer, nullable: false }),
     __metadata("design:type", typeof BigInt === "function" ? BigInt : Object)
-], AlbumsAction.prototype, "amount", void 0);
+], Collections.prototype, "albumid", void 0);
 __decorate([
+    (0, typeorm_1.Index)(),
     (0, typeorm_1.Column)("numeric", { transformer: marshal.bigintTransformer, nullable: false }),
     __metadata("design:type", typeof BigInt === "function" ? BigInt : Object)
-], AlbumsAction.prototype, "fee", void 0);
+], Collections.prototype, "songid", void 0);
+__decorate([
+    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Column)("numeric", { transformer: marshal.bigintTransformer, nullable: false }),
+    __metadata("design:type", typeof BigInt === "function" ? BigInt : Object)
+], Collections.prototype, "maxsupply", void 0);
+__decorate([
+    (0, typeorm_1.Index)(),
+    (0, typeorm_1.Column)("numeric", { transformer: marshal.bigintTransformer, nullable: false }),
+    __metadata("design:type", typeof BigInt === "function" ? BigInt : Object)
+], Collections.prototype, "price", void 0);
 __decorate([
     (0, typeorm_1.Column)("text", { nullable: false }),
     __metadata("design:type", String)
-], AlbumsAction.prototype, "contract", void 0);
-AlbumsAction = __decorate([
+], Collections.prototype, "contract", void 0);
+Collections = __decorate([
     (0, typeorm_1.Entity)(),
     __metadata("design:paramtypes", [Object])
-], AlbumsAction);
-exports.AlbumsAction = AlbumsAction;
-//# sourceMappingURL=albumsAction.model.js.map
+], Collections);
+exports.Collections = Collections;
+//# sourceMappingURL=collections.model.js.map
