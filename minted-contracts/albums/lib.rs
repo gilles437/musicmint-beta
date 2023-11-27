@@ -328,7 +328,7 @@ pub mod albums {
             Ok(())
         }
 
-        /// Mintes a new album to the caller.
+        /// Mints a new album to the caller.
         #[ink(message, payable)]
         pub fn mint_album(&mut self, album_id: AlbumId) -> Result<Id, Error> {
             let id = combine_ids(album_id, 0);
@@ -356,7 +356,7 @@ pub mod albums {
             Ok(id)
         }
 
-        /// Mintes a new song to the caller.
+        /// Mints a new song to the caller.
         #[ink(message, payable)]
         pub fn mint_song(&mut self, album_id: AlbumId, song_id: SongId) -> Result<Id, Error> {
             let id = combine_ids(album_id, song_id);
@@ -384,610 +384,279 @@ pub mod albums {
             Ok(id)
         }
     }
-    // #[cfg(all(test, feature = "e2e-tests"))]
-    // pub mod tests {
-    //     use allfeat_contracts::aft37::aft37_external::AFT37;
-
-    //     #[rustfmt::skip]
-    //     use super::*;
-    //     #[rustfmt::skip]
-    //     use ink_e2e::build_message;
-
-    //     use test_helpers::{address_of, balance_of_37};
-
-    //     type E2EResult<T> = Result<T, Box<dyn std::error::Error>>;
-
-    //     #[ink_e2e::test]
-    //     async fn balance_of_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
-    //         let constructor = ContractRef::new();
-    //         let address = client
-    //             .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
-    //             .await
-    //             .expect("instantiate failed")
-    //             .account_id;
-
-    //         let token_1 = Id::U8(0);
-    //         let token_2 = Id::U8(1);
-
-    //         let amount_1 = 1;
-    //         let amount_2 = 20;
-
-    //         assert_eq!(balance_of_37!(client, address, alice, None), 0);
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token_1.clone(), amount_1));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("mint failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token_2.clone(), amount_2));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("mint failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_1.clone())),
-    //             amount_1
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_2.clone())),
-    //             amount_2
-    //         );
-    //         assert_eq!(balance_of_37!(client, address, alice, None), 2);
-
-    //         Ok(())
-    //     }
-
-    //     #[ink_e2e::test]
-    //     async fn total_supply_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
-    //         let constructor = ContractRef::new();
-    //         let address = client
-    //             .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
-    //             .await
-    //             .expect("instantiate failed")
-    //             .account_id;
-
-    //         let token_1 = Id::U8(0);
-    //         let token_2 = Id::U8(1);
-
-    //         let amount_1 = 1;
-    //         let amount_2 = 20;
-
-    //         let total_supply = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.total_supply(None));
-    //             client.call_dry_run(&ink_e2e::alice(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(total_supply, 0);
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token_1.clone(), amount_1.clone()));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         let total_supply_1 = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.total_supply(Some(token_1.clone())));
-    //             client.call_dry_run(&ink_e2e::alice(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(total_supply_1.clone(), amount_1.clone());
-
-    //         let total_supply_2 = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.total_supply(None));
-    //             client.call_dry_run(&ink_e2e::alice(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(total_supply_2, 1);
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token_2.clone(), amount_2.clone()));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         let total_supply_1 = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.total_supply(Some(token_2.clone())));
-    //             client.call_dry_run(&ink_e2e::alice(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(total_supply_1.clone(), amount_2.clone());
-
-    //         let total_supply_2 = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.total_supply(None));
-    //             client.call_dry_run(&ink_e2e::alice(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(total_supply_2.clone(), 2);
-
-    //         Ok(())
-    //     }
-
-    //     #[ink_e2e::test]
-    //     async fn allowance_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
-    //         let constructor = ContractRef::new();
-    //         let address = client
-    //             .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
-    //             .await
-    //             .expect("instantiate failed")
-    //             .account_id;
-
-    //         let token = Id::U8(0);
-
-    //         let allowance = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.allowance(address_of!(alice), address_of!(bob), Some(token.clone()))
-    //             });
-    //             client.call_dry_run(&ink_e2e::alice(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(allowance, 0);
-
-    //         let approve_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.approve(address_of!(bob), Some(token.clone()), 10));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("approve failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(approve_tx, Ok(()));
-
-    //         let allowance = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.allowance(address_of!(alice), address_of!(bob), Some(token.clone()))
-    //             });
-    //             client.call_dry_run(&ink_e2e::alice(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(allowance, 10);
-
-    //         Ok(())
-    //     }
-
-    //     #[ink_e2e::test]
-    //     async fn transfer_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
-    //         let constructor = ContractRef::new();
-    //         let address = client
-    //             .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
-    //             .await
-    //             .expect("instantiate failed")
-    //             .account_id;
-
-    //         let token_1 = Id::U8(0);
-    //         let token_2 = Id::U8(1);
-
-    //         let amount_1 = 1;
-    //         let amount_2 = 10;
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token_1.clone(), amount_1.clone()));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token_2.clone(), amount_2.clone()));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         assert_eq!(balance_of_37!(client, address, alice, None), 2);
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_1.clone())),
-    //             amount_1
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_2.clone())),
-    //             amount_2
-    //         );
-
-    //         let total_supply = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.total_supply(None));
-    //             client.call_dry_run(&ink_e2e::alice(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(total_supply, 2);
-
-    //         let transfer_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.transfer(address_of!(bob), token_2.clone(), amount_2, vec![])
-    //             });
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(transfer_tx, Ok(()));
-
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_1.clone())),
-    //             amount_1
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_2.clone())),
-    //             0
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, bob, Some(token_1.clone())),
-    //             0
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, bob, Some(token_2.clone())),
-    //             amount_2
-    //         );
-    //         assert_eq!(balance_of_37!(client, address, alice, None), 1);
-    //         assert_eq!(balance_of_37!(client, address, bob, None), 1);
-
-    //         let transfer_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.transfer(address_of!(bob), token_1.clone(), amount_1, vec![])
-    //             });
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(transfer_tx, Ok(()));
-
-    //         let transfer_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.transfer(address_of!(alice), token_2.clone(), amount_1, vec![])
-    //             });
-    //             client
-    //                 .call(&ink_e2e::bob(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(transfer_tx, Ok(()));
-
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_1.clone())),
-    //             0
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_2.clone())),
-    //             amount_1
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, bob, Some(token_1.clone())),
-    //             amount_1
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, bob, Some(token_2.clone())),
-    //             amount_2 - amount_1
-    //         );
-    //         assert_eq!(balance_of_37!(client, address, alice, None), 1);
-    //         assert_eq!(balance_of_37!(client, address, bob, None), 2);
-
-    //         Ok(())
-    //     }
-
-    //     #[ink_e2e::test]
-    //     async fn transfer_from_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
-    //         let constructor = ContractRef::new();
-    //         let address = client
-    //             .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
-    //             .await
-    //             .expect("instantiate failed")
-    //             .account_id;
-
-    //         let token_1 = Id::U8(0);
-    //         let token_2 = Id::U8(1);
-
-    //         let amount_1 = 1;
-    //         let amount_2 = 10;
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token_1.clone(), amount_1.clone()));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token_2.clone(), amount_2.clone()));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         let approve_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.approve(address_of!(alice), None, 1));
-    //             client
-    //                 .call(&ink_e2e::bob(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(approve_tx, Ok(()));
-
-    //         let transfer_from_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.transfer_from(
-    //                     address_of!(alice),
-    //                     address_of!(bob),
-    //                     token_2.clone(),
-    //                     amount_2,
-    //                     vec![],
-    //                 )
-    //             });
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(transfer_from_tx, Ok(()));
-
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_1.clone())),
-    //             amount_1
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_2.clone())),
-    //             0
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, bob, Some(token_1.clone())),
-    //             0
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, bob, Some(token_2.clone())),
-    //             amount_2
-    //         );
-
-    //         let transfer_from_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.transfer_from(
-    //                     address_of!(alice),
-    //                     address_of!(bob),
-    //                     token_1.clone(),
-    //                     amount_1,
-    //                     vec![],
-    //                 )
-    //             });
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(transfer_from_tx, Ok(()));
-
-    //         let transfer_from_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.transfer_from(
-    //                     address_of!(bob),
-    //                     address_of!(alice),
-    //                     token_2.clone(),
-    //                     amount_1,
-    //                     vec![],
-    //                 )
-    //             });
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(transfer_from_tx, Ok(()));
-
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_1.clone())),
-    //             0
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token_2.clone())),
-    //             amount_1
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, bob, Some(token_1.clone())),
-    //             amount_1
-    //         );
-    //         assert_eq!(
-    //             balance_of_37!(client, address, bob, Some(token_2.clone())),
-    //             amount_2 - amount_1
-    //         );
-
-    //         Ok(())
-    //     }
-
-    //     #[ink_e2e::test]
-    //     async fn transfer_from_insufficient_balance_should_fail(
-    //         mut client: ink_e2e::Client<C, E>,
-    //     ) -> E2EResult<()> {
-    //         let constructor = ContractRef::new();
-    //         let address = client
-    //             .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
-    //             .await
-    //             .expect("instantiate failed")
-    //             .account_id;
-
-    //         let token = Id::U8(0);
-    //         let amount = 1;
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token.clone(), amount.clone()));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token.clone())),
-    //             amount
-    //         );
-
-    //         let approve_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.approve(address_of!(alice), Some(token.clone()), amount)
-    //             });
-    //             client
-    //                 .call(&ink_e2e::bob(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(approve_tx, Ok(()));
-
-    //         let transfer_from_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.transfer_from(
-    //                     address_of!(bob),
-    //                     address_of!(alice),
-    //                     token.clone(),
-    //                     amount + 1,
-    //                     vec![],
-    //                 )
-    //             });
-    //             client.call_dry_run(&ink_e2e::bob(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert!(matches!(transfer_from_tx, Err(_)));
-
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token.clone())),
-    //             amount
-    //         );
-
-    //         Ok(())
-    //     }
-
-    //     #[ink_e2e::test]
-    //     async fn transfer_from_without_allowance_should_fail(
-    //         mut client: ink_e2e::Client<C, E>,
-    //     ) -> E2EResult<()> {
-    //         let constructor = ContractRef::new();
-    //         let address = client
-    //             .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
-    //             .await
-    //             .expect("instantiate failed")
-    //             .account_id;
-
-    //         let token = Id::U8(0);
-    //         let amount = 1;
-
-    //         let mint_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone())
-    //                 .call(|contract| contract.mint_tokens(token.clone(), amount.clone()));
-    //             client
-    //                 .call(&ink_e2e::alice(), _msg, 0, None)
-    //                 .await
-    //                 .expect("call failed")
-    //         }
-    //         .return_value();
-
-    //         assert_eq!(mint_tx, Ok(()));
-
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token.clone())),
-    //             amount
-    //         );
-
-    //         let transfer_from_tx = {
-    //             let _msg = build_message::<ContractRef>(address.clone()).call(|contract| {
-    //                 contract.transfer_from(
-    //                     address_of!(bob),
-    //                     address_of!(alice),
-    //                     token.clone(),
-    //                     amount + 1,
-    //                     vec![],
-    //                 )
-    //             });
-    //             client.call_dry_run(&ink_e2e::bob(), &_msg, 0, None).await
-    //         }
-    //         .return_value();
-
-    //         assert!(matches!(transfer_from_tx, Err(_)));
-
-    //         assert_eq!(
-    //             balance_of_37!(client, address, alice, Some(token.clone())),
-    //             amount
-    //         );
-
-    //         Ok(())
-    //     }
-    // }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[ink::test]
+        fn new_works() {
+            let owner_id = AccountId::from([0x01; 32]);
+            let uri = URI::from("ipfs://Qm.../");
+            let contract = Contract::new(Some(uri.clone()), owner_id);
+
+            assert_eq!(contract.ownable.owner.get().unwrap(), Some(owner_id));
+            assert_eq!(contract.uris.base_uri, Some(uri));
+        }
+
+        #[ink::test]
+        fn combine_ids_works() {
+            let album_id: AlbumId = 21;
+            let song_id: SongId = 1;
+            let id = combine_ids(album_id, song_id);
+
+            assert_eq!(id, Id::U32(1376257));
+        }
+
+        #[ink::test]
+        fn _is_album_works() {
+            let album_id: AlbumId = 21;
+            let song_id: SongId = 1;
+            let id = combine_ids(album_id, song_id);
+
+            assert!(!_is_album(&id));
+
+            let album_id: AlbumId = 1;
+            let song_id: SongId = 0;
+            let id = combine_ids(album_id, song_id);
+
+            assert!(_is_album(&id));
+        }
+    }
+
+    #[cfg(all(test, feature = "e2e-tests"))]
+    mod e2e_tests {
+        use super::*;
+        use ink_e2e::build_message;
+
+        type E2EResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+
+        // This test creates two albums and checks for their ids
+        #[ink_e2e::test]
+        async fn test_create_album(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+            let uri = Some(URI::from("ipfs://Qm.../"));
+            let constructor =
+                ContractRef::new(uri, ink_e2e::account_id(ink_e2e::AccountKeyring::Alice));
+            let contract_acc_id = client
+                .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
+                .await
+                .expect("instantiate failed")
+                .account_id;
+
+            // Creates a first album
+            let create_album = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.create_album(10, 1, URI::from("ipfs://Qm.../album1")));
+            let create_album_res = client
+                .call(&ink_e2e::alice(), create_album, 0, None)
+                .await
+                .expect("create album failed");
+
+            // Checks for first's album id
+            assert_eq!(create_album_res.return_value(), Ok(combine_ids(0, 0)));
+
+            // Creates a second album
+            let create_album = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.create_album(10, 1, URI::from("ipfs://Qm.../album2")));
+            let create_album_res = client
+                .call(&ink_e2e::alice(), create_album, 0, None)
+                .await
+                .expect("create album failed");
+
+            // Checks for second's album id
+            assert_eq!(create_album_res.return_value(), Ok(combine_ids(1, 0)));
+
+            Ok(())
+        }
+
+        // This test creates an album, deletes it, and checks it was deleted succeffully
+        #[ink_e2e::test]
+        async fn test_delete_album(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+            Ok(())
+        }
+
+        // This test creates an album and tries to mint it.
+        #[ink_e2e::test]
+        async fn test_mint_album(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+            let uri = Some(URI::from("ipfs://Qm.../"));
+            let constructor =
+                ContractRef::new(uri, ink_e2e::account_id(ink_e2e::AccountKeyring::Alice));
+            let contract_acc_id = client
+                .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
+                .await
+                .expect("instantiate failed")
+                .account_id;
+
+            // Creates an album
+            let create_album = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.create_album(10, 1, URI::from("ipfs://Qm.../album1")));
+            let create_album_res = client
+                .call(&ink_e2e::alice(), create_album, 0, None)
+                .await
+                .expect("create album failed");
+
+            // Checks for new album id
+            assert_eq!(create_album_res.return_value(), Ok(combine_ids(0, 0)));
+
+            // Mints the newly created album
+            let mint_album = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.mint_album(0));
+            let mint_album_res = client
+                .call(&ink_e2e::alice(), mint_album, 1, None)
+                .await
+                .expect("mint album failed");
+
+            // Checks it was minted successfully
+            assert_eq!(mint_album_res.return_value(), Ok(combine_ids(0, 0)));
+
+            Ok(())
+        }
+
+        // This test creates an album including two songs and checks for their ids
+        #[ink_e2e::test]
+        async fn test_create_song(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+            let uri = Some(URI::from("ipfs://Qm.../"));
+            let constructor =
+                ContractRef::new(uri, ink_e2e::account_id(ink_e2e::AccountKeyring::Alice));
+            let contract_acc_id = client
+                .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
+                .await
+                .expect("instantiate failed")
+                .account_id;
+
+            // Creates a first album
+            let create_album = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.create_album(10, 1, URI::from("ipfs://Qm.../album1")));
+            let create_album_res = client
+                .call(&ink_e2e::alice(), create_album, 0, None)
+                .await
+                .expect("create album failed");
+
+            // Checks for first's album id
+            assert_eq!(create_album_res.return_value(), Ok(combine_ids(0, 0)));
+
+            // Creates a first song within the album
+            let create_song = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.create_song(0, 10, 1, URI::from("ipfs://Qm.../song1")));
+            let create_song_res = client
+                .call(&ink_e2e::alice(), create_song, 0, None)
+                .await
+                .expect("create song failed");
+
+            // Checks for first's song id
+            assert_eq!(create_song_res.return_value(), Ok(combine_ids(0, 1)));
+
+            // Creates a second song within the album
+            let create_song = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.create_song(0, 10, 1, URI::from("ipfs://Qm.../song2")));
+            let create_song_res = client
+                .call(&ink_e2e::alice(), create_song, 0, None)
+                .await
+                .expect("create song failed");
+
+            // Checks for second's song id
+            assert_eq!(create_song_res.return_value(), Ok(combine_ids(0, 2)));
+
+            Ok(())
+        }
+
+        // This test creates an album including a song, deletes it, and checks it was deleted succeffully
+        #[ink_e2e::test]
+        async fn test_delete_song(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+            Ok(())
+        }
+
+        // This test creates an album including a song and tries to mint it.
+        #[ink_e2e::test]
+        async fn test_mint_song(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+            let uri = Some(URI::from("ipfs://Qm.../"));
+            let constructor =
+                ContractRef::new(uri, ink_e2e::account_id(ink_e2e::AccountKeyring::Alice));
+            let contract_acc_id = client
+                .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
+                .await
+                .expect("instantiate failed")
+                .account_id;
+
+            // Creates an album
+            let create_album = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.create_album(10, 1, URI::from("ipfs://Qm.../album1")));
+            let create_album_res = client
+                .call(&ink_e2e::alice(), create_album, 0, None)
+                .await
+                .expect("create album failed");
+
+            // Checks for new album id
+            assert_eq!(create_album_res.return_value(), Ok(combine_ids(0, 0)));
+
+            // Creates a song within the album
+            let create_song = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.create_song(0, 10, 1, URI::from("ipfs://Qm.../song1")));
+            let create_song_res = client
+                .call(&ink_e2e::alice(), create_song, 0, None)
+                .await
+                .expect("create song failed");
+
+            // Checks for new song id
+            assert_eq!(create_song_res.return_value(), Ok(combine_ids(0, 1)));
+
+            // Mints the newly created song
+            let mint_song = build_message::<ContractRef>(contract_acc_id)
+                .call(|contract| contract.mint_song(0, 1));
+            let mint_song_res = client
+                .call(&ink_e2e::alice(), mint_song, 1, None)
+                .await
+                .expect("mint song failed");
+
+            // Checks it was minted successfully
+            assert_eq!(mint_song_res.return_value(), Ok(combine_ids(0, 1)));
+
+            Ok(())
+        }
+
+        // TODO: find a way to test error on e2e tests
+        // // This test creates an album, denies its id and tries to mint it.
+        // #[ink_e2e::test]
+        // async fn test_deny_id(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
+        //     let uri = Some(URI::from("ipfs://Qm.../"));
+        //     let constructor =
+        //         ContractRef::new(uri, ink_e2e::account_id(ink_e2e::AccountKeyring::Alice));
+        //     let contract_acc_id = client
+        //         .instantiate("albums", &ink_e2e::alice(), constructor, 0, None)
+        //         .await
+        //         .expect("instantiate failed")
+        //         .account_id;
+
+        //     // Creates an album
+        //     let create_album = build_message::<ContractRef>(contract_acc_id)
+        //         .call(|contract| contract.create_album(10, 1, URI::from("ipfs://Qm.../album1")));
+        //     let create_album_res = client
+        //         .call(&ink_e2e::alice(), create_album, 0, None)
+        //         .await
+        //         .expect("create album failed");
+
+        //     // Checks for new album id
+        //     assert_eq!(create_album_res.return_value(), Ok(combine_ids(0, 0)));
+
+        //     // Deny the album's id
+        //     let deny =
+        //         build_message::<ContractRef>(contract_acc_id).call(|contract| contract.deny(0, 0));
+        //     let deny_res = client
+        //         .call(&ink_e2e::alice(), deny, 0, None)
+        //         .await
+        //         .expect("create album failed");
+
+        //     // Check it was denied
+        //     assert_eq!(deny_res.return_value(), Ok(()));
+
+        //     // Mints the newly created album
+        //     let mint_album = build_message::<ContractRef>(contract_acc_id)
+        //         .call(|contract| contract.mint_album(0));
+        //     let mint_album_res = client.call(&ink_e2e::alice(), mint_album, 1, None).await;
+
+        //     // Checks it could not be minted
+        //     assert_eq!(mint_album_res, Err(Error::DeniedId));
+
+        //     Ok(())
+        // }
+    }
 }
