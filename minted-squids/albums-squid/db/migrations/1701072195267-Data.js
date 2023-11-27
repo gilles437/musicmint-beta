@@ -1,0 +1,51 @@
+module.exports = class Data1701072195267 {
+    name = 'Data1701072195267'
+
+    async up(db) {
+        await db.query(`CREATE TABLE "owner" ("id" character varying NOT NULL, "balance" numeric NOT NULL, CONSTRAINT "PK_8e86b6b9f94aece7d12d465dc0c" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "transfer" ("id" character varying NOT NULL, "from" text NOT NULL, "to" text NOT NULL, "role" text, "amount" numeric NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "block" integer NOT NULL, "contract" character varying NOT NULL, CONSTRAINT "PK_fd9ddbdd49a17afcbe014401295" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_be54ea276e0f665ffc38630fc0" ON "transfer" ("from") `)
+        await db.query(`CREATE INDEX "IDX_4cbc37e8c3b47ded161f44c24f" ON "transfer" ("to") `)
+        await db.query(`CREATE INDEX "IDX_8d46ef064e80b54dcc21ba8de9" ON "transfer" ("role") `)
+        await db.query(`CREATE TABLE "collections" ("id" character varying NOT NULL, "block" integer NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "extrinsic_hash" text, "from" text NOT NULL, "to" text NOT NULL, "uri" text, "albumid" text, "songid" text, "maxsupply" text, "price" numeric NOT NULL, "contract" text NOT NULL, CONSTRAINT "PK_21c00b1ebbd41ba1354242c5c4e" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_9b410f71a713c5c16a31efd0ff" ON "collections" ("block") `)
+        await db.query(`CREATE INDEX "IDX_82358ea503734339c2250c60cf" ON "collections" ("timestamp") `)
+        await db.query(`CREATE INDEX "IDX_07b6ab69c38010d52e710ac9a4" ON "collections" ("extrinsic_hash") `)
+        await db.query(`CREATE INDEX "IDX_99ee92492282ef5229f3a24716" ON "collections" ("from") `)
+        await db.query(`CREATE INDEX "IDX_02d93fbd1f91cbb48cdc353e70" ON "collections" ("to") `)
+        await db.query(`CREATE INDEX "IDX_7e4dec57e1d8e9aa9e8275d92e" ON "collections" ("uri") `)
+        await db.query(`CREATE INDEX "IDX_22cee351458547f1cf2f28f9ad" ON "collections" ("albumid") `)
+        await db.query(`CREATE INDEX "IDX_9cf293449f529d972e0298d507" ON "collections" ("songid") `)
+        await db.query(`CREATE INDEX "IDX_b43f72e6a94a8efc762808afd2" ON "collections" ("maxsupply") `)
+        await db.query(`CREATE INDEX "IDX_293aa8a31fa549685b2af081f5" ON "collections" ("price") `)
+        await db.query(`CREATE TABLE "account" ("id" character varying NOT NULL, "timestamp" TIMESTAMP WITH TIME ZONE NOT NULL, "transfers_from_id" character varying, "transfers_to_id" character varying, CONSTRAINT "PK_54115ee388cdb6d86bb4bf5b2ea" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_ab8a6c61c6b2b5fc1f88656549" ON "account" ("transfers_from_id") `)
+        await db.query(`CREATE INDEX "IDX_d45e59fa2ec1aede407e5f14d6" ON "account" ("transfers_to_id") `)
+        await db.query(`ALTER TABLE "account" ADD CONSTRAINT "FK_ab8a6c61c6b2b5fc1f88656549a" FOREIGN KEY ("transfers_from_id") REFERENCES "owner"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+        await db.query(`ALTER TABLE "account" ADD CONSTRAINT "FK_d45e59fa2ec1aede407e5f14d6d" FOREIGN KEY ("transfers_to_id") REFERENCES "owner"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
+    }
+
+    async down(db) {
+        await db.query(`DROP TABLE "owner"`)
+        await db.query(`DROP TABLE "transfer"`)
+        await db.query(`DROP INDEX "public"."IDX_be54ea276e0f665ffc38630fc0"`)
+        await db.query(`DROP INDEX "public"."IDX_4cbc37e8c3b47ded161f44c24f"`)
+        await db.query(`DROP INDEX "public"."IDX_8d46ef064e80b54dcc21ba8de9"`)
+        await db.query(`DROP TABLE "collections"`)
+        await db.query(`DROP INDEX "public"."IDX_9b410f71a713c5c16a31efd0ff"`)
+        await db.query(`DROP INDEX "public"."IDX_82358ea503734339c2250c60cf"`)
+        await db.query(`DROP INDEX "public"."IDX_07b6ab69c38010d52e710ac9a4"`)
+        await db.query(`DROP INDEX "public"."IDX_99ee92492282ef5229f3a24716"`)
+        await db.query(`DROP INDEX "public"."IDX_02d93fbd1f91cbb48cdc353e70"`)
+        await db.query(`DROP INDEX "public"."IDX_7e4dec57e1d8e9aa9e8275d92e"`)
+        await db.query(`DROP INDEX "public"."IDX_22cee351458547f1cf2f28f9ad"`)
+        await db.query(`DROP INDEX "public"."IDX_9cf293449f529d972e0298d507"`)
+        await db.query(`DROP INDEX "public"."IDX_b43f72e6a94a8efc762808afd2"`)
+        await db.query(`DROP INDEX "public"."IDX_293aa8a31fa549685b2af081f5"`)
+        await db.query(`DROP TABLE "account"`)
+        await db.query(`DROP INDEX "public"."IDX_ab8a6c61c6b2b5fc1f88656549"`)
+        await db.query(`DROP INDEX "public"."IDX_d45e59fa2ec1aede407e5f14d6"`)
+        await db.query(`ALTER TABLE "account" DROP CONSTRAINT "FK_ab8a6c61c6b2b5fc1f88656549a"`)
+        await db.query(`ALTER TABLE "account" DROP CONSTRAINT "FK_d45e59fa2ec1aede407e5f14d6d"`)
+    }
+}

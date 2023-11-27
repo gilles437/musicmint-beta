@@ -1,0 +1,20 @@
+type Owner @entity {
+  id: ID!
+  balance: BigInt!
+}
+ 
+type Collections @entity {
+  id: ID!
+  block: Int! @index
+  timestamp: DateTime! @index
+  extrinsicHash: String @index
+  from: String! @index
+  to: String! @index
+  uri: String @index
+  albumid: BigInt! @index
+  songid: BigInt! @index
+  maxsupply: BigInt! @index
+  price: BigInt! @index
+  contract: ID!
+
+}
