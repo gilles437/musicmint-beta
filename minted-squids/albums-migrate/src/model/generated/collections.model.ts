@@ -35,16 +35,16 @@ export class Collections {
     uri!: string | undefined | null
 
     @Index_()
-    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-    albumid!: bigint
+    @Column_("int4", {nullable: false})
+    albumid!: number
 
     @Index_()
-    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-    songid!: bigint
+    @Column_("int4", {nullable: false})
+    songid!: number
 
     @Index_()
-    @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
-    maxsupply!: bigint
+    @Column_("int4", {nullable: false})
+    maxsupply!: number
 
     @Index_()
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})

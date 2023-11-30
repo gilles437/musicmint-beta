@@ -3,9 +3,6 @@ type Owner @entity {
   balance: BigInt!
 }
  
-
-
-
 type Transfer @entity {
   id: ID!
   block: Int! @index

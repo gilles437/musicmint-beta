@@ -14,6 +14,7 @@ type Transfer @entity {
   to: Account!
   amount: BigInt! @index
   fee: BigInt! # fee is calculated at the best effort and may be zero for some old extrinsics
+  contract: ID!
 }
 
 type Owner @entity {
@@ -29,9 +30,9 @@ type Collections @entity {
   from: String! @index
   to: String! @index
   uri: String @index
-  albumid: BigInt! @index
-  songid: BigInt! @index
-  maxsupply: BigInt! @index
+  albumid: Int! @index
+  songid: Int! @index
+  maxsupply: Int! @index
   price: BigInt! @index
   contract: ID!
 }

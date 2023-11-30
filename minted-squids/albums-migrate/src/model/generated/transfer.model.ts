@@ -37,4 +37,7 @@ export class Transfer {
 
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: false})
     fee!: bigint
+
+    @Column_("text", {nullable: false})
+    contract!: string
 }
