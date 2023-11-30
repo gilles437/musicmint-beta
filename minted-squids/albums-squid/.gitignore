@@ -1,7 +1,11 @@
 /node_modules
 /lib
+/builds
+/db
+
 
 /**Versions.json
+/**Versions.jsonl
 
 # IDE files
 /.idea
