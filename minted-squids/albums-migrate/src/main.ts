@@ -130,8 +130,9 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
             if (event.name === 'Contracts.ContractEmitted') {
                 console.log("event", event)
                 const contract = event.args.contract;
+                console.log('contract', encodeAddress(contract));
 
-                const album = decodeEvent(event.args.data)
+                const album = decodeEvent(event)
                 if (!album) {
                     continue;
                 }
