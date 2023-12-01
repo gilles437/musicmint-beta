@@ -43,7 +43,7 @@ export const processor = new SubstrateBatchProcessor()
     //     extrinsic: true
     // })
     .addContractsContractEmitted({
-        contractAddress: [CONTRACT_ADDRESS],
+        // contractAddress: [CONTRACT_ADDRESS],
         extrinsic: true
     })
     .setFields({

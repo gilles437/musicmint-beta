@@ -11,7 +11,8 @@ import { env } from 'process'
 import {
     processor,
     SS58_PREFIX,
-    ProcessorContext
+    ProcessorContext,
+    Event
 } from './processor'
 
 const encodeAddress = (address: string | Uint8Array) => {
@@ -20,6 +21,9 @@ const encodeAddress = (address: string | Uint8Array) => {
 
 processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
     let txs = extractCollectionsRecords(ctx);
+    if (txs.length <= 0) {
+        return;
+    }
     
     const ownerIds = new Set<string>()
     txs.forEach(tx => {
@@ -111,6 +115,14 @@ interface CollectionsRecord {
     contract: string
 }
 
+function decodeEvent(event: Event) {
+    try {
+        return albums.decodeEvent(event.args.data)
+    } catch (ex) {
+        return null;
+    }
+}
+
 function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRecord[] {
     const records: CollectionsRecord[] = []
     for (const block of ctx.blocks) {
@@ -119,29 +131,32 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
                 console.log("event", event)
                 const contract = event.args.contract;
 
-                const artist = albums.decodeEvent(event.args.data)
-                console.log('album', artist)
+                const album = decodeEvent(event.args.data)
+                if (!album) {
+                    continue;
+                }
+                console.log('album', album)
               
-                console.log('album.kind', artist.__kind)
-                console.log('album.albumId', artist.albumId, artist.songId)
+                console.log('album.kind', album.__kind)
+                console.log('album.albumId', album.albumId, album.songId)
 
-                if (artist.__kind === 'ItemCreated') {
+                if (album.__kind === 'ItemCreated') {
                     records.push({
                         id: event.id,
-                        from: artist.from && encodeAddress(artist.from),
+                        from: album.from && encodeAddress(album.from),
                         to: 'toto',
                         block: block.header.height,
                         timestamp: new Date(block.header.timestamp || 0),
-                        uri: artist.uri,
-                        song_id: artist.songId,
-                        album_id: artist.albumId,
-                        max_supply: artist.maxSupply,
-                        price: artist.price,
+                        uri: album.uri,
+                        song_id: album.songId,
+                        album_id: album.albumId,
+                        max_supply: album.maxSupply,
+                        price: album.price,
                         action: "add",
                         contract: encodeAddress(contract),
                     })
                 }
-                else if (artist.__kind === 'ItemDeleted') {
+                else if (album.__kind === 'ItemDeleted') {
                     records.push({
                         id: event.id,
                         from: '',
@@ -149,30 +164,30 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
                         block: block.header.height,
                         timestamp: new Date(block.header.timestamp || 0),
                         uri:'',
-                        song_id: artist.songId,
-                        album_id: artist.albumId,
+                        song_id: album.songId,
+                        album_id: album.albumId,
                         max_supply:0,
                         price: BigInt(0),
                         action: "delete",
                         contract: encodeAddress(contract),
                     })
                 }
-                else if (artist.__kind === 'ItemMinted') {
+                else if (album.__kind === 'ItemMinted') {
                     records.push({
                         id: event.id,
-                        from: artist.from && encodeAddress(artist.from),
-                        to: artist.to && encodeAddress(artist.to),
+                        from: album.from && encodeAddress(album.from),
+                        to: album.to && encodeAddress(album.to),
                         block: block.header.height,
                         timestamp: new Date(block.header.timestamp || 0),
                         uri:'',
-                        song_id: artist.songId,
-                        album_id: artist.albumId,
+                        song_id: album.songId,
+                        album_id: album.albumId,
                         max_supply:0,
                         price: BigInt(0),
                         action: "mint",
                         contract: encodeAddress(contract),
                     })
-                }   
+                }
             }
         }
       }
