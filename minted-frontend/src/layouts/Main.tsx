@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Head from "next/head";
 import Script from "next/script";
 //= Components
+import { Providers } from '@/lib/providers'
 import PreLoader from "@/components/PreLoader";
 import WalletProvider from "@/contexts/Wallets";
 import ScrollToTop from "@/components/ScrollToTop";
@@ -33,11 +34,13 @@ const MainLayout = ({ children }: Props) => {
 
       {/* <PreLoader /> */}
 
-      <WalletProvider>
-        <Navbar />
-        {children}
-        <Footer />
-      </WalletProvider>
+      <Providers>
+        <WalletProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </WalletProvider>
+      </Providers>
 
       <ScrollToTop />
     </>

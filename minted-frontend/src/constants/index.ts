@@ -8,3 +8,5 @@ export const DEFAULT_CHAIN = ChainId.AllFEATTestNET;
 export const MARKETPLACE_SUBGRAPH_URLS: { [chainId: number]: string } = {
   [ChainId.AllFEATTestNET]: "https://subsquid.mintedwaves.com/graphql",
 };
+
+export const ALLFEAT_CONTRACT = "5D5G8y4Gusc89E2XjetuwuNAN5GdhnQKUByQJ9NxkCdFwwBG";

@@ -3,7 +3,7 @@ import { WsProvider } from "@polkadot/api";
 
 export const useProvider = () => {
   return useMemo(() => {
-    const wsProvider = new WsProvider("wss://rpc-test.allfeat.io");
+    const wsProvider = new WsProvider("wss://rpc-test-3.allfeat.io");
 
     return wsProvider
   }, []);
