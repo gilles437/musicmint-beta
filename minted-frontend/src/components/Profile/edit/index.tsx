@@ -324,14 +324,6 @@ const CreateProfile = () => {
           </div>
         </div>
       )}
-      <ToastContainer
-        position="top-right"
-        newestOnTop={true}
-        autoClose={5000}
-        pauseOnHover
-        pauseOnFocusLoss
-        draggable
-      />
     </section>
   );
 };

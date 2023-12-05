@@ -1,498 +1,96 @@
 import React, { useState, CSSProperties, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { ContractPromise } from "@polkadot/api-contract";
-import { WeightV2 } from "@polkadot/types/interfaces";
-import { BN } from "@polkadot/util";
-import { useWallets } from "@/contexts/Wallets";
-import contractAbi from "@/contracts/album/albums.json";
-import { useApi } from "@/hooks/useApi";
-import configureAWS from "@/utils/ipfs/awsConfig";
-import { v4 as uuidv4 } from "uuid";
-import S3 from "aws-sdk/clients/s3";
-import axios from "axios";
+import { toast } from "react-toastify";
 import Link from "next/link";
-import CircleLoader from "react-spinners/ClipLoader";
 import { useRouter } from "next/router";
-import { useAlbumContract } from "@/hooks/useAlbumContract";
-import CreateAlbumForm from "./CreateAlbumForm";
-import CreateSongForm from "./CreateSongForm";
+import "react-toastify/dist/ReactToastify.css";
 
-const s3 = configureAWS();
+import { createIpfsUrl } from "@/utils/ipfs";
+import { uploadFile, uploadMetadata } from "@/utils/bucket";
+import CircleLoader from "react-spinners/ClipLoader";
+import { useAlbumContract } from "@/hooks/useAlbumContract";
+import CreateAlbumForm, { CreateAlbumInput } from "./CreateAlbumForm";
+import CreateSongForm, { CreateSongInput } from "./CreateSongForm";
+import { AlbumMetadata, SongMetadata } from "@/lib/redux";
+
 const override: CSSProperties = {
   display: "block",
   margin: "0 auto",
 };
 
-type SongMetadataType = {
-  title: string;
-  price: string;
-  maxSupply: string;
-  image: string;
-  sound: string;
-};
-
-interface contractEventsType {
-  dispatchInfo: {};
-  events: [];
-  status: {};
-  txHash: string;
-  txIndex: number;
-  blockNumber: string;
-  contractEvents: [
-    {
-      args: string[];
-      docs: [];
-      identifier: string;
-      index: number;
-    }
-  ];
-}
-
 const CreateAlbum = () => {
-  const [currentTitle, setCurrentTitle] = useState<string>("");
-  const [currentDescription, setCurrentDescription] = useState<string>("");
-  const [maxSupply, setMaxSupply] = useState<number>(0);
-  const [currentPrice, setCurrentPrice] = useState<string>("");
-  const [selectedImage, setSelectedImage] = useState<File>();
-  const [currentSoundTitle, setCurrentSoundTitle] = useState<string>("");
-  const [currentSoundPrice, setCurrentSoundPrice] = useState<string>("");
-  const [currentSoundMaxSupply, setCurrentSoundMaxSupply] =
-    useState<string>("");
-  const [currentAlbumId, setCurrentAlbumId] = useState<string>("");
-  const [selectedSound, setSelectedSound] = useState<File>();
-  const [selectedSoundImage, setSelectedSoundImage] = useState<File>();
-  const [showSongs, setShowSongs] = useState(false);
-  const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>("");
-  const [songMetaData, setSongMetaData] = useState<SongMetadataType[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [contract, setContract] = useState<ContractPromise>();
-  const [gasLimit, setGasLimit] = useState<WeightV2>();
-  const [chainDecimals, setChainDecimals] = useState<number>(10);
-  const api = useApi();
-  const { wallet } = useWallets();
   const { query } = useRouter();
 
-  const { createAlbum } = useAlbumContract("5HFo61hpJxcg52VV1ENnAbHHsKwhTLaADtYQqe5jRJmsH224");
+  const [currentAlbumId, setCurrentAlbumId] = useState<string>("");
+  const [showSongs, setShowSongs] = useState(false);
+  const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>("");
+  const [songMetaData, setSongMetaData] = useState<SongMetadata[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [contractAddress, setContractAddress] = useState("");
+  const { createAlbum } = useAlbumContract(contractAddress);
 
   useEffect(() => {
-    if (api && query?.contract) {
-      //Contract Create
-      const contractAddress = query.contract as string;
-      const contract = new ContractPromise(api, contractAbi, contractAddress);
-      setContract(contract);
-
-      //GasLimit
-      const gasLimit = api.registry.createType("WeightV2", {
-        refTime: new BN("10000000000"),
-        proofSize: new BN("10000000000"),
-      }) as WeightV2;
-      setGasLimit(gasLimit);
-
-      const chainDecimals = api.registry.chainDecimals[0];
-      setChainDecimals(chainDecimals);
+    if (query?.contract) {
+      setContractAddress(query?.contract as string);
     }
-  }, [api, query?.contract]);
+  }, [query?.contract]);
 
-  const handleImageChange = (e: any) => {
-    e.preventDefault();
-    setSelectedImage(e.target.files[0]);
-  };
-
-  const handleSoundImageChange = (e: any) => {
-    e.preventDefault();
-    setSelectedSoundImage(e.target.files[0]);
-  };
-
-  const handleSoundChange = (e: any) => {
-    e.preventDefault();
-    console.log("handleSoundChange", e.target.files[0]);
-    setSelectedSound(e.target.files[0]);
-  };
-
-  const uploadNFTImage = async () => {
-    const params: S3.Types.PutObjectRequest = {
-      Bucket: process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        ? process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        : "",
-      Key: selectedImage ? selectedImage.name : "",
-      ContentType: selectedImage?.type,
-      Body: selectedImage,
-    };
-
-    const S3Response = await s3.putObject(params).promise();
-    if (S3Response.$response.httpResponse.statusCode === 200) {
-      const file_image_cid =
-        S3Response.$response.httpResponse.headers["x-amz-meta-cid"];
-      return file_image_cid;
-    } else {
-      // setMessage("Something went wrong when uploading the image of the NFT");
-      return "";
-    }
-  };
-
-  const uploadMetadata = async (fileImageCid: string) => {
-    const json_metadata = {
-      name: selectedImage ? selectedImage.name.toString() : "",
-      title: currentTitle,
-      description: currentDescription,
-      price: currentPrice,
-      image: `https://ipfs.io/ipfs/${fileImageCid}`,
-    };
-
-    const myuuid = uuidv4();
-    const params: S3.Types.PutObjectRequest = {
-      Bucket: process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        ? process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        : "",
-      Key: `${myuuid}_metadata.json`,
-      ContentType: "application/json",
-      Body: new Blob([JSON.stringify(json_metadata)], {
-        type: "application/json",
-      }),
-    };
-
-    const S3Response = await s3.putObject(params).promise();
-    if (S3Response.$response.httpResponse.statusCode === 200) {
-      const file_meta_cid =
-        S3Response.$response.httpResponse.headers["x-amz-meta-cid"];
-      return file_meta_cid;
-    } else {
-      return "";
-    }
-  };
-
-  const uploadNFTToS3Bucket = async (e: any) => {
-    e.preventDefault();
-    if (!validateFields()) return;
-    if (!wallet) return;
-    if (!contract || !gasLimit) return;
-
+  const handleCreateAlbum = async (input: CreateAlbumInput) => {
+    console.log("handleCreateAlbum", input);
     try {
       setIsLoading(true);
-      const fileImageCid = await uploadNFTImage();
-      if (fileImageCid.length == 0) {
+
+      const imageCid = await uploadFile(input.image);
+      if (!imageCid) {
         console.error("error when uploading image nft");
-        return;
+        return false;
       }
-      setSelectedImageFileCid(fileImageCid);
-      const tempCurrentMetaId = await uploadMetadata(fileImageCid);
-      if (!tempCurrentMetaId) {
+      setSelectedImageFileCid(imageCid);
+
+      const metadata: AlbumMetadata = {
+        name: input.image ? input.image.name.toString() : "",
+        title: input.title,
+        description: input.description,
+        price: input.price,
+        image: createIpfsUrl(imageCid),
+      };
+      const metadataId = await uploadMetadata(metadata);
+      if (!metadataId) {
         console.error("error when uploading metadata");
-        return;
+        return false;
       }
 
       const success = await createAlbum(
-        tempCurrentMetaId,
-        Number(maxSupply),
-        Number(currentPrice),
+        metadataId,
+        Number(input.maxSupply),
+        Number(input.price),
         (albumId: string) => {
           setIsLoading(false);
           setCurrentAlbumId(albumId);
           toastFunction(`New Album TokenId is: ${Number(albumId)}`);
         }
       );
-      console.log('success', success)
+      console.log("success", success);
+
       if (success) {
-        toastFunction(`New Album Metadata saved on https://ipfs.io/ipfs/${tempCurrentMetaId}`);
+        toastFunction(
+          `New Album Metadata saved on https://ipfs.io/ipfs/${metadataId}`
+        );
+        return true;
       } else {
         setIsLoading(false);
         toastFunction(`Something wrong to create Album`);
       }
     } catch (error) {
+      console.log(error);
+    } finally {
       setIsLoading(false);
-      console.log(error);
     }
+    return false;
   };
 
-  const handleCreateAlbum = (e: any) => {
-    console.log('handleCreateAlbum', e);
-  }
-
-  const handleCreateSong = (e: any) => {
-    console.log('handleCreateSong', e);
-  }
-
-  const emptyFields = () => {
-    setCurrentDescription("");
-    setCurrentTitle("");
-    setSelectedImage(undefined);
-  };
-
-  const validateFields = () => {
-    if (!currentTitle) {
-      toastFunction("Please provide a title");
-      return false;
-    }
-    if (!currentDescription) {
-      toastFunction("Please provide a description");
-      return false;
-    }
-    if (!currentPrice) {
-      toastFunction("Please provide a price");
-      return false;
-    }
-    if (!selectedImage) {
-      toastFunction("Please provide an image");
-      return false;
-    }
-    return true;
-  };
-
-  const uploadNFTSound = async () => {
-    const paramsSoundTrack: S3.Types.PutObjectRequest = {
-      Bucket: process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        ? process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        : "",
-      Key: selectedSound ? selectedSound.name : "",
-      ContentType: selectedSound ? selectedSound.type : "",
-      Body: selectedSound,
-    };
-
-    const S3Response = await s3.putObject(paramsSoundTrack).promise();
-    if (S3Response.$response.httpResponse.statusCode === 200) {
-      const file_cid =
-        S3Response.$response.httpResponse.headers["x-amz-meta-cid"];
-      return file_cid;
-    } else {
-      return "";
-    }
-  };
-
-  const uploadNFTSoundImage = async () => {
-    const params: S3.Types.PutObjectRequest = {
-      Bucket: process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        ? process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        : "",
-      Key: selectedSoundImage ? selectedSoundImage.name : "",
-      ContentType: selectedSoundImage?.type,
-      Body: selectedSoundImage,
-    };
-
-    const S3Response = await s3.putObject(params).promise();
-    if (S3Response.$response.httpResponse.statusCode === 200) {
-      const file_cid =
-        S3Response.$response.httpResponse.headers["x-amz-meta-cid"];
-      return file_cid;
-    } else {
-      return "";
-    }
-  };
-
-  const uploadSoundMetadata = async (
-    fileImageCid: string,
-    fileSoundTrackCid: string
-  ) => {
-    const json_metadata = {
-      title: currentSoundTitle,
-      price: currentSoundPrice,
-      maxSupply: currentSoundMaxSupply,
-      image: `https://ipfs.io/ipfs/${fileImageCid}`,
-      sound: `https://ipfs.io/ipfs/${fileSoundTrackCid}`,
-    };
-
-    const myuuid = uuidv4();
-    const params: S3.Types.PutObjectRequest = {
-      Bucket: process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        ? process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME
-        : "",
-      Key: `${myuuid}_metadata.json`,
-      ContentType: "application/json",
-      Body: new Blob([JSON.stringify(json_metadata)], {
-        type: "application/json",
-      }),
-    };
-
-    const S3Response = await s3.putObject(params).promise();
-    if (S3Response.$response.httpResponse.statusCode === 200) {
-      const file_meta_cid =
-        S3Response.$response.httpResponse.headers["x-amz-meta-cid"];
-      return file_meta_cid;
-    } else {
-      return "";
-    }
-  };
-
-  const validateSoundFields = () => {
-    if (!currentSoundTitle) {
-      toastFunction("Please provide a title");
-      return false;
-    }
-    if (!currentSoundPrice) {
-      toastFunction("Please provide a price");
-      return false;
-    }
-    if (!selectedSound) {
-      toastFunction("Please provide a sound");
-      return false;
-    }
-    if (!selectedSoundImage) {
-      toastFunction("Please provide an image");
-      return false;
-    }
-    return true;
-  };
-
-  const emptySoundFields = () => {
-    setCurrentSoundPrice("");
-    setCurrentSoundTitle("");
-    setSelectedSoundImage(undefined);
-    setSelectedSound(undefined);
-  };
-
-  const uploadSoundNFTToS3Bucket = async (e: any) => {
-    e.preventDefault();
-    if (!validateSoundFields()) return;
-    if (!wallet) return;
-    if (!contract) return;
-
-    try {
-      setIsLoading(true);
-      if (currentAlbumId != "") {
-        const fileSoundImageCid = await uploadNFTSoundImage();
-        if (fileSoundImageCid.length == 0) {
-          console.error("error when uploading image nft");
-          return;
-        }
-
-        const fileSoundCid = await uploadNFTSound();
-        if (fileSoundCid.length == 0) {
-          console.error("error when uploading sound nft");
-          return;
-        }
-
-        const tempCurrentMetaId = await uploadSoundMetadata(
-          fileSoundImageCid,
-          fileSoundCid
-        );
-        console.log('~~~~tempCurrentMetaId', tempCurrentMetaId)
-        if (tempCurrentMetaId) {
-          /*const storageAlbumsData = localStorage.getItem("albums");
-          const storageAlbums = storageAlbumsData
-            ? JSON.parse(storageAlbumsData)
-            : [];
-
-          if (storageAlbums.length) {
-            const storageSongs = storageAlbums[storageAlbums.length - 1].songs
-              ? storageAlbums[storageAlbums.length - 1].songs
-              : [];
-
-            storageSongs.push(tempCurrentMetaId);
-            storageAlbums[storageAlbums.length - 1].songs = storageSongs;
-            console.log({ storageAlbums });
-
-            localStorage.setItem("albums", JSON.stringify(storageAlbums));
-
-            const options = wallet ? { signer: wallet.signer } : undefined;
-            const savedAccount = localStorage.getItem("currentAccount");
-            const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-
-            const queryAlbumResult = await contract.query.createSong(
-              parsedAccount,
-              { value: 0, gasLimit, storageDepositLimit: null },
-              currentAlbumId, //album_id
-              currentSoundMaxSupply, //max_supply
-              Number(currentSoundPrice) * 10 ** chainDecimals, //price,
-              `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
-            );
-
-            if (queryAlbumResult.result && queryAlbumResult.result.isOk) {
-              const addSongResult = await contract.tx.createSong(
-                { value: 0, gasLimit, storageDepositLimit: null },
-                currentAlbumId, //album_id
-                currentSoundMaxSupply, //max_supply
-                Number(currentSoundPrice) * 10 ** chainDecimals, //price,
-                `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
-              );
-
-              const tx = await addSongResult.signAndSend(
-                parsedAccount,
-                { signer: wallet.signer },
-                (result) => {
-                  if (result.status.isFinalized) {
-                    const resultJson: contractEventsType = JSON.parse(
-                      JSON.stringify(result, null, 2)
-                    );
-                    console.log("\nResult is : ", resultJson);
-                    if (
-                      resultJson.contractEvents.length &&
-                      resultJson.contractEvents[0].args[1]
-                    ) {
-                      toastFunction(
-                        `New Song tokenID is: ${resultJson.contractEvents[0].args[1]}`
-                      );
-                    } else {
-                      toastFunction(`Something wrong to create Song`);
-                    }
-                  }
-                }
-              );
-
-              toastFunction(`New Song Metadata saved on https://ipfs.io/ipfs/${tempCurrentMetaId}`);
-              await fetchSongsFromStorage();
-              setIsLoading(false);
-            } else {
-              toastFunction(`Something wrong on save Song Metadata`);
-              setIsLoading(false);
-            }
-          }*/
-        }
-      } else {
-        toastFunction(`There is no selected Album`);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchSongsFromStorage = async () => {
-    const storageAlbumsData = localStorage.getItem("albums");
-    const storageAlbums = storageAlbumsData
-      ? JSON.parse(storageAlbumsData)
-      : [];
-    console.log("fetchSongsFromStorage");
-    if (storageAlbums.length && showSongs) {
-      const albumMetaData = (
-        await Promise.all(
-          storageAlbums[storageAlbums.length - 1].songs.map(
-            async (song: string) => {
-              const axiosConfig = {
-                method: "get",
-                url: `https://ipfs.io/ipfs/${song}`,
-                headers: {
-                  accept: "application/json",
-                  "Content-Type": "application/json",
-                },
-              };
-
-              try {
-                const { data } = await axios(axiosConfig);
-                return data;
-              } catch (error) {
-                console.error(error);
-                return null;
-              }
-            }
-          )
-        )
-      ).filter((data) => data !== null);
-      console.log({ albumMetaData });
-      setSongMetaData(albumMetaData);
-    }
-  };
-
-  const removeSongs = async (id: number) => {
-    const storageAlbumsData = localStorage.getItem("albums");
-    const storageAlbums = storageAlbumsData
-      ? JSON.parse(storageAlbumsData)
-      : [];
-    console.log("fetchSongsFromStorage");
-    storageAlbums[storageAlbums.length - 1].songs.splice(id, 1);
-    localStorage.setItem("albums", JSON.stringify(storageAlbums));
-    await fetchSongsFromStorage();
-    toastFunction(`Deleted Song SuccessFully`);
+  const handleCreateSong = (input: CreateSongInput) => {
+    console.log("handleCreateSong", input);
   };
 
   const toastFunction = (string: any) => {
@@ -507,7 +105,7 @@ const CreateAlbum = () => {
         size={350}
         cssOverride={override}
       />
-    )
+    );
   }
 
   return (
@@ -523,20 +121,10 @@ const CreateAlbum = () => {
           </Link>
         </div>
 
-        <CreateAlbumForm onSubmit={handleCreateAlbum}/>
+        <CreateAlbumForm onSubmit={handleCreateAlbum} />
 
-        {!!showSongs && (
-          <CreateSongForm onSubmit={handleCreateSong} />
-        )}
+        {!!showSongs && <CreateSongForm onSubmit={handleCreateSong} />}
       </div>
-      <ToastContainer
-        position="top-right"
-        newestOnTop={true}
-        autoClose={5000}
-        pauseOnHover
-        pauseOnFocusLoss
-        draggable
-      />
     </section>
   );
 };

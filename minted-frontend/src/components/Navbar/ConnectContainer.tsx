@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useWallets } from "@/contexts/Wallets";
 import { Account } from "@polkadot-onboard/core";
 import { formatAccount } from "@/utils/account";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import DropDown from "./DropDown";
 
 const ConnectContainer = () => {
@@ -93,14 +93,6 @@ const ConnectContainer = () => {
               Connect Wallet
             </small>
           </button>
-          <ToastContainer
-            position="top-right"
-            newestOnTop={true}
-            autoClose={5000}
-            pauseOnHover
-            pauseOnFocusLoss
-            draggable
-          />
         </>
       )}
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, CSSProperties } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
 import configureAWS from "@/utils/ipfs/awsConfig";
@@ -676,14 +676,6 @@ const EditAlbum = () => {
           </div>
         </div>
       )}
-      <ToastContainer
-        position="top-right"
-        newestOnTop={true}
-        autoClose={5000}
-        pauseOnHover
-        pauseOnFocusLoss
-        draggable
-      />
     </section>
   );
 };

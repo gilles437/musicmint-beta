@@ -1,20 +1,7 @@
-import React, { useState, CSSProperties, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ContractPromise } from "@polkadot/api-contract";
-import { WeightV2 } from "@polkadot/types/interfaces";
-import { BN } from "@polkadot/util";
-import { useWallets } from "@/contexts/Wallets";
-import contractAbi from "@/contracts/album/albums.json";
-import { useApi } from "@/hooks/useApi";
-import configureAWS from "@/utils/ipfs/awsConfig";
-import { v4 as uuidv4 } from "uuid";
-import S3 from "aws-sdk/clients/s3";
 import axios from "axios";
-import Link from "next/link";
-import CircleLoader from "react-spinners/ClipLoader";
-import { useRouter } from "next/router";
-import { useAlbumContract } from "@/hooks/useAlbumContract";
 
 type SongMetadataType = {
   title: string;
@@ -24,16 +11,16 @@ type SongMetadataType = {
   sound: string;
 };
 
-type CreateSongInput = {
+export type CreateSongInput = {
   title: string;
   price: string;
   maxSupply: string;
   image: File;
-}
+};
 
 type Props = {
   onSubmit: (input: CreateSongInput) => void;
-}
+};
 
 const CreateSongForm = ({ onSubmit }: Props) => {
   const [title, setTitle] = useState<string>("");
@@ -161,9 +148,7 @@ const CreateSongForm = ({ onSubmit }: Props) => {
                 type="text"
                 placeholder="Enter Title..."
                 value={title ? title : ""}
-                onChange={(e: any) =>
-                  setTitle(e.target.value)
-                }
+                onChange={(e: any) => setTitle(e.target.value)}
               />
             </div>
             <div className="mt-3">
@@ -181,12 +166,8 @@ const CreateSongForm = ({ onSubmit }: Props) => {
               <input
                 type="text"
                 placeholder="Press 0 if no maximum"
-                value={
-                  maxSupply ? maxSupply : ""
-                }
-                onChange={(e: any) =>
-                  setCurrentSoundMaxSupply(e.target.value)
-                }
+                value={maxSupply ? maxSupply : ""}
+                onChange={(e: any) => setCurrentSoundMaxSupply(e.target.value)}
               />
             </div>
           </div>
@@ -199,9 +180,7 @@ const CreateSongForm = ({ onSubmit }: Props) => {
                 type="text"
                 placeholder="Enter Price..."
                 value={price ? price : ""}
-                onChange={(e: any) =>
-                  setPrice(e.target.value)
-                }
+                onChange={(e: any) => setPrice(e.target.value)}
               />
               <span className="ms-3">AFT</span>
             </div>
@@ -260,12 +239,8 @@ const CreateSongForm = ({ onSubmit }: Props) => {
                           </td>
                           <td>
                             <audio controls>
-                              <source
-                                src={song.sound}
-                                type="audio/mpeg"
-                              />
-                              Your browser does not support the audio
-                              element.
+                              <source src={song.sound} type="audio/mpeg" />
+                              Your browser does not support the audio element.
                             </audio>
                           </td>
                           <td>{song.maxSupply}</td>

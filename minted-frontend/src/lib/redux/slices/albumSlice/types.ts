@@ -7,9 +7,24 @@ export interface Album {
   to: string;
   contract: string;
   uri: string;
+  timestamp: string;
+  metadata?: AlbumMetadata;
+}
+
+export interface AlbumMetadata {
+  id?: string;
+  name?: string;
   title: string;
-  description: string;
   image: string;
+  description: string;
   price: string;
   timestamp: string;
 }
+
+export interface SongMetadata {
+  title: string;
+  price: string;
+  maxSupply: string;
+  image: string;
+  sound: string;
+};

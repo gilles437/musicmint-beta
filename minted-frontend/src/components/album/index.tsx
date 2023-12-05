@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import Link from "next/link";
 import dayjs from "dayjs";
 import "react-toastify/dist/ReactToastify.css";
@@ -122,14 +122,6 @@ const Album = () => {
           </div>
         </div>
       </div>
-      <ToastContainer
-        position="top-right"
-        newestOnTop={true}
-        autoClose={5000}
-        pauseOnHover
-        pauseOnFocusLoss
-        draggable
-      />
     </section>
   );
 };

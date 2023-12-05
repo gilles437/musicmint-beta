@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
 
-type CreateAlbumInput = {
+export type CreateAlbumInput = {
   title: string;
   description: string;
   image: File;
@@ -12,7 +12,7 @@ type CreateAlbumInput = {
 };
 
 type Props = {
-  onSubmit: (input: CreateAlbumInput) => void;
+  onSubmit: (input: CreateAlbumInput) => Promise<boolean>;
 };
 
 const CreateAlbumForm = ({ onSubmit }: Props) => {
@@ -36,13 +36,23 @@ const CreateAlbumForm = ({ onSubmit }: Props) => {
       return;
     }
 
-    onSubmit({
+    const input = {
       title,
       description,
       image: selectedImage,
       maxSupply,
       price,
-    } as CreateAlbumInput);
+    } as CreateAlbumInput;
+
+    onSubmit(input).then((success) => {
+      success && emptyFields();
+    });
+  };
+
+  const emptyFields = () => {
+    setDescription("");
+    setTitle("");
+    setSelectedImage(undefined);
   };
 
   const validateFields = () => {

@@ -1,5 +1,4 @@
 import React, { useState, CSSProperties } from "react";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CircleLoader from "react-spinners/ClipLoader";
 import ArtistsSection from "./ArtistsSection";
@@ -30,14 +29,6 @@ const ContractAdmin = () => {
           </>
         )}
       </div>
-      <ToastContainer
-        position="top-right"
-        newestOnTop={true}
-        autoClose={5000}
-        pauseOnHover
-        pauseOnFocusLoss
-        draggable
-      />
     </section>
   );
 };

@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import Head from "next/head";
 import Script from "next/script";
+import { ToastContainer } from "react-toastify";
 //= Components
 import { Providers } from '@/lib/providers'
 import PreLoader from "@/components/PreLoader";
@@ -41,6 +42,15 @@ const MainLayout = ({ children }: Props) => {
           <Footer />
         </WalletProvider>
       </Providers>
+
+      <ToastContainer
+        position="top-right"
+        newestOnTop={true}
+        autoClose={5000}
+        pauseOnHover
+        pauseOnFocusLoss
+        draggable
+      />
 
       <ScrollToTop />
     </>
