@@ -1,5 +1,4 @@
 import React, { useState, CSSProperties } from "react";
-import "react-toastify/dist/ReactToastify.css";
 import CircleLoader from "react-spinners/ClipLoader";
 import ArtistsSection from "./ArtistsSection";
 import SuperAdminSection from "./SuperAdminSection";

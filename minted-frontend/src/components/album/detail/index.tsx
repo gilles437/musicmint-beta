@@ -2,7 +2,6 @@ import React, { useState, useEffect, CSSProperties } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import CircleLoader from "react-spinners/ClipLoader";
 

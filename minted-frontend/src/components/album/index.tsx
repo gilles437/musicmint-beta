@@ -1,19 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
-import { toast } from "react-toastify";
-import Link from "next/link";
-import dayjs from "dayjs";
-import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
+import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import {
   useSelector,
   useDispatch,
   selectAlbums,
   fetchAlbumListAsync,
-  Album,
   selectArtists,
   Artist,
   fetchArtistListAsync,
-} from "@/lib/redux";
+} from '@/lib/redux';
+import { getActiveAccount } from '@/utils/account';
+import AlbumTable from './AlbumTable';
 
 const Album = () => {
   const dispatch = useDispatch();
@@ -35,7 +32,7 @@ const Album = () => {
   useEffect(() => {
     if (artists?.length) {
       const account = getActiveAccount();
-      const artist = artists.find(i => i.to === account);
+      const artist = artists.find((i) => i.to === account);
       artist && setArtist(artist);
     }
   }, [artists]);
@@ -99,24 +96,7 @@ const Album = () => {
             </Link>
           )}
           <div className="col-sm-12">
-            <div className="mt-5 table-responsive">
-              <table className="table table-hover table-success table-striped">
-                <thead className="thead-dark">
-                  <tr>
-                    <th scope="col">Address</th>
-                    <th scope="col"></th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Created On</th>
-                    <th scope="col"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(albums || []).map((album: Album, index: number) => (
-                    <AlbumRow  key={index} album={album} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <AlbumTable albums={albums} />
           </div>
         </div>
       </div>

@@ -3,7 +3,6 @@ import { toast } from 'react-toastify';
 import CircleLoader from 'react-spinners/ClipLoader';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import 'react-toastify/dist/ReactToastify.css';
 
 import {
   AlbumMetadata,

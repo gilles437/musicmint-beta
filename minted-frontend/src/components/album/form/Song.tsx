@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 type SongMetadataType = {
   title: string;
@@ -85,8 +84,8 @@ const SongForm = ({ onSubmit }: Props) => {
       title,
       price,
       maxSupply,
-      image: selectedImage,
-      sound: selectedSound,
+      image: selectedImage!,
+      sound: selectedSound!,
     };
     onSubmit(input).then((success) => {
       success && emptySoundFields();

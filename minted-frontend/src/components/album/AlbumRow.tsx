@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import dayjs from 'dayjs'
-import 'react-toastify/dist/ReactToastify.css'
 import { Album } from '@/lib/redux'
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata'
 

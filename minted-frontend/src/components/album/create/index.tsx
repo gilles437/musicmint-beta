@@ -3,7 +3,6 @@ import { toast } from 'react-toastify';
 import CircleLoader from 'react-spinners/ClipLoader';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import 'react-toastify/dist/ReactToastify.css';
 
 import { AlbumMetadata, SongMetadata } from '@/lib/redux';
 import { createIpfsUrl } from '@/utils/ipfs';
@@ -28,7 +27,6 @@ const CreateAlbum = () => {
   const [currentAlbumId, setCurrentAlbumId] = useState<string>('');
   const [showSongs, setShowSongs] = useState(false);
   const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>('');
-  const [songMetaData, setSongMetaData] = useState<SongMetadata[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const [contractAddress, setContractAddress] = useState('');

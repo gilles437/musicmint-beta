@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Head from "next/head";
 import Script from "next/script";
 import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 //= Components
 import { Providers } from '@/lib/providers'
 import PreLoader from "@/components/PreLoader";

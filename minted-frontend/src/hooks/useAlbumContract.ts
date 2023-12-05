@@ -120,7 +120,6 @@ export const useAlbumContract = (contractAddress?: string) => {
       metaUrl: string,
       callback: (albumId: string) => void
     ): Promise<boolean> => {
-      console.log('albumId', albumId);
       if (!api || !contract) {
         console.error('Api is not ready');
         return false;
@@ -149,8 +148,6 @@ export const useAlbumContract = (contractAddress?: string) => {
       console.log('*****queryTx=', queryTx);
       if (!queryTx.result?.isOk) {
         console.error('****queryTx.error', queryTx.result.asErr);
-        console.error('****queryTx.toHuman', queryTx.result.toHuman());
-        console.error('****queryTx.toJSON', queryTx.result.toJSON());
         return false;
       }
 
@@ -163,7 +160,7 @@ export const useAlbumContract = (contractAddress?: string) => {
       );
       console.log('*****tx=', tx);
 
-      const parseAlbumId = (result: any) => {
+      const parseSongId = (result: any) => {
         const event: ContractEventsType = JSON.parse(
           JSON.stringify(result, null, 2)
         );
@@ -179,8 +176,64 @@ export const useAlbumContract = (contractAddress?: string) => {
         (result) => {
           console.log('*****tx**result=', result.status.isFinalized);
           if (result.status.isFinalized) {
-            const albumId = parseAlbumId(result);
-            console.log('*****tx**result**albumId=', albumId);
+            const songId = parseSongId(result);
+            console.log('*****tx**result**albumId=', songId);
+            callback(songId);
+            unsub();
+          }
+        }
+      );
+      return true;
+    },
+    [api, contract, gasLimit, wallet]
+  );
+
+  const deleteSong = useCallback(
+    async (
+      albumId: string,
+      songId: string,
+      callback: (albumId: string) => void
+    ): Promise<boolean> => {
+      if (!api || !contract) {
+        console.error('Api is not ready');
+        return false;
+      }
+      console.log('****wallet', wallet);
+      if (!wallet) {
+        console.error('Please connect your wallet!');
+        return false;
+      }
+
+      const account = getActiveAccount();
+      console.log('****account', account);
+
+      const options = { value: 0, storageDepositLimit: null, gasLimit };
+      const queryTx = await contract.query.deleteSong(
+        account,
+        options,
+        albumId,
+        songId,
+      );
+
+      console.log('*****queryTx=', queryTx);
+      if (!queryTx.result?.isOk) {
+        console.error('****queryTx.error', queryTx.result.asErr);
+        return false;
+      }
+
+      const tx = await contract.tx.deleteSong(
+        options,
+        albumId,
+        songId,
+      );
+      console.log('*****tx=', tx);
+
+      const unsub = await tx.signAndSend(
+        account,
+        { signer: wallet.signer },
+        (result) => {
+          console.log('*****tx**result=', result.status.isFinalized);
+          if (result.status.isFinalized) {
             callback(albumId);
             unsub();
           }
@@ -194,5 +247,6 @@ export const useAlbumContract = (contractAddress?: string) => {
   return {
     createAlbum,
     createSong,
+    deleteSong,
   };
 };
