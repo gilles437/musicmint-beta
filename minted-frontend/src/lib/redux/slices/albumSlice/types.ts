@@ -2,7 +2,7 @@ export interface Album {
   id: string;
   albumid: string;
   songid: string;
-  maxsupply: string;
+  maxsupply: number;
   from: string;
   to: string;
   contract: string;

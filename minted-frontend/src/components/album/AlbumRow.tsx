@@ -1,45 +1,28 @@
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import dayjs from "dayjs";
-import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-import { Album, AlbumMetadata } from "@/lib/redux";
+import Link from 'next/link'
+import dayjs from 'dayjs'
+import 'react-toastify/dist/ReactToastify.css'
+import { Album } from '@/lib/redux'
+import { useAlbumMetadata } from '@/hooks/useAlbumMetadata'
 
 type Props = {
-  album: Album;
-};
+  album: Album
+}
 
 const AlbumRow = ({ album }: Props) => {
-  const [metadata, setMetadata] = useState<AlbumMetadata | null>(null);
-
-  useEffect(() => {
-    const request = {
-      method: "GET",
-      url: album.uri,
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    };
-    axios(request)
-      .then(({ data }: { data: AlbumMetadata}) => {
-        setMetadata(data);
-      })
-      .catch(console.error);
-  }, [album]);
+  const metadata = useAlbumMetadata(album?.uri)
 
   return (
     <tr>
-      <td scope="row">{metadata?.title || ""}</td>
+      <td scope="row">{metadata?.title || ''}</td>
       <td>
         <img
-          src={metadata?.image || "/images/album.png"}
+          src={metadata?.image || '/images/album.png'}
           alt="Album"
-          style={{ width: "60px", height: "60px", borderRadius: '16px' }}
+          style={{ width: '60px', height: '60px', borderRadius: '16px' }}
         />
       </td>
-      <td>{metadata?.price || ""}</td>
-      <td>{dayjs(album.timestamp).format("MM/DD/YYYY HH:mm")}</td>
+      <td>{metadata?.price || ''}</td>
+      <td>{dayjs(album.timestamp).format('MM/DD/YYYY HH:mm')}</td>
       <td>
         <Link href={`/album/edit?id=${album.id}`}>
           <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
@@ -48,7 +31,7 @@ const AlbumRow = ({ album }: Props) => {
         </Link>
       </td>
     </tr>
-  );
-};
+  )
+}
 
-export default AlbumRow;
+export default AlbumRow
