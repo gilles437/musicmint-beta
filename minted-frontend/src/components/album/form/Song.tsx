@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
-type SongMetadataType = {
-  title: string;
-  price: string;
-  maxSupply: string;
-  image: string;
-  sound: string;
-};
-
 export type CreateSongInput = {
   title: string;
   price: string;
@@ -31,8 +23,6 @@ const SongForm = ({ onSubmit }: Props) => {
   const [maxSupply, setCurrentSoundMaxSupply] = useState<string>('');
   const [selectedSound, setSelectedSound] = useState<File>();
   const [selectedImage, setSelectedImage] = useState<File>();
-  const [showSongs, setShowSongs] = useState(false);
-  const [songMetaData, setSongMetaData] = useState<SongMetadataType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleImageChange = (e: any) => {
