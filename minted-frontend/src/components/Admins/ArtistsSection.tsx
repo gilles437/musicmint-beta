@@ -59,7 +59,7 @@ const ArtistsSection = () => {
     );
 
     if (success) {
-      toastFunction("Artist has been successfull added");
+      toastFunction("Artist has been successfully added");
       setNewAdminInput("");
       const timerId = setTimeout(() => fetchArtistList(), 5000);
       return () => clearTimeout(timerId);
@@ -92,7 +92,7 @@ const ArtistsSection = () => {
     );
 
     if (success) {
-      toastFunction("Artist has been successfull removed");
+      toastFunction("Artist has been successfully removed");
       setNewAdminInput("");
       const timerId = setTimeout(() => fetchArtistList(), 5000);
       return () => clearTimeout(timerId);
