@@ -87,20 +87,18 @@ const Album = () => {
           <h2>My Albums</h2>
         </div>
         <div className="mb-5">
-          {isArtist ? (
+          {!!artist && (
             <Link
               className="d-flex"
               href={{
-                pathname: "/album/create",
-                query: { contract: artist?.contract },
+                pathname: `/album/create`,
+                query: { contract: artist.contract },
               }}
             >
               <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
                 Create Album
               </button>
             </Link>
-          ) : (
-            ""
           )}
           <div className="col-sm-12">
             <div className="mt-5 table-responsive">
