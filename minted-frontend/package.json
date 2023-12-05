@@ -29,6 +29,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "aws-sdk": "^2.1440.0",
     "axios": "^0.27.2",
+    "dayjs": "^1.11.10",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "lightgallery": "^2.5.0",

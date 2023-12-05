@@ -1,41 +1,93 @@
-import { ContractPromise } from "@polkadot/api-contract";
-import { BN, BN_ONE, BN_TEN } from "@polkadot/util";
-import { WeightV2 } from "@polkadot/types/interfaces";
+import { CodePromise, ContractPromise } from "@polkadot/api-contract";
+import { CodeSubmittableResult } from "@polkadot/api-contract/base";
+import { useCallback, useMemo } from "react";
 
 import { ALLFEAT_CONTRACT } from "@/constants";
 import contractAbi from "@/contracts/admin/admin.json"; // Replace by your contract ABI
+import { ContractFile as ArtistContract } from "@/contracts/album/albums1";
+import { useWallets } from "@/contexts/Wallets";
+import { getActiveAccount } from "@/utils/account";
 
-import { Artist } from "../lib/redux/slices/artistsSlice";
+import { Artist } from "../lib/redux/slices/adminSlice";
 import { useApi } from "./useApi";
-import { useCallback } from "react";
+import { useGasLimit } from "./useGasLimit";
 
 export const useAdminContract = () => {
   const api = useApi();
+  const gasLimit = useGasLimit(api);
+  const { wallet } = useWallets();
 
-  const getGasLimit = useCallback(() => {
+  const contract = useMemo(() => {
     if (api) {
-      return api.registry.createType("WeightV2", {
-        refTime: new BN("10000000000"),
-        proofSize: new BN("10000000000"),
-      }) as WeightV2;
+      return new ContractPromise(api, contractAbi, ALLFEAT_CONTRACT);
     }
-    return -1;
+    return null;
   }, [api]);
+
+  const request = useMemo(() => {
+    if (!api || !contract) {
+      console.error("Api is not ready");
+      return null;
+    }
+    console.log("****wallet", wallet);
+    if (!wallet) {
+      console.error("Please connect your wallet!");
+      return null;
+    }
+
+    const account = getActiveAccount();
+    console.log("****account", account);
+    if (!account) {
+      console.error("Invalid account!");
+      return null;
+    }
+
+    return {
+      api,
+      contract,
+      wallet,
+      account,
+      options: { value: 0, storageDepositLimit: null, gasLimit },
+    };
+  }, [api, contract, wallet, gasLimit]);
+
+  const addSuperAdmin = useCallback(
+    async (adminAddress: string) => {
+      if (!request) {
+        return false;
+      }
+
+      const { contract, wallet, options, account } = request;
+      const tx = await contract.tx.addSuperAdmin(options, adminAddress);
+
+      await tx.signAndSend(account, { signer: wallet.signer });
+      return true;
+    },
+    [request]
+  );
+
+  const removeSuperAdmin = useCallback(
+    async (adminAddress: string) => {
+      if (!request) {
+        return false;
+      }
+
+      const { contract, wallet, options, account } = request;
+      const tx = await contract.tx.removeSuperAdmin(options, adminAddress);
+
+      await tx.signAndSend(account, { signer: wallet.signer });
+      return true;
+    },
+    [request]
+  );
 
   const getArtists = useCallback(
     async (caller: string): Promise<Artist[] | null> => {
-      if (!api) {
+      if (!request) {
         return null;
       }
 
-      // Create Contract
-      const contract = new ContractPromise(api, contractAbi, ALLFEAT_CONTRACT);
-      if (!contract) {
-        return null;
-      }
-
-      const gasLimit = getGasLimit();
-      const options = { value: 0, storageDepositLimit: null, gasLimit };
+      const { contract, options } = request;
       const { result, output } = await contract.query.getAllAdmins(
         caller,
         options
@@ -78,10 +130,90 @@ export const useAdminContract = () => {
 
       return artists.filter((i) => i.contract);
     },
-    [api, getGasLimit]
+    [request]
+  );
+
+  const addArtist = useCallback(
+    async (address: string, contractAddress: string) => {
+      if (!request) {
+        return null;
+      }
+
+      const { contract, wallet, options, account } = request;
+      const tx = await contract.tx.addAdmin(options, address, contractAddress);
+
+      await tx.signAndSend(account, { signer: wallet.signer });
+      return true;
+    },
+    [request]
+  );
+
+  const removeArtist = useCallback(
+    async (address: string, contractAddress: string) => {
+      if (!request) {
+        return null;
+      }
+
+      const { contract, wallet, options, account } = request;
+      const tx = await contract.tx.removeAdmin(
+        options,
+        address,
+        contractAddress
+      );
+
+      await tx.signAndSend(account, { signer: wallet.signer });
+      return true;
+    },
+    [request]
+  );
+
+  const deployArtistContract = useCallback(
+    async (
+      artistAddress: string,
+      callback: (contractAddress: string) => void
+    ) => {
+      if (!request) {
+        return false;
+      }
+
+      const { api, wallet, account } = request;
+      const code = new CodePromise(
+        api,
+        ArtistContract,
+        ArtistContract.source.wasm
+      );
+
+      const tx = code.tx.new(
+        { value: 0, gasLimit, storageDepositLimit: null },
+        "",
+        artistAddress
+      );
+      const unsub = await tx.signAndSend(
+        account,
+        { signer: wallet.signer },
+        (result) => {
+          if (result.status.isFinalized) {
+            const dataResult: CodeSubmittableResult<"promise"> = result;
+            if (dataResult.contract) {
+              const address = dataResult.contract.address.toString();
+              callback(address);
+            }
+            unsub();
+          }
+        }
+      );
+
+      return true;
+    },
+    [request]
   );
 
   return {
+    addSuperAdmin,
+    removeSuperAdmin,
     getArtists,
+    addArtist,
+    removeArtist,
+    deployArtistContract,
   };
 };

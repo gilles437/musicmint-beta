@@ -27,11 +27,13 @@ const ConnectContainer = () => {
     if (wallet) {
       try {
         await wallet.connect();
+
         let accounts = await wallet.getAccounts();
         accounts.map((account) => {
           account.address = formatAccount(account.address);
         });
         setAccounts(accounts);
+
         const savedAccount = localStorage.getItem("currentAccount");
         const parsedAccount =
           savedAccount && savedAccount != "null"

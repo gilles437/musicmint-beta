@@ -2,12 +2,13 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 /* Instruments */
-import { fetchSuperAdminListAsync } from './thunks'
+import { fetchSuperAdminListAsync, fetchArtistListAsync } from './thunks'
 import { Artist, SuperAdmin } from './types';
 
 /* Types */
 export interface AdminState {
   status: 'idle' | 'loading' | 'failed'
+  loadingAdmins: boolean;
   loadingArtists: boolean;
   superAdmins: SuperAdmin[];
   artists: Artist[];
@@ -15,6 +16,7 @@ export interface AdminState {
 
 const initialState: AdminState = {
   status: 'idle',
+  loadingAdmins: false,
   loadingArtists: false,
   superAdmins: [],
   artists: [],
@@ -43,11 +45,18 @@ export const adminSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchSuperAdminListAsync.pending, (state) => {
-        state.status = 'loading'
+        state.loadingAdmins = true;
       })
       .addCase(fetchSuperAdminListAsync.fulfilled, (state, action) => {
-        state.status = 'idle'
+        state.loadingAdmins = false;
         state.superAdmins = action.payload
+      })
+      .addCase(fetchArtistListAsync.pending, (state) => {
+        state.loadingArtists = true
+      })
+      .addCase(fetchArtistListAsync.fulfilled, (state, action) => {
+        state.loadingArtists = false
+        state.artists = action.payload
       })
   },
 })

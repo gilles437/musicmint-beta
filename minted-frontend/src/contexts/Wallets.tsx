@@ -19,6 +19,7 @@ export const useWallets = () => useContext<IWalletContext>(WalletContext);
 const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
   const [wallet, setWallet] = useState<BaseWallet>();
   const { wallets } = _useWallets();
+
   const initiateWallets = async (wallets: Array<BaseWallet>) => {
     for (const wallet of wallets) {
       if (
@@ -36,6 +37,7 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
       initiateWallets(wallets);
     }
   }, [wallets]);
+
   return (
     <WalletContext.Provider value={{ wallet: wallet }}>
       {children}

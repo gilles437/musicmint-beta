@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { ContractPromise } from "@polkadot/api-contract";
-import { BN } from "@polkadot/util";
 import { WeightV2 } from "@polkadot/types/interfaces";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import contractAbi from "@/contracts/admin/admin.json"; // Replace by your contract ABI
 import { useApi } from "@/hooks/useApi";
 import { useWallets } from "@/contexts/Wallets";
-import { beatifyAddress } from "@/utils/account";
+import { beatifyAddress, getActiveAccount } from "@/utils/account";
 import Identicon from "@polkadot/react-identicon";
 import {
   useSelector,
@@ -16,6 +14,8 @@ import {
   fetchSuperAdminListAsync,
   SuperAdmin,
 } from "@/lib/redux";
+import { useFindAddress } from "@/hooks/useFindAddress";
+import { useAdminContract } from "@/hooks/useAdminContract";
 
 interface adminListType {
   to: string;
@@ -29,48 +29,12 @@ const toastFunction = (string: any) => {
 
 const SuperAdminSection = () => {
   const dispatch = useDispatch();
-  const superAdminList = useSelector(selectSuperAdmins);
-
-  const [contract, setContract] = useState<ContractPromise>();
-  const [gasLimit, setGasLimit] = useState<WeightV2>();
+  const superAdmins = useSelector(selectSuperAdmins);
   const [newSuperAdminInput, setNewSuperAdminInput] = useState<string>("");
-  const [adminList, setAdminList] = useState<adminListType[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const adminContract = useAdminContract();
+  const findAddress = useFindAddress();
 
-  const api = useApi();
-  const { wallet } = useWallets();
-
-  const contractAddress = "5D5G8y4Gusc89E2XjetuwuNAN5GdhnQKUByQJ9NxkCdFwwBG"; // Replace the address of your contract
   const caller = "5FNj1E5Wxqg1vMo1qd6Zi6XZjrAXB8ECuXCyHDrsRQZSAPHL"; //The address of Contract Owner
-  const storageDepositLimit = null;
-
-  useEffect(() => {
-    const connectChain = async () => {
-      if (api == null) return;
-      setIsLoading(true);
-      const { chainSS58, chainDecimals, chainTokens } = api.registry;
-      localStorage.setItem("chainSS58", JSON.stringify(chainSS58));
-
-      //Contract Create
-      const contract = new ContractPromise(api, contractAbi, contractAddress);
-      setContract(contract);
-
-      //GasLimit
-      const gasLimit = api.registry.createType("WeightV2", {
-        refTime: new BN("10000000000"),
-        proofSize: new BN("10000000000"),
-      }) as WeightV2;
-      setGasLimit(gasLimit);
-    };
-    connectChain()
-      .then(() => {
-        if (api == null) return;
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
-  }, [api]);
 
   const fetchSuperAdminList = useCallback(() => {
     dispatch(fetchSuperAdminListAsync());
@@ -80,61 +44,61 @@ const SuperAdminSection = () => {
     fetchSuperAdminList();
   }, []);
 
+  const isOwner = () => {
+    const activeAccount = getActiveAccount();
+    return activeAccount && caller === activeAccount;
+  };
+
   const addSuperAdmin = async () => {
     if (!newSuperAdminInput) {
       toastFunction("You should input address !");
       return;
     }
 
-    const savedAccount = localStorage.getItem("currentAccount");
-    const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-    if (parsedAccount && caller != parsedAccount) {
+    if (!isOwner()) {
       toastFunction("Current selected account is not Contract Owner !");
       return;
     }
 
-    const allAdminAccounts = [
-      ...superAdminList.map((a) => a.to),
-      ...adminList.map((a) => a.to),
-    ];
-    if (allAdminAccounts.includes(newSuperAdminInput)) {
+    if (findAddress(newSuperAdminInput)) {
       toastFunction("Account is already added !");
       return;
     }
 
-    if (wallet && contract) {
-      const options = wallet.signer ? { signer: wallet.signer } : undefined;
-      const tx = await contract.tx.addSuperAdmin(
-        { value: 0, gasLimit, storageDepositLimit },
-        newSuperAdminInput
-      );
-      await tx.signAndSend(parsedAccount, options);
+    const success = await adminContract.addSuperAdmin(newSuperAdminInput);
+
+    if (success) {
       setNewSuperAdminInput("");
+      toastFunction("Super admin has been successfully added");
 
       const timerId = setTimeout(fetchSuperAdminList, 5000);
       return () => clearTimeout(timerId);
+    } else {
+      toastFunction("Failed to add super admin!");
     }
   };
 
-  const removeSuperAdmin = async (account: string) => {
-    const savedAccount = localStorage.getItem("currentAccount");
-    const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
-    if (parsedAccount && parsedAccount != caller) {
+  const removeSuperAdmin = async (adminAddress: string) => {
+    if (!adminAddress) {
+      toastFunction("You should input address !");
+      return;
+    }
+
+    if (!isOwner()) {
       toastFunction("Current selected account is not Contract Owner !");
       return;
     }
 
-    if (wallet && contract) {
-      const options = wallet ? { signer: wallet.signer } : undefined;
-      const tx = await contract.tx.removeSuperAdmin(
-        { value: 0, gasLimit, storageDepositLimit },
-        account
-      );
-      await tx.signAndSend(parsedAccount, options);
+    const success = await adminContract.removeSuperAdmin(adminAddress);
+
+    if (success) {
       setNewSuperAdminInput("");
+      toastFunction("Super admin has been successfully removed");
 
       const timerId = setTimeout(fetchSuperAdminList, 5000);
       return () => clearTimeout(timerId);
+    } else {
+      toastFunction("Failed to remove super admin!");
     }
   };
 
@@ -180,7 +144,7 @@ const SuperAdminSection = () => {
                 </tr>
               </thead>
               <tbody>
-                {superAdminList.map(
+                {(superAdmins || []).map(
                   (superAdminAccount: SuperAdmin, index: number) => (
                     <tr key={index}>
                       <th scope="row">

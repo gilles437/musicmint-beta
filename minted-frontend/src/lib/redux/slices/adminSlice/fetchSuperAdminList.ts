@@ -1,6 +1,6 @@
 import { request } from "graphql-request";
 
-import { DEFAULT_CHAIN, MARKETPLACE_SUBGRAPH_URLS } from "@/constants";
+import { DEFAULT_CHAIN, ADMIN_SUBGRAPH_URLS } from "@/constants";
 import { QUERY_GET_SUPER_ADMIN_TRANSFERS } from "@/lib/subgraph/erc721Queries";
 import { SuperAdmin } from "./types";
 
@@ -10,7 +10,7 @@ interface FetchType {
 
 export const fetchSuperAdminList = async (): Promise<SuperAdmin[]> => {
   const result: FetchType = await request(
-    MARKETPLACE_SUBGRAPH_URLS[DEFAULT_CHAIN],
+    ADMIN_SUBGRAPH_URLS[DEFAULT_CHAIN],
     QUERY_GET_SUPER_ADMIN_TRANSFERS()
   );
   return result.transfers.map((data: SuperAdmin) => {

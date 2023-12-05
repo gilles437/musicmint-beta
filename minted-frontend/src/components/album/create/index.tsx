@@ -14,6 +14,7 @@ import axios from "axios";
 import Link from "next/link";
 import CircleLoader from "react-spinners/ClipLoader";
 import { useRouter } from "next/router";
+import { useAlbumContract } from "@/hooks/useAlbumContract";
 
 const s3 = configureAWS();
 const override: CSSProperties = {
@@ -70,6 +71,8 @@ const CreateAlbum = () => {
   const api = useApi();
   const { wallet } = useWallets();
   const { query } = useRouter();
+
+  const { createAlbum } = useAlbumContract("5HFo61hpJxcg52VV1ENnAbHHsKwhTLaADtYQqe5jRJmsH224");
 
   useEffect(() => {
     if (api && query?.contract) {
@@ -173,72 +176,30 @@ const CreateAlbum = () => {
       }
       setSelectedImageFileCid(fileImageCid);
       const tempCurrentMetaId = await uploadMetadata(fileImageCid);
-      if (tempCurrentMetaId) {
-        const savedAccount = localStorage.getItem("currentAccount");
-        const parsedAccount = savedAccount ? JSON.parse(savedAccount) : "";
+      if (!tempCurrentMetaId) {
+        console.error("error when uploading metadata");
+        return;
+      }
 
-        const queryCurrentAlbumId = await contract.query.createAlbum(
-          parsedAccount,
-          { value: 0, gasLimit: gasLimit, storageDepositLimit: null },
-          maxSupply, //max_supply
-          Number(currentPrice) * 10 ** chainDecimals, //price,
-          `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
-        );
-        console.log({ queryCurrentAlbumId });
-
-        if (queryCurrentAlbumId.result && queryCurrentAlbumId.result.isOk) {
-          const addAlbumResult = await contract.tx.createAlbum(
-            { value: 0, gasLimit: gasLimit, storageDepositLimit: null },
-            maxSupply, //max_supply
-            Number(currentPrice) * 10 ** chainDecimals, //price,
-            `https://ipfs.io/ipfs/${tempCurrentMetaId}` //album_uri,
-          );
-
-          const tx = await addAlbumResult.signAndSend(
-            parsedAccount,
-            { signer: wallet.signer },
-            (result) => {
-              if (result.status.isFinalized) {
-                const resultJson: contractEventsType = JSON.parse(
-                  JSON.stringify(result, null, 2)
-                );
-                console.log("\nResult is : ", resultJson);
-                if (
-                  resultJson.contractEvents.length &&
-                  resultJson.contractEvents[0].args[1]
-                ) {
-                  setCurrentAlbumId(resultJson.contractEvents[0].args[1]);
-                  toastFunction(
-                    `New Album TokenId is: ${resultJson.contractEvents[0].args[1]}`
-                  );
-                } else {
-                  toastFunction(`Something wrong to create Album`);
-                  setCurrentAlbumId("");
-                }
-              }
-            }
-          );
-
-          const storageSongsData = localStorage.getItem("albums");
-          const storageSongs = storageSongsData
-            ? JSON.parse(storageSongsData)
-            : [];
-          storageSongs.push({
-            id: storageSongs.length + 1,
-            metadata: tempCurrentMetaId,
-            songs: [],
-          });
-          setShowSongs(true);
-          localStorage.setItem("albums", JSON.stringify(storageSongs));
-          // emptyFields();
-          toastFunction(`New Album Metadata saved on https://ipfs.io/ipfs/${tempCurrentMetaId}`);
+      const success = await createAlbum(
+        tempCurrentMetaId,
+        Number(maxSupply),
+        Number(currentPrice),
+        (albumId: string) => {
           setIsLoading(false);
-        } else {
-          toastFunction(`Something wrong to save Album Metadata`);
-          setIsLoading(false);
+          setCurrentAlbumId(albumId);
+          toastFunction(`New Album TokenId is: ${Number(albumId)}`);
         }
+      );
+      console.log('success', success)
+      if (success) {
+        toastFunction(`New Album Metadata saved on https://ipfs.io/ipfs/${tempCurrentMetaId}`);
+      } else {
+        setIsLoading(false);
+        toastFunction(`Something wrong to create Album`);
       }
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
     }
   };
@@ -395,8 +356,9 @@ const CreateAlbum = () => {
           fileSoundImageCid,
           fileSoundCid
         );
+        console.log('~~~~tempCurrentMetaId', tempCurrentMetaId)
         if (tempCurrentMetaId) {
-          const storageAlbumsData = localStorage.getItem("albums");
+          /*const storageAlbumsData = localStorage.getItem("albums");
           const storageAlbums = storageAlbumsData
             ? JSON.parse(storageAlbumsData)
             : [];
@@ -464,7 +426,7 @@ const CreateAlbum = () => {
               toastFunction(`Something wrong on save Song Metadata`);
               setIsLoading(false);
             }
-          }
+          }*/
         }
       } else {
         toastFunction(`There is no selected Album`);
