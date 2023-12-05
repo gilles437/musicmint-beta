@@ -19,8 +19,6 @@ const Album = () => {
   const dispatch = useDispatch();
   const artists = useSelector(selectArtists);
   const albums = useSelector(selectAlbums);
-
-  const [isArtist, setIsArtist] = useState<Boolean>(true);
   const [artist, setArtist] = useState<Artist | null>(null);
 
   const fetchAlbumList = useCallback((owner: string) => {

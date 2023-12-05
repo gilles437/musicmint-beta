@@ -1,16 +1,17 @@
 import React, { useState, CSSProperties, useEffect } from "react";
 import { toast } from "react-toastify";
+import CircleLoader from "react-spinners/ClipLoader";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
 
+import { AlbumMetadata, SongMetadata } from "@/lib/redux";
 import { createIpfsUrl } from "@/utils/ipfs";
 import { uploadFile, uploadMetadata } from "@/utils/bucket";
-import CircleLoader from "react-spinners/ClipLoader";
 import { useAlbumContract } from "@/hooks/useAlbumContract";
-import CreateAlbumForm, { CreateAlbumInput } from "./CreateAlbumForm";
+
+import CreateAlbumForm, { CreateAlbumInput } from "../form/AlbumForm";
 import CreateSongForm, { CreateSongInput } from "./CreateSongForm";
-import { AlbumMetadata, SongMetadata } from "@/lib/redux";
 
 const override: CSSProperties = {
   display: "block",
