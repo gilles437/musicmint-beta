@@ -1,13 +1,13 @@
 /* Core */
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 /* Instruments */
-import { fetchAlbumListAsync } from './thunks'
-import { Album } from './types';
+import { fetchAlbumListAsync } from './thunks';
+import { Album, AlbumMetadata } from './types';
 
 /* Types */
 export interface AlbumState {
-  status: 'idle' | 'loading' | 'failed'
+  status: 'idle' | 'loading' | 'failed';
   loadingArtists: boolean;
   albums: Album[];
   albumMetadata: { [key: string]: AlbumMetadata };
@@ -18,7 +18,7 @@ const initialState: AlbumState = {
   loadingArtists: false,
   albums: [],
   albumMetadata: {},
-}
+};
 
 export const albumSlice = createSlice({
   name: 'admin',
@@ -26,7 +26,7 @@ export const albumSlice = createSlice({
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
     setLoadingStatus: (state, action: PayloadAction<boolean>) => {
-      state.status = action.payload ? 'loading' : 'idle'
+      state.status = action.payload ? 'loading' : 'idle';
     },
     setLoadingArtists: (state, action: PayloadAction<boolean>) => {
       state.loadingArtists = action.payload;
@@ -34,9 +34,12 @@ export const albumSlice = createSlice({
     setAlbums: (state, action: PayloadAction<Album[]>) => {
       state.albums = action.payload;
     },
-    setAlbumMetadata: (state, action: PayloadAction<AlbumMetadata>) => {
+    setAlbumMetadata: (
+      state,
+      action: PayloadAction<{ id: string; metadata: AlbumMetadata }>
+    ) => {
       if (action.payload.id) {
-        state.albumMetadata[action.payload.id] = action.payload;
+        state.albumMetadata[action.payload.id] = action.payload.metadata;
       }
     },
   },
@@ -45,17 +48,14 @@ export const albumSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchAlbumListAsync.pending, (state) => {
-        state.status = 'loading'
+        state.status = 'loading';
       })
       .addCase(fetchAlbumListAsync.fulfilled, (state, action) => {
-        state.status = 'idle'
-        state.albums = action.payload
-      })
+        state.status = 'idle';
+        state.albums = action.payload;
+      });
   },
-})
+});
 
-export const {
-  setLoadingStatus,
-  setAlbums,
-  setAlbumMetadata,
-} = albumSlice.actions;
+export const { setLoadingStatus, setAlbums, setAlbumMetadata } =
+  albumSlice.actions;

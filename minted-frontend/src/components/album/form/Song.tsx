@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
+import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type SongMetadataType = {
   title: string;
@@ -16,91 +15,101 @@ export type CreateSongInput = {
   price: string;
   maxSupply: string;
   image: File;
+  sound: File;
 };
 
 type Props = {
-  onSubmit: (input: CreateSongInput) => void;
+  onSubmit: (input: CreateSongInput) => Promise<boolean>;
 };
 
-const CreateSongForm = ({ onSubmit }: Props) => {
-  const [title, setTitle] = useState<string>("");
-  const [price, setPrice] = useState<string>("");
-  const [maxSupply, setCurrentSoundMaxSupply] = useState<string>("");
+const toastFunction = (string: any) => {
+  toast.info(string, { position: toast.POSITION.TOP_RIGHT });
+};
+
+const SongForm = ({ onSubmit }: Props) => {
+  const [title, setTitle] = useState<string>('');
+  const [price, setPrice] = useState<string>('');
+  const [maxSupply, setCurrentSoundMaxSupply] = useState<string>('');
   const [selectedSound, setSelectedSound] = useState<File>();
   const [selectedImage, setSelectedImage] = useState<File>();
   const [showSongs, setShowSongs] = useState(false);
   const [songMetaData, setSongMetaData] = useState<SongMetadataType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSoundImageChange = (e: any) => {
+  const handleImageChange = (e: any) => {
     e.preventDefault();
     setSelectedImage(e.target.files[0]);
   };
 
   const handleSoundChange = (e: any) => {
     e.preventDefault();
-    console.log("handleSoundChange", e.target.files[0]);
+    console.log('handleSoundChange', e.target.files[0]);
     setSelectedSound(e.target.files[0]);
   };
 
   const validateSoundFields = () => {
     if (!title) {
-      toastFunction("Please provide a title");
+      toastFunction('Please provide a title');
       return false;
     }
     if (!price) {
-      toastFunction("Please provide a price");
+      toastFunction('Please provide a price');
       return false;
     }
     if (!selectedSound) {
-      toastFunction("Please provide a sound");
+      toastFunction('Please provide a sound');
       return false;
     }
     if (!selectedImage) {
-      toastFunction("Please provide an image");
+      toastFunction('Please provide an image');
       return false;
     }
     return true;
   };
 
   const emptySoundFields = () => {
-    setPrice("");
-    setTitle("");
+    setPrice('');
+    setTitle('');
     setSelectedImage(undefined);
     setSelectedSound(undefined);
   };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
     if (!validateSoundFields()) {
       return;
     }
 
-    onSubmit({
+    const input: CreateSongInput = {
       title,
       price,
       maxSupply,
       image: selectedImage,
-    } as CreateSongInput);
+      sound: selectedSound,
+    };
+    onSubmit(input).then((success) => {
+      success && emptySoundFields();
+    });
   };
 
-  const fetchSongsFromStorage = async () => {
-    const storageAlbumsData = localStorage.getItem("albums");
+  /*const fetchSongsFromStorage = async () => {
+    const storageAlbumsData = localStorage.getItem('albums');
     const storageAlbums = storageAlbumsData
       ? JSON.parse(storageAlbumsData)
       : [];
-    console.log("fetchSongsFromStorage");
+    console.log('fetchSongsFromStorage');
     if (storageAlbums.length && showSongs) {
       const albumMetaData = (
         await Promise.all(
           storageAlbums[storageAlbums.length - 1].songs.map(
             async (song: string) => {
               const axiosConfig = {
-                method: "get",
+                method: 'get',
                 url: `https://ipfs.io/ipfs/${song}`,
                 headers: {
-                  accept: "application/json",
-                  "Content-Type": "application/json",
+                  accept: 'application/json',
+                  'Content-Type': 'application/json',
                 },
               };
 
@@ -121,23 +130,19 @@ const CreateSongForm = ({ onSubmit }: Props) => {
   };
 
   const removeSongs = async (id: number) => {
-    const storageAlbumsData = localStorage.getItem("albums");
+    const storageAlbumsData = localStorage.getItem('albums');
     const storageAlbums = storageAlbumsData
       ? JSON.parse(storageAlbumsData)
       : [];
-    console.log("fetchSongsFromStorage");
+    console.log('fetchSongsFromStorage');
     storageAlbums[storageAlbums.length - 1].songs.splice(id, 1);
-    localStorage.setItem("albums", JSON.stringify(storageAlbums));
+    localStorage.setItem('albums', JSON.stringify(storageAlbums));
     await fetchSongsFromStorage();
     toastFunction(`Deleted Song SuccessFully`);
-  };
-
-  const toastFunction = (string: any) => {
-    toast.info(string, { position: toast.POSITION.TOP_RIGHT });
-  };
+  };*/
 
   return (
-    <div className="mt-3" style={{ borderTop: "1px solid" }}>
+    <div className="mt-3" style={{ borderTop: '1px solid' }}>
       <h2 className="mt-3">Songs</h2>
       <div className="row">
         <div className="col-md-6 col-sm-12">
@@ -147,7 +152,7 @@ const CreateSongForm = ({ onSubmit }: Props) => {
               <input
                 type="text"
                 placeholder="Enter Title..."
-                value={title ? title : ""}
+                value={title ? title : ''}
                 onChange={(e: any) => setTitle(e.target.value)}
               />
             </div>
@@ -166,7 +171,7 @@ const CreateSongForm = ({ onSubmit }: Props) => {
               <input
                 type="text"
                 placeholder="Press 0 if no maximum"
-                value={maxSupply ? maxSupply : ""}
+                value={maxSupply ? maxSupply : ''}
                 onChange={(e: any) => setCurrentSoundMaxSupply(e.target.value)}
               />
             </div>
@@ -174,12 +179,12 @@ const CreateSongForm = ({ onSubmit }: Props) => {
         </div>
         <div className="col-md-6 col-sm-12">
           <h5>Price</h5>
-          <div className="" style={{ alignItems: "center" }}>
+          <div className="" style={{ alignItems: 'center' }}>
             <div className="d-flex">
               <input
                 type="text"
                 placeholder="Enter Price..."
-                value={price ? price : ""}
+                value={price ? price : ''}
                 onChange={(e: any) => setPrice(e.target.value)}
               />
               <span className="ms-3">AFT</span>
@@ -190,7 +195,7 @@ const CreateSongForm = ({ onSubmit }: Props) => {
                 type="file"
                 placeholder="Upload Image"
                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                onChange={handleSoundImageChange}
+                onChange={handleImageChange}
               />
             </div>
             <div className="mt-3">
@@ -205,7 +210,7 @@ const CreateSongForm = ({ onSubmit }: Props) => {
           </div>
         </div>
       </div>
-      {songMetaData.length > 0 ? (
+      {/* {songMetaData.length > 0 ? (
         <div className="mb-5">
           <div className="row">
             <div className="col-sm-12 col-md-9">
@@ -264,9 +269,9 @@ const CreateSongForm = ({ onSubmit }: Props) => {
             </div>
           </div>
         </div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 };
 
-export default CreateSongForm;
+export default SongForm;

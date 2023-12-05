@@ -22,7 +22,7 @@ export const uploadFile = async (file: File) => {
   }
 };
 
-export const uploadMetadata = async (metadata: AlbumMetadata) => {
+export const uploadMetadata = async (metadata: any) => {
   const myuuid = uuidv4();
   const params: S3.Types.PutObjectRequest = {
     Bucket: process.env.NEXT_PUBLIC_NFT_METADATA_BUCKET_NAME

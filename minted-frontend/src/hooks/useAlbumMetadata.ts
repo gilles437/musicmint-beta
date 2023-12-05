@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
+import { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
 import {
   Album,
   AlbumMetadata,
@@ -7,7 +7,7 @@ import {
   setAlbumMetadata,
   useDispatch,
   useSelector,
-} from '@/lib/redux'
+} from '@/lib/redux';
 
 const fetchAlbumMetadata = (url: string) => {
   const request = {
@@ -17,37 +17,37 @@ const fetchAlbumMetadata = (url: string) => {
       accept: 'application/json',
       'Content-Type': 'application/json',
     },
-  }
+  };
   return axios(request)
     .then(({ data }: { data: AlbumMetadata }) => {
-      return data
+      return data;
     })
     .catch((e) => {
-      console.error(e)
-      return null
-    })
-}
+      console.error(e);
+      return null;
+    });
+};
 
 export const useAlbumMetadata = (album?: Album | null) => {
-  const dispatch = useDispatch()
-  const albumMetadata = useSelector(selectAlbumMetadata)
+  const dispatch = useDispatch();
+  const albumMetadata = useSelector(selectAlbumMetadata);
 
   const metadata = useMemo(() => {
     if (album?.id) {
       if (albumMetadata && albumMetadata[album.id]) {
-        return albumMetadata[album.id]
+        return albumMetadata[album.id];
       }
     }
-    return null
-  }, [albumMetadata, album])
+    return null;
+  }, [albumMetadata, album]);
 
   useEffect(() => {
     if (album && album.uri && !metadata) {
       fetchAlbumMetadata(album.uri).then((meta) => {
-        meta && dispatch(setAlbumMetadata({ ...meta, id: album.id }))
-      })
+        meta && dispatch(setAlbumMetadata({ metadata: meta, id: album.id }));
+      });
     }
-  }, [album, metadata])
+  }, [album, metadata]);
 
-  return metadata
-}
+  return metadata;
+};

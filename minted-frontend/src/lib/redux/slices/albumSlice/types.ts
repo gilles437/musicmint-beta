@@ -8,11 +8,9 @@ export interface Album {
   contract: string;
   uri: string;
   timestamp: string;
-  metadata?: AlbumMetadata;
 }
 
 export interface AlbumMetadata {
-  id?: string;
   name?: string;
   title: string;
   image: string;
@@ -24,7 +22,6 @@ export interface AlbumMetadata {
 export interface SongMetadata {
   title: string;
   price: string;
-  maxSupply: string;
   image: string;
   sound: string;
 };

@@ -1,33 +1,37 @@
-import React, { useState, CSSProperties, useEffect } from "react";
-import { toast } from "react-toastify";
-import CircleLoader from "react-spinners/ClipLoader";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState, CSSProperties, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import CircleLoader from 'react-spinners/ClipLoader';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import 'react-toastify/dist/ReactToastify.css';
 
-import { AlbumMetadata, SongMetadata } from "@/lib/redux";
-import { createIpfsUrl } from "@/utils/ipfs";
-import { uploadFile, uploadMetadata } from "@/utils/bucket";
-import { useAlbumContract } from "@/hooks/useAlbumContract";
+import { AlbumMetadata, SongMetadata } from '@/lib/redux';
+import { createIpfsUrl } from '@/utils/ipfs';
+import { uploadFile, uploadMetadata } from '@/utils/bucket';
+import { useAlbumContract } from '@/hooks/useAlbumContract';
 
-import CreateAlbumForm, { CreateAlbumInput } from "../form/Album";
-import CreateSongForm, { CreateSongInput } from "./CreateSongForm";
+import CreateAlbumForm, { CreateAlbumInput } from '../form/Album';
+import CreateSongForm, { CreateSongInput } from '../form/Song';
 
 const override: CSSProperties = {
-  display: "block",
-  margin: "0 auto",
+  display: 'block',
+  margin: '0 auto',
+};
+
+const toastFunction = (string: any) => {
+  toast.info(string, { position: toast.POSITION.TOP_RIGHT });
 };
 
 const CreateAlbum = () => {
   const { query } = useRouter();
 
-  const [currentAlbumId, setCurrentAlbumId] = useState<string>("");
+  const [currentAlbumId, setCurrentAlbumId] = useState<string>('');
   const [showSongs, setShowSongs] = useState(false);
-  const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>("");
+  const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>('');
   const [songMetaData, setSongMetaData] = useState<SongMetadata[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [contractAddress, setContractAddress] = useState("");
+  const [contractAddress, setContractAddress] = useState('');
   const { createAlbum } = useAlbumContract(contractAddress);
 
   useEffect(() => {
@@ -37,19 +41,19 @@ const CreateAlbum = () => {
   }, [query?.contract]);
 
   const handleCreateAlbum = async (input: CreateAlbumInput) => {
-    console.log("handleCreateAlbum", input);
+    console.log('handleCreateAlbum', input);
     try {
       setIsLoading(true);
 
-      const imageCid = await uploadFile(input.image);
+      const imageCid = await uploadFile(input.image!);
       if (!imageCid) {
-        console.error("error when uploading image nft");
+        console.error('error when uploading image nft');
         return false;
       }
       setSelectedImageFileCid(imageCid);
 
       const metadata: AlbumMetadata = {
-        name: input.image ? input.image.name.toString() : "",
+        name: input.image ? input.image.name.toString() : '',
         title: input.title,
         description: input.description,
         price: input.price,
@@ -57,26 +61,25 @@ const CreateAlbum = () => {
       };
       const metadataId = await uploadMetadata(metadata);
       if (!metadataId) {
-        console.error("error when uploading metadata");
+        console.error('error when uploading metadata');
         return false;
       }
 
+      const metaUrl = createIpfsUrl(metadataId);
       const success = await createAlbum(
-        metadataId,
         Number(input.maxSupply),
         Number(input.price),
+        metaUrl,
         (albumId: string) => {
           setIsLoading(false);
           setCurrentAlbumId(albumId);
           toastFunction(`New Album TokenId is: ${Number(albumId)}`);
         }
       );
-      console.log("success", success);
+      console.log('success', success);
 
       if (success) {
-        toastFunction(
-          `New Album Metadata saved on https://ipfs.io/ipfs/${metadataId}`
-        );
+        toastFunction(`New Album Metadata saved on ${metaUrl}`);
         return true;
       } else {
         setIsLoading(false);
@@ -90,12 +93,9 @@ const CreateAlbum = () => {
     return false;
   };
 
-  const handleCreateSong = (input: CreateSongInput) => {
-    console.log("handleCreateSong", input);
-  };
-
-  const toastFunction = (string: any) => {
-    toast.info(string, { position: toast.POSITION.TOP_RIGHT });
+  const handleCreateSong = async (input: CreateSongInput) => {
+    console.log('handleCreateSong', input);
+    return true;
   };
 
   if (isLoading) {
@@ -116,7 +116,7 @@ const CreateAlbum = () => {
           <Link
             href="/album"
             className="d-flex"
-            style={{ justifyContent: "flex-end" }}
+            style={{ justifyContent: 'flex-end' }}
           >
             <h4>Back to My Album</h4>
           </Link>
