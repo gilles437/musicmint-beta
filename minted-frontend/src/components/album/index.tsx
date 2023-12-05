@@ -10,22 +10,37 @@ import {
   selectAlbums,
   fetchAlbumListAsync,
   Album,
+  selectArtists,
+  Artist,
+  fetchArtistListAsync,
 } from "@/lib/redux";
 
 const Album = () => {
   const dispatch = useDispatch();
+  const artists = useSelector(selectArtists);
   const albums = useSelector(selectAlbums);
 
   const [isArtist, setIsArtist] = useState<Boolean>(true);
-  const [contractAddress, setContractAddress] = useState<string | null>('5HFo61hpJxcg52VV1ENnAbHHsKwhTLaADtYQqe5jRJmsH224'); //TODO
+  const [artist, setArtist] = useState<Artist | null>(null);
 
   const fetchAlbumList = useCallback((owner: string) => {
     dispatch(fetchAlbumListAsync(owner));
   }, [dispatch]);
 
   useEffect(() => {
-    fetchAlbumList('5D4Q5sf67ZyNNLsRff8g2hWa5T3Z9HeCfbC9EXV8b1x7uVmy'); //TODO
-  }, [fetchAlbumList]);
+    dispatch(fetchArtistListAsync());
+
+    const account = getActiveAccount();
+    fetchAlbumList(account);
+  }, [dispatch, fetchAlbumList]);
+
+  useEffect(() => {
+    if (artists?.length) {
+      const account = getActiveAccount();
+      const artist = artists.find(i => i.to === account);
+      artist && setArtist(artist);
+    }
+  }, [artists]);
 
   useEffect(() => {
     // const getStorageAlbum = async () => {
@@ -73,7 +88,13 @@ const Album = () => {
         </div>
         <div className="mb-5">
           {isArtist ? (
-            <Link className="d-flex" href={{ pathname: "/album/create", query: { contract: contractAddress }}} >
+            <Link
+              className="d-flex"
+              href={{
+                pathname: "/album/create",
+                query: { contract: artist?.contract },
+              }}
+            >
               <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
                 Create Album
               </button>
@@ -94,29 +115,9 @@ const Album = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {(albums || []).map(
-                    (album: Album, index: number) => (
-                      <tr key={index}>
-                        <td scope="row">{album.title}</td>
-                        <td>
-                          <img
-                            src={album.image}
-                            alt="Album"
-                            style={{ width: "60px", height: "60px" }}
-                          />
-                        </td>
-                        <td>{album.price}</td>
-                        <td>{dayjs(album.timestamp).format('MM/DD/YYYY HH:mm')}</td>
-                        <td>
-                          <Link href={`/album/edit?id=${index}`}>
-                            <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
-                              Edit
-                            </button>
-                          </Link>
-                        </td>
-                      </tr>
-                    )
-                  )}
+                  {(albums || []).map((album: Album, index: number) => (
+                    <AlbumRow  key={index} album={album} />
+                  ))}
                 </tbody>
               </table>
             </div>
