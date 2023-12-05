@@ -34,7 +34,7 @@ const EditAlbum = () => {
     if (query?.id) {
       setAlbumId(query?.id as string)
     }
-  }, [query?.contract])
+  }, [query?.id])
 
   const handleCreateAlbum = async (input: CreateAlbumInput) => {
     console.log('handleCreateAlbum', input)
