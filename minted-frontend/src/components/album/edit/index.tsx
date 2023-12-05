@@ -10,7 +10,7 @@ import { createIpfsUrl } from '@/utils/ipfs'
 import { uploadFile, uploadMetadata } from '@/utils/bucket'
 import { useAlbumContract } from '@/hooks/useAlbumContract'
 
-import CreateAlbumForm, { CreateAlbumInput } from '../form/AlbumForm'
+import CreateAlbumForm, { CreateAlbumInput } from '../form/Album'
 // import CreateSongForm, { CreateSongInput } from "./CreateSongForm";
 
 const override: CSSProperties = {
