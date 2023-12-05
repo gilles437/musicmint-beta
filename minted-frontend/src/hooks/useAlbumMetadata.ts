@@ -30,16 +30,16 @@ const fetchAlbumMetadata = (url: string) => {
 
 export const useAlbumMetadata = (album?: Album | null) => {
   const dispatch = useDispatch();
-  const albumMetadata = useSelector(selectAlbumMetadata);
+  const metadataDict = useSelector(selectAlbumMetadata);
 
   const metadata = useMemo(() => {
     if (album?.id) {
-      if (albumMetadata && albumMetadata[album.id]) {
-        return albumMetadata[album.id];
+      if (metadataDict && metadataDict[album.id]) {
+        return metadataDict[album.id];
       }
     }
     return null;
-  }, [albumMetadata, album]);
+  }, [metadataDict, album]);
 
   useEffect(() => {
     if (album && album.uri && !metadata) {

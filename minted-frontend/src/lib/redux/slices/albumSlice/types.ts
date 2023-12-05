@@ -1,7 +1,6 @@
 export interface Album {
   id: string;
   albumid: string;
-  songid: string;
   maxsupply: number;
   from: string;
   to: string;
@@ -16,6 +15,17 @@ export interface AlbumMetadata {
   image: string;
   description: string;
   price: string;
+  timestamp: string;
+}
+
+export interface Song {
+  id: string;
+  albumid: string;
+  songid: string;
+  maxsupply: number;
+  from: string;
+  to: string;
+  uri: string;
   timestamp: string;
 }
 
