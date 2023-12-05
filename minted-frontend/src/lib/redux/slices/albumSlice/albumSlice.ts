@@ -10,12 +10,14 @@ export interface AlbumState {
   status: 'idle' | 'loading' | 'failed'
   loadingArtists: boolean;
   albums: Album[];
+  albumMetadata: { [key: string]: AlbumMetadata };
 }
 
 const initialState: AlbumState = {
   status: 'idle',
   loadingArtists: false,
   albums: [],
+  albumMetadata: {},
 }
 
 export const albumSlice = createSlice({
@@ -31,6 +33,11 @@ export const albumSlice = createSlice({
     },
     setAlbums: (state, action: PayloadAction<Album[]>) => {
       state.albums = action.payload;
+    },
+    setAlbumMetadata: (state, action: PayloadAction<AlbumMetadata>) => {
+      if (action.payload.id) {
+        state.albumMetadata[action.payload.id] = action.payload;
+      }
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -50,4 +57,5 @@ export const albumSlice = createSlice({
 export const {
   setLoadingStatus,
   setAlbums,
+  setAlbumMetadata,
 } = albumSlice.actions;

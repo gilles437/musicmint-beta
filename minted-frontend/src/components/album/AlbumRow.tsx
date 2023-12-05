@@ -9,7 +9,7 @@ type Props = {
 }
 
 const AlbumRow = ({ album }: Props) => {
-  const metadata = useAlbumMetadata(album?.uri)
+  const metadata = useAlbumMetadata(album)
 
   return (
     <tr>
