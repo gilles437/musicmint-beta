@@ -3,7 +3,7 @@ import Head from "next/head";
 import React, { useEffect } from "react";
 
 import dynamic from "next/dynamic";
-const ContractAdmin = dynamic(() => import("@/components/Admins"), {
+const AdminIndex = dynamic(() => import("@/sections/Admin"), {
   ssr: false,
 });
 
@@ -20,7 +20,7 @@ const Admins: NextPage = () => {
       </Head>
 
       <main>
-        <ContractAdmin />
+        <AdminIndex />
       </main>
     </>
   );
