@@ -5,41 +5,26 @@ import {
   useDispatch,
   selectAlbums,
   fetchAllAlbumsAsync,
-  selectArtists,
-  Artist,
   fetchArtistListAsync,
   Album,
 } from '@/lib/redux';
+import { useFindArtist } from '@/hooks/useFindArtist';
 import { getActiveAccount } from '@/utils/account';
 import AlbumTable from '@/components/Album/AlbumTable';
 
 const AllAlbums = () => {
   const dispatch = useDispatch();
-  const artists = useSelector(selectArtists);
   const albums = useSelector(selectAlbums);
-  const [artist, setArtist] = useState<Artist | null>(null);
+  const artist = useFindArtist();
 
-  const fetchAlbumList = useCallback(
-    () => {
-      dispatch(fetchAllAlbumsAsync());
-    },
-    [dispatch]
-  );
+  const fetchAlbumList = useCallback(() => {
+    dispatch(fetchAllAlbumsAsync());
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(fetchArtistListAsync());
-
-    const account = getActiveAccount();
     fetchAlbumList();
   }, [dispatch, fetchAlbumList]);
-
-  useEffect(() => {
-    if (artists?.length) {
-      const account = getActiveAccount();
-      const artist = artists.find((i) => i.to === account);
-      artist && setArtist(artist);
-    }
-  }, [artists]);
 
   const handleBuyAlbum = (album: Album) => {
     console.log('handleBuyAlbum', album);
@@ -63,14 +48,21 @@ const AllAlbums = () => {
             <AlbumTable
               albums={albums}
               showOwner={true}
-              actions={(album: Album) => (
-                <button
-                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                  onClick={() => handleBuyAlbum(album)}
-                >
-                  Buy
-                </button>
-              )}
+              actions={(album: Album) => {
+                const activeAccount = getActiveAccount();
+                return (
+                  <>
+                    {activeAccount !== album.from && (
+                      <button
+                        className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                        onClick={() => handleBuyAlbum(album)}
+                      >
+                        Buy
+                      </button>
+                    )}
+                  </>
+                );
+              }}
             />
           </div>
         </div>

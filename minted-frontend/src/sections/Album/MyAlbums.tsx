@@ -1,23 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
   useSelector,
   useDispatch,
   selectAlbums,
   fetchOwnedAlbumListAsync,
-  selectArtists,
-  Artist,
   fetchArtistListAsync,
   Album,
 } from '@/lib/redux';
+import { useFindArtist } from '@/hooks/useFindArtist';
 import { getActiveAccount } from '@/utils/account';
 import AlbumTable from '@/components/Album/AlbumTable';
 
 const Album = () => {
   const dispatch = useDispatch();
-  const artists = useSelector(selectArtists);
   const albums = useSelector(selectAlbums);
-  const [artist, setArtist] = useState<Artist | null>(null);
+  const artist = useFindArtist();
 
   const fetchAlbumList = useCallback(
     (owner: string) => {
@@ -32,14 +30,6 @@ const Album = () => {
     const account = getActiveAccount();
     fetchAlbumList(account);
   }, [dispatch, fetchAlbumList]);
-
-  useEffect(() => {
-    if (artists?.length) {
-      const account = getActiveAccount();
-      const artist = artists.find((i) => i.to === account);
-      artist && setArtist(artist);
-    }
-  }, [artists]);
 
   return (
     <section className="projects section-padding style-12">

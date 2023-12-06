@@ -66,8 +66,11 @@ export function beatifyAddress(address: string | null) {
 }
 
 export const getActiveAccount = () => {
-  const account = localStorage.getItem("currentAccount");
-  return account ? JSON.parse(account) : "";
+  if (localStorage) {
+    const account = localStorage.getItem("currentAccount");
+    return account ? JSON.parse(account) : "";
+  }
+  return "";
 }
 
 export default toDefaultAddress;

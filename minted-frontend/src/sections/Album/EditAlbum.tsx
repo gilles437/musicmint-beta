@@ -12,7 +12,7 @@ import {
 } from '@/lib/redux';
 import { useAlbumContract } from '@/hooks/useAlbumContract';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
-import { useSelectAlbum } from '@/hooks/useSelectAlbum';
+import { useFindAlbumById } from '@/hooks/useFindAlbumById';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 
@@ -36,7 +36,7 @@ const EditAlbum = () => {
   const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const album = useSelectAlbum(albumId);
+  const album = useFindAlbumById(albumId);
   const albumMetadata = useAlbumMetadata(album);
   const { createAlbum, createSong } = useAlbumContract(album?.contract);
 
