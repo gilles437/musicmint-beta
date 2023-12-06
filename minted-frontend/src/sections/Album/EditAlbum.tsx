@@ -1,28 +1,17 @@
-import React, { useState, CSSProperties, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import CircleLoader from 'react-spinners/ClipLoader';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import {
-  AlbumMetadata,
-  SongMetadata,
-  selectAlbums,
-  useSelector,
-} from '@/lib/redux';
+import { AlbumMetadata } from '@/lib/redux';
+import Loader from '@/components/Loader';
 import { useAlbumContract } from '@/hooks/useAlbumContract';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import { useFindAlbumById } from '@/hooks/useFindAlbumById';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 
-import EditSongForm, { CreateSongInput } from '@/components/AlbumSong/SongForm';
 import EditAlbumForm, { CreateAlbumInput } from './AlbumForm';
-
-const override: CSSProperties = {
-  display: 'block',
-  margin: '0 auto',
-};
 
 const toastFunction = (string: any) => {
   toast.info(string, { position: toast.POSITION.TOP_RIGHT });
@@ -30,7 +19,6 @@ const toastFunction = (string: any) => {
 
 const EditAlbum = () => {
   const { query } = useRouter();
-  const albumList = useSelector(selectAlbums);
 
   const [albumId, setAlbumId] = useState<string>('');
   const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>('');
@@ -38,7 +26,7 @@ const EditAlbum = () => {
 
   const album = useFindAlbumById(albumId);
   const albumMetadata = useAlbumMetadata(album);
-  const { createAlbum, createSong } = useAlbumContract(album?.contract);
+  const { createAlbum } = useAlbumContract(album?.contract);
 
   useEffect(() => {
     if (query?.id) {
@@ -103,84 +91,8 @@ const EditAlbum = () => {
     return false;
   };
 
-  const handleCreateSong = async (input: CreateSongInput) => {
-    console.log('handleCreateSong', input);
-    if (!album) {
-      console.error('Invalid album');
-      return false;
-    }
-
-    try {
-      setIsLoading(true);
-
-      const imageId = await uploadFile(input.image);
-      console.log('imageId', imageId)
-      if (!imageId) {
-        console.error('error when uploading image nft');
-        return false;
-      }
-
-      const soundId = await uploadFile(input.sound);
-      console.log('soundId', soundId)
-      if (!soundId) {
-        console.error('error when uploading sound nft');
-        return false;
-      }
-
-      const meta: SongMetadata = {
-        title: input.title,
-        price: input.price,
-        image: createIpfsUrl(imageId),
-        sound: createIpfsUrl(soundId),
-      };
-      console.log('meta', meta)
-      const metadataId = await uploadMetadata(meta);
-      console.log('metadataId', metadataId)
-      if (!metadataId) {
-        console.error('error when uploading metadata');
-        return false;
-      }
-
-      const metaUrl = createIpfsUrl(metadataId);
-      console.log('metaUrl', metaUrl)
-      const success = await createSong(
-        album.albumid,
-        Number(input.maxSupply),
-        Number(input.price),
-        metaUrl,
-        (albumId: string) => {
-          setIsLoading(false);
-          toastFunction(`New Song TokenId is: ${Number(albumId)}`);
-        }
-      );
-      console.log('success', success);
-
-      if (success) {
-        toastFunction(
-          `Song Metadata saved on ${metaUrl}`
-        );
-        return true;
-      } else {
-        setIsLoading(false);
-        toastFunction(`Something wrong to create song`);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-    return false;
-  };
-
   if (isLoading) {
-    return (
-      <CircleLoader
-        color="#36d7b7"
-        loading={isLoading}
-        size={350}
-        cssOverride={override}
-      />
-    );
+    return <Loader />;
   }
 
   return (
@@ -201,8 +113,6 @@ const EditAlbum = () => {
           metadata={albumMetadata}
           onSubmit={handleUpdateAlbum}
         />
-
-        <EditSongForm onSubmit={handleCreateSong} />
       </div>
     </section>
   );

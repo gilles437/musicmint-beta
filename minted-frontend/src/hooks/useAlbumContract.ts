@@ -112,6 +112,56 @@ export const useAlbumContract = (contractAddress?: string) => {
     [api, contract, gasLimit, wallet]
   );
 
+  const deleteAlbum = useCallback(
+    async (
+      albumId: string,
+      callback: (albumId: string) => void
+    ): Promise<boolean> => {
+      if (!api || !contract) {
+        console.error('Api is not ready');
+        return false;
+      }
+      console.log('****wallet', wallet);
+      if (!wallet) {
+        console.error('Please connect your wallet!');
+        return false;
+      }
+
+      const account = getActiveAccount();
+      console.log('****account', account);
+
+      const options = { value: 0, storageDepositLimit: null, gasLimit };
+      const queryTx = await contract.query.deleteAlbum(
+        account,
+        options,
+        albumId
+      );
+
+      console.log('*****queryTx=', queryTx);
+      if (!queryTx.result?.isOk) {
+        console.error('****queryTx.error', queryTx.result.asErr);
+        return false;
+      }
+
+      const tx = await contract.tx.createAlbum(options, albumId);
+      console.log('*****tx=', tx);
+
+      const unsub = await tx.signAndSend(
+        account,
+        { signer: wallet.signer },
+        (result) => {
+          console.log('*****tx**result=', result.status.isFinalized);
+          if (result.status.isFinalized) {
+            callback(albumId);
+            unsub();
+          }
+        }
+      );
+      return true;
+    },
+    [api, contract, gasLimit, wallet]
+  );
+
   const mintAlbum = useCallback(
     async (
       albumId: string,
@@ -133,7 +183,11 @@ export const useAlbumContract = (contractAddress?: string) => {
       console.log('****account', account);
 
       const options = { value: 0, storageDepositLimit: null, gasLimit };
-      const queryTx = await _contract.query.mintAlbum(account, options, albumId);
+      const queryTx = await _contract.query.mintAlbum(
+        account,
+        options,
+        albumId
+      );
 
       console.log('*****queryTx=', queryTx);
       if (!queryTx.result?.isOk) {
@@ -260,7 +314,7 @@ export const useAlbumContract = (contractAddress?: string) => {
         account,
         options,
         albumId,
-        songId,
+        songId
       );
 
       console.log('*****queryTx=', queryTx);
@@ -269,11 +323,7 @@ export const useAlbumContract = (contractAddress?: string) => {
         return false;
       }
 
-      const tx = await contract.tx.deleteSong(
-        options,
-        albumId,
-        songId,
-      );
+      const tx = await contract.tx.deleteSong(options, albumId, songId);
       console.log('*****tx=', tx);
 
       const unsub = await tx.signAndSend(
@@ -292,10 +342,66 @@ export const useAlbumContract = (contractAddress?: string) => {
     [api, contract, gasLimit, wallet]
   );
 
+  const mintSong = useCallback(
+    async (
+      albumId: string,
+      songId: string,
+      contractAddress: string,
+      callback: (success: boolean) => void
+    ): Promise<boolean> => {
+      if (!api) {
+        console.error('Api is not ready');
+        return false;
+      }
+      console.log('****wallet', wallet);
+      if (!wallet) {
+        console.error('Please connect your wallet!');
+        return false;
+      }
+
+      const _contract = new ContractPromise(api, contractAbi, contractAddress);
+      const account = getActiveAccount();
+      console.log('****account', account);
+
+      const options = { value: 0, storageDepositLimit: null, gasLimit };
+      const queryTx = await _contract.query.mintSong(
+        account,
+        options,
+        albumId,
+        songId
+      );
+
+      console.log('*****queryTx=', queryTx);
+      if (!queryTx.result?.isOk) {
+        console.error('****queryTx.error', queryTx.result.asErr);
+        return false;
+      }
+
+      const tx = await _contract.tx.mintAlbum(options, albumId);
+      console.log('*****tx=', tx);
+
+      const unsub = await tx.signAndSend(
+        account,
+        { signer: wallet.signer },
+        (result) => {
+          console.log('*****tx**result=', result.status.isFinalized);
+          if (result.status.isFinalized) {
+            callback(true);
+            unsub();
+          }
+        }
+      );
+      return true;
+    },
+    [api, contract, gasLimit, wallet]
+  );
+
   return {
     createAlbum,
+    deleteAlbum,
     mintAlbum,
     createSong,
     deleteSong,
+    mintSong,
   };
 };
