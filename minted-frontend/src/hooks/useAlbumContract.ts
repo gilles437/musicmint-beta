@@ -88,7 +88,8 @@ export const useAlbumContract = (contractAddress?: string) => {
         const event: ContractEventsType = JSON.parse(
           JSON.stringify(result, null, 2)
         );
-        if (event.contractEvents?.length && event.contractEvents[0].args[1]) {
+        console.log('*****create.album.event', event)
+        if (event.contractEvents?.length && event.contractEvents[0].args?.length > 1) {
           return event.contractEvents[0].args[1];
         }
         return '';
@@ -102,7 +103,7 @@ export const useAlbumContract = (contractAddress?: string) => {
           if (result.status.isFinalized) {
             const albumId = parseAlbumId(result);
             console.log('*****tx**result**albumId=', albumId);
-            callback(Number(albumId).toString());
+            callback(albumId ? Number(albumId).toString() : '');
             unsub();
           }
         }
@@ -266,8 +267,9 @@ export const useAlbumContract = (contractAddress?: string) => {
         const event: ContractEventsType = JSON.parse(
           JSON.stringify(result, null, 2)
         );
-        if (event.contractEvents?.length && event.contractEvents[0].args[1]) {
-          return event.contractEvents[0].args[1];
+        console.log('*****create.song.event', event)
+        if (event.contractEvents?.length && event.contractEvents[0].args?.length > 2) {
+          return event.contractEvents[0].args[2];
         }
         return '';
       };
@@ -279,8 +281,8 @@ export const useAlbumContract = (contractAddress?: string) => {
           console.log('*****tx**result=', result.status.isFinalized);
           if (result.status.isFinalized) {
             const songId = parseSongId(result);
-            console.log('*****tx**result**albumId=', songId);
-            callback(songId);
+            console.log('*****tx**result**songId=', songId);
+            callback(songId ? Number(songId).toString() : '');
             unsub();
           }
         }
