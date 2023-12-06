@@ -102,7 +102,7 @@ export const useAlbumContract = (contractAddress?: string) => {
           if (result.status.isFinalized) {
             const albumId = parseAlbumId(result);
             console.log('*****tx**result**albumId=', albumId);
-            callback(albumId);
+            callback(Number(albumId).toString());
             unsub();
           }
         }

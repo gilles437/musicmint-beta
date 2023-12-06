@@ -4,6 +4,7 @@ import {
   fetchOwnedAlbumList,
   fetchAllAlbumList,
   fetchAlbumSongList,
+  fetchAlbumById,
 } from './fetchAlbumList';
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -22,6 +23,13 @@ export const fetchOwnedAlbumListAsync = createAppAsyncThunk(
   'album/fetchOwnedAlbumListAsync',
   async (owner: string) => {
     return await fetchOwnedAlbumList(owner);
+  }
+);
+
+export const fetchAlbumByIdAsync = createAppAsyncThunk(
+  'album/fetchAlbumByIdAsync',
+  async ({ contract, albumId }: { contract: string; albumId: string }) => {
+    return await fetchAlbumById(contract, albumId);
   }
 );
 

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
 import Loader from '@/components/Loader';
-import { AlbumMetadata } from '@/lib/redux';
+import { AlbumMetadata, fetchAlbumByIdAsync, useDispatch } from '@/lib/redux';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import { useAlbumContract } from '@/hooks/useAlbumContract';
@@ -11,16 +11,27 @@ import { useAlbumContract } from '@/hooks/useAlbumContract';
 import CreateAlbumForm, { CreateAlbumInput } from './AlbumForm';
 
 const CreateAlbum = () => {
-  const { query } = useRouter();
+  const dispatch = useDispatch();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [contractAddress, setContractAddress] = useState('');
   const { createAlbum } = useAlbumContract(contractAddress);
 
   useEffect(() => {
-    if (query?.contract) {
-      setContractAddress(query?.contract as string);
+    if (router.query?.contract) {
+      setContractAddress(router.query?.contract as string);
     }
-  }, [query?.contract]);
+  }, [router.query?.contract]);
+
+  const onAlbumCreated = async (albumId: string) => {
+    console.log('onAlbumCreated', albumId);
+    await dispatch(fetchAlbumByIdAsync({ contract: contractAddress, albumId }));
+
+    const timerId = setTimeout(() => {
+      router.push(`/album/edit?contract=${contractAddress}&albumId=${albumId}`)
+    }, 2000);
+    return () => clearTimeout(timerId);
+  };
 
   const handleCreateAlbum = async (input: CreateAlbumInput) => {
     console.log('handleCreateAlbum', input);
@@ -53,6 +64,7 @@ const CreateAlbum = () => {
         metaUrl,
         (albumId: string) => {
           setIsLoading(false);
+          onAlbumCreated(albumId);
           toast.info(`New Album TokenId is: ${Number(albumId)}`);
         }
       );

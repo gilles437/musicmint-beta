@@ -5,6 +5,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import {
   fetchOwnedAlbumListAsync,
   fetchAllAlbumsAsync,
+  fetchAlbumByIdAsync,
   fetchAlbumSongListAsync,
 } from './thunks';
 import { Album, AlbumMetadata, Song, SongMetadata } from './types';
@@ -79,6 +80,15 @@ export const albumSlice = createSlice({
       .addCase(fetchAllAlbumsAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.albums = action.payload;
+      })
+      .addCase(fetchAlbumByIdAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAlbumByIdAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        if (action.payload) {
+          state.albums.push(action.payload);
+        }
       })
       .addCase(fetchAlbumSongListAsync.pending, (state) => {
         state.status = 'loading';

@@ -29,12 +29,15 @@ export const fetchOwnedAlbumList = async (owner: string): Promise<Album[]> => {
   return result.collections;
 };
 
-export const fetchAlbumById = async (owner: string, albumId: string): Promise<Album[]> => {
+export const fetchAlbumById = async (contract: string, albumId: string): Promise<Album | null> => {
   const result: FetchType<Album> = await request(
     ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
-    QUERY_GET_ALBUM_BY_ID(owner, albumId)
+    QUERY_GET_ALBUM_BY_ID(contract, albumId)
   );
-  return result.collections;
+  if (result.collections?.length) {
+    return result.collections[0];
+  }
+  return null;
 };
 
 export const fetchAlbumSongList = async (albumId: string): Promise<Song[]> => {
