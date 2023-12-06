@@ -10,9 +10,9 @@ import {
   fetchArtistListAsync,
 } from '@/lib/redux';
 import { getActiveAccount } from '@/utils/account';
-import AlbumTable from './AlbumTable';
+import AlbumTable from '@/components/Album/AlbumTable';
 
-const Album = () => {
+const AllAlbums = () => {
   const dispatch = useDispatch();
   const artists = useSelector(selectArtists);
   const albums = useSelector(selectAlbums);
@@ -66,4 +66,4 @@ const Album = () => {
   );
 };
 
-export default Album;
+export default AllAlbums;

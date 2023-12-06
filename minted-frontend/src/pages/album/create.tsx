@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import React, { useEffect } from "react";
-//= Components
-import CreateAlbum from "@/components/Album/create";
+//= Sections
+import { CreateAlbum } from "@/sections/Album";
 
 const CreateAlbumMain: NextPage = () => {
   useEffect(() => {

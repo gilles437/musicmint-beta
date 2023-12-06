@@ -15,7 +15,7 @@ export interface AlbumMetadata {
   image: string;
   description: string;
   price: string;
-  timestamp: string;
+  timestamp?: string;
 }
 
 export interface Song {

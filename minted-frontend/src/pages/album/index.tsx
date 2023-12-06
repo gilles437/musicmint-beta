@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import React, { useEffect } from "react";
-//= Components
-import Album from "@/components/Album";
+//= Sections
+import { AllAlbums } from "@/sections/Album";
 
 const AlbumMain: NextPage = () => {
   useEffect(() => {
@@ -17,7 +17,7 @@ const AlbumMain: NextPage = () => {
       </Head>
 
       <main>
-        <Album />
+        <AllAlbums />
       </main>
     </>
   );

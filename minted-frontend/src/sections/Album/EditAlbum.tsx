@@ -1,4 +1,4 @@
-import React, { useState, CSSProperties, useEffect, useMemo } from 'react';
+import React, { useState, CSSProperties, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import CircleLoader from 'react-spinners/ClipLoader';
 import Link from 'next/link';
@@ -16,8 +16,8 @@ import { useSelectAlbum } from '@/hooks/useSelectAlbum';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 
-import EditAlbumForm, { CreateAlbumInput } from '../form/Album';
-import EditSongForm, { CreateSongInput } from '../form/Song';
+import EditSongForm, { CreateSongInput } from '@/components/AlbumSong/SongForm';
+import EditAlbumForm, { CreateAlbumInput } from './AlbumForm';
 
 const override: CSSProperties = {
   display: 'block',

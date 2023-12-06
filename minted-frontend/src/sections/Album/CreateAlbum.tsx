@@ -4,13 +4,13 @@ import CircleLoader from 'react-spinners/ClipLoader';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { AlbumMetadata, SongMetadata } from '@/lib/redux';
+import { AlbumMetadata } from '@/lib/redux';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import { useAlbumContract } from '@/hooks/useAlbumContract';
+import CreateSongForm, { CreateSongInput } from '@/components/AlbumSong/SongForm';
 
-import CreateAlbumForm, { CreateAlbumInput } from '../form/Album';
-import CreateSongForm, { CreateSongInput } from '../form/Song';
+import CreateAlbumForm, { CreateAlbumInput } from './AlbumForm';
 
 const override: CSSProperties = {
   display: 'block',

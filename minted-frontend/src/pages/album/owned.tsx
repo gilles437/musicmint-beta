@@ -2,9 +2,9 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import React, { useEffect } from "react";
 //= Sections
-import { DetailAlbum } from "@/sections/Album";
+import { MyAlbums } from "@/sections/Album";
 
-const DetailAlbumMain: NextPage = () => {
+const AlbumMain: NextPage = () => {
   useEffect(() => {
     document.body.classList.add("home-style-12");
     return () => document.body.classList.remove("home-style-12");
@@ -13,14 +13,14 @@ const DetailAlbumMain: NextPage = () => {
   return (
     <>
       <Head>
-        <title>MintedWave - Edit Album</title>
+        <title>MintedWave - My Albums</title>
       </Head>
 
       <main>
-        <DetailAlbum />
+        <MyAlbums />
       </main>
     </>
   );
 };
 
-export default DetailAlbumMain;
+export default AlbumMain;
