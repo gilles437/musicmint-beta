@@ -4,10 +4,11 @@ import {
   useSelector,
   useDispatch,
   selectAlbums,
-  fetchAlbumListAsync,
+  fetchOwnedAlbumListAsync,
   selectArtists,
   Artist,
   fetchArtistListAsync,
+  Album,
 } from '@/lib/redux';
 import { getActiveAccount } from '@/utils/account';
 import AlbumTable from '@/components/Album/AlbumTable';
@@ -18,9 +19,12 @@ const Album = () => {
   const albums = useSelector(selectAlbums);
   const [artist, setArtist] = useState<Artist | null>(null);
 
-  const fetchAlbumList = useCallback((owner: string) => {
-    dispatch(fetchAlbumListAsync(owner));
-  }, [dispatch]);
+  const fetchAlbumList = useCallback(
+    (owner: string) => {
+      dispatch(fetchOwnedAlbumListAsync(owner));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     dispatch(fetchArtistListAsync());
@@ -58,7 +62,16 @@ const Album = () => {
             </Link>
           )}
           <div className="col-sm-12">
-            <AlbumTable albums={albums} />
+            <AlbumTable
+              albums={albums}
+              actions={(album: Album) => (
+                <Link href={`/album/edit?id=${album.id}`}>
+                  <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+                    Edit
+                  </button>
+                </Link>
+              )}
+            />
           </div>
         </div>
       </div>

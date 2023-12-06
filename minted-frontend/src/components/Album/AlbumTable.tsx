@@ -3,9 +3,11 @@ import AlbumRow from './AlbumRow';
 
 type Props = {
   albums: Album[];
+  showOwner?: boolean;
+  actions?: (album: Album) => React.ReactElement;
 };
 
-const AlbumTable = ({ albums }: Props) => {
+const AlbumTable = ({ albums, showOwner, actions }: Props) => {
   return (
     <div className="mt-5 table-responsive">
       <table className="table table-hover table-success table-striped">
@@ -13,6 +15,7 @@ const AlbumTable = ({ albums }: Props) => {
           <tr>
             <th scope="col">Address</th>
             <th scope="col"></th>
+            {!!showOwner && <th scope="col">Owner</th>}
             <th scope="col">Price</th>
             <th scope="col">Created On</th>
             <th scope="col"></th>
@@ -20,7 +23,12 @@ const AlbumTable = ({ albums }: Props) => {
         </thead>
         <tbody>
           {(albums || []).map((album: Album, index: number) => (
-            <AlbumRow key={index} album={album} />
+            <AlbumRow
+              key={index}
+              album={album}
+              showOwner={showOwner}
+              actions={actions}
+            />
           ))}
         </tbody>
       </table>

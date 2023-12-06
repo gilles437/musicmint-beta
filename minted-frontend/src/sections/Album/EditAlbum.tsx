@@ -188,7 +188,7 @@ const EditAlbum = () => {
       <div className="container">
         <div className="mb-3">
           <Link
-            href="/album"
+            href="/album/owned"
             className="d-flex"
             style={{ justifyContent: 'flex-end' }}
           >

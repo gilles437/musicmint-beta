@@ -4,10 +4,11 @@ import {
   useSelector,
   useDispatch,
   selectAlbums,
-  fetchAlbumListAsync,
+  fetchAllAlbumsAsync,
   selectArtists,
   Artist,
   fetchArtistListAsync,
+  Album,
 } from '@/lib/redux';
 import { getActiveAccount } from '@/utils/account';
 import AlbumTable from '@/components/Album/AlbumTable';
@@ -18,15 +19,18 @@ const AllAlbums = () => {
   const albums = useSelector(selectAlbums);
   const [artist, setArtist] = useState<Artist | null>(null);
 
-  const fetchAlbumList = useCallback((owner: string) => {
-    dispatch(fetchAlbumListAsync(owner));
-  }, [dispatch]);
+  const fetchAlbumList = useCallback(
+    () => {
+      dispatch(fetchAllAlbumsAsync());
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
     dispatch(fetchArtistListAsync());
 
     const account = getActiveAccount();
-    fetchAlbumList(account);
+    fetchAlbumList();
   }, [dispatch, fetchAlbumList]);
 
   useEffect(() => {
@@ -37,28 +41,37 @@ const AllAlbums = () => {
     }
   }, [artists]);
 
+  const handleBuyAlbum = (album: Album) => {
+    console.log('handleBuyAlbum', album);
+  };
+
   return (
     <section className="projects section-padding style-12">
       <div className="container">
         <div className="text-center mb-3">
-          <h2>My Albums</h2>
+          <h2>Albums</h2>
         </div>
         <div className="mb-5">
           {!!artist && (
-            <Link
-              className="d-flex"
-              href={{
-                pathname: `/album/create`,
-                query: { contract: artist.contract },
-              }}
-            >
+            <Link className="d-flex" href="/album/owned">
               <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
-                Create Album
+                My Albums
               </button>
             </Link>
           )}
           <div className="col-sm-12">
-            <AlbumTable albums={albums} />
+            <AlbumTable
+              albums={albums}
+              showOwner={true}
+              actions={(album: Album) => (
+                <button
+                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                  onClick={() => handleBuyAlbum(album)}
+                >
+                  Buy
+                </button>
+              )}
+            />
           </div>
         </div>
       </div>

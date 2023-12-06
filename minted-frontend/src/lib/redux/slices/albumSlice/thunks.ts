@@ -1,15 +1,22 @@
 /* Instruments */
 import { createAppAsyncThunk } from '@/lib/redux/createAppAsyncThunk'
-import { fetchAlbumList } from './fetchAlbumList'
+import { fetchOwnedAlbumList, fetchAllAlbumList } from './fetchAlbumList'
 
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const fetchAlbumListAsync = createAppAsyncThunk(
-  'album/fetchAlbumListAsync',
+export const fetchAllAlbumsAsync = createAppAsyncThunk(
+  'album/fetchAllAlbumsAsync',
+  async () => {
+    return await fetchAllAlbumList()
+  }
+)
+
+export const fetchOwnedAlbumListAsync = createAppAsyncThunk(
+  'album/fetchOwnedAlbumListAsync',
   async (owner: string) => {
-    return await fetchAlbumList(owner)
+    return await fetchOwnedAlbumList(owner)
   }
 )

@@ -1,14 +1,16 @@
-import Link from 'next/link'
-import dayjs from 'dayjs'
-import { Album } from '@/lib/redux'
-import { useAlbumMetadata } from '@/hooks/useAlbumMetadata'
+import dayjs from 'dayjs';
+import { Album } from '@/lib/redux';
+import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
+import { beatifyAddress } from '@/utils/account';
 
 type Props = {
-  album: Album
-}
+  album: Album;
+  showOwner?: boolean;
+  actions?: (album: Album) => React.ReactElement;
+};
 
-const AlbumRow = ({ album }: Props) => {
-  const metadata = useAlbumMetadata(album)
+const AlbumRow = ({ album, showOwner, actions }: Props) => {
+  const metadata = useAlbumMetadata(album);
 
   return (
     <tr>
@@ -20,17 +22,12 @@ const AlbumRow = ({ album }: Props) => {
           style={{ width: '60px', height: '60px', borderRadius: '16px' }}
         />
       </td>
+      {!!showOwner && <td>{beatifyAddress(album.from)}</td>}
       <td>{metadata?.price || ''}</td>
       <td>{dayjs(album.timestamp).format('MM/DD/YYYY HH:mm')}</td>
-      <td>
-        <Link href={`/album/edit?id=${album.id}`}>
-          <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
-            Edit
-          </button>
-        </Link>
-      </td>
+      <td>{actions ? actions(album) : ''}</td>
     </tr>
-  )
-}
+  );
+};
 
-export default AlbumRow
+export default AlbumRow;
