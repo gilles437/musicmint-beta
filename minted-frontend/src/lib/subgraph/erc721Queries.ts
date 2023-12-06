@@ -1,10 +1,6 @@
-import { gql } from "graphql-request";
+import { gql } from 'graphql-request';
 
-export const QUERY_ERC721_NOTOWNED_ID = (
-  from: number,
-  count: number,
-  owner: string
-) => gql`
+export const QUERY_ERC721_NOTOWNED_ID = (from: number, count: number, owner: string) => gql`
   query getUserActiveOrders {
     tokens(
       orderBy: numericId,
@@ -21,7 +17,7 @@ export const QUERY_ERC721_NOTOWNED_ID = (
 
 export const QUERY_GET_ADMIN_TRANSFERS = () => gql`
   query getTransfers {
-    transfers(where: {role_eq: "Admin"}) {
+    transfers(where: { role_eq: "Admin" }) {
       contract
       to
       timestamp
@@ -31,7 +27,7 @@ export const QUERY_GET_ADMIN_TRANSFERS = () => gql`
 
 export const QUERY_GET_SUPER_ADMIN_TRANSFERS = () => gql`
   query getTransfers {
-    transfers(where: {role_eq: "SuperAdmin"}) {
+    transfers(where: { role_eq: "SuperAdmin" }) {
       to
       timestamp
     }
@@ -40,7 +36,7 @@ export const QUERY_GET_SUPER_ADMIN_TRANSFERS = () => gql`
 
 export const QUERY_GET_ALL_ALBUMS = () => gql`
   query getCollections {
-    collections(where: {songid_eq: 0}) {
+    collections(where: { songid_eq: 0 }) {
       albumid
       block
       contract
@@ -95,6 +91,25 @@ export const QUERY_GET_ALBUM_BY_ID = (contract: string, albumId: number) => gql`
 export const QUERY_GET_ALBUM_SONGS = (albumId: number) => gql`
   query getCollections {
     collections(where: {songid_gt: 0, albumid_eq: ${albumId}}) {
+      albumid
+      block
+      contract
+      extrinsicHash
+      from
+      id
+      maxsupply
+      price
+      songid
+      timestamp
+      to
+      uri
+    }
+  }
+`;
+
+export const QUERY_GET_SONG_BY_ID = (contract: string, albumId: number, songId: number) => gql`
+  query getCollections {
+    collections(where: {contract_eq: "${contract}", albumid_eq: ${albumId}, songid_eq: ${songId}}) {
       albumid
       block
       contract

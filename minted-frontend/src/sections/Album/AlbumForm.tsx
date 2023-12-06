@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Album, AlbumMetadata } from '@/lib/redux';
@@ -146,7 +147,7 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
         <div className="col-md-6 col-sm-12">
           {!!metadata && (
             <div>
-              <img src={metadata.image || '/images/album.png'}></img>
+              <Image src={metadata.image || '/images/album.png'} alt="Album"></Image>
             </div>
           )}
         </div>

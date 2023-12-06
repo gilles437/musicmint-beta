@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import Image from 'next/image';
 import { Album } from '@/lib/redux';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import { beatifyAddress } from '@/utils/account';
@@ -16,7 +17,7 @@ const AlbumRow = ({ album, showOwner, actions }: Props) => {
     <tr>
       <td scope="row">{metadata?.title || ''}</td>
       <td>
-        <img
+        <Image
           src={metadata?.image || '/images/album.png'}
           alt="Album"
           style={{ width: '60px', height: '60px', borderRadius: '16px' }}

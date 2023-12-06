@@ -1,4 +1,3 @@
-export * from './counterSlice'
-export * from './adminSlice'
-export * from './albumSlice'
-
+export * from './counterSlice';
+export * from './adminSlice';
+export * from './albumSlice';

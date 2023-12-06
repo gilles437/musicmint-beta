@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { Album, SongMetadata } from '@/lib/redux';
+import { Album, SongMetadata, fetchSongByIdAsync, useDispatch } from '@/lib/redux';
 import CreateSongForm, { CreateSongInput } from '@/components/AlbumSong/SongForm';
 import Loader from '@/components/Loader';
 import { useAlbumSong } from '@/hooks/useAlbumSong';
@@ -13,8 +13,20 @@ type Props = {
 };
 
 const CreateSong = ({ album }: Props) => {
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const { createSong } = useAlbumSong(album?.contract);
+
+  const onSongCreated = (songId: number) => {
+    console.log('onSongCreated', songId);
+    dispatch(
+      fetchSongByIdAsync({
+        contract: album.contract,
+        albumId: album.albumid,
+        songId,
+      })
+    );
+  };
 
   const handleCreateSong = async (input: CreateSongInput) => {
     console.log('handleCreateSong', input);
@@ -61,9 +73,10 @@ const CreateSong = ({ album }: Props) => {
         Number(input.maxSupply),
         Number(input.price),
         metaUrl,
-        (albumId: number) => {
+        (songId: number) => {
           setIsLoading(false);
-          toast.info(`New Song TokenId is: ${Number(albumId)}`);
+          onSongCreated(songId);
+          toast.info(`New Song TokenId is: ${Number(songId)}`);
         }
       );
       console.log('success', success);

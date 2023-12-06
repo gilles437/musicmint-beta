@@ -1,13 +1,13 @@
 /* Core */
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 /* Instruments */
-import { fetchSuperAdminListAsync, fetchArtistListAsync } from './thunks'
+import { fetchSuperAdminListAsync, fetchArtistListAsync } from './thunks';
 import { Artist, SuperAdmin } from './types';
 
 /* Types */
 export interface AdminState {
-  status: 'idle' | 'loading' | 'failed'
+  status: 'idle' | 'loading' | 'failed';
   loadingAdmins: boolean;
   loadingArtists: boolean;
   superAdmins: SuperAdmin[];
@@ -20,7 +20,7 @@ const initialState: AdminState = {
   loadingArtists: false,
   superAdmins: [],
   artists: [],
-}
+};
 
 export const adminSlice = createSlice({
   name: 'admin',
@@ -28,7 +28,7 @@ export const adminSlice = createSlice({
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
     setLoadingStatus: (state, action: PayloadAction<boolean>) => {
-      state.status = action.payload ? 'loading' : 'idle'
+      state.status = action.payload ? 'loading' : 'idle';
     },
     setLoadingArtists: (state, action: PayloadAction<boolean>) => {
       state.loadingArtists = action.payload;
@@ -49,20 +49,16 @@ export const adminSlice = createSlice({
       })
       .addCase(fetchSuperAdminListAsync.fulfilled, (state, action) => {
         state.loadingAdmins = false;
-        state.superAdmins = action.payload
+        state.superAdmins = action.payload;
       })
       .addCase(fetchArtistListAsync.pending, (state) => {
-        state.loadingArtists = true
+        state.loadingArtists = true;
       })
       .addCase(fetchArtistListAsync.fulfilled, (state, action) => {
-        state.loadingArtists = false
-        state.artists = action.payload
-      })
+        state.loadingArtists = false;
+        state.artists = action.payload;
+      });
   },
-})
+});
 
-export const {
-  setLoadingStatus,
-  setSuperAdmins,
-  setArtists,  
-} = adminSlice.actions;
+export const { setLoadingStatus, setSuperAdmins, setArtists } = adminSlice.actions;

@@ -6,6 +6,7 @@ import {
   QUERY_GET_ALL_ALBUMS,
   QUERY_GET_ALBUM_SONGS,
   QUERY_GET_ALBUM_BY_ID,
+  QUERY_GET_SONG_BY_ID,
 } from '@/lib/subgraph/erc721Queries';
 import { Album, Song } from './types';
 
@@ -46,4 +47,19 @@ export const fetchAlbumSongList = async (albumId: number): Promise<Song[]> => {
     QUERY_GET_ALBUM_SONGS(albumId)
   );
   return result.collections;
+};
+
+export const fetchSongById = async (
+  contract: string,
+  albumId: number,
+  songId: number
+): Promise<Song | null> => {
+  const result: FetchType<Song> = await request(
+    ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
+    QUERY_GET_SONG_BY_ID(contract, albumId, songId)
+  );
+  if (result.collections?.length) {
+    return result.collections[0];
+  }
+  return null;
 };

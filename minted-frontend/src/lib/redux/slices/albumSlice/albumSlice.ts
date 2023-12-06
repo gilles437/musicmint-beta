@@ -7,13 +7,14 @@ import {
   fetchAllAlbumsAsync,
   fetchAlbumByIdAsync,
   fetchAlbumSongListAsync,
+  fetchSongByIdAsync,
 } from './thunks';
 import { Album, AlbumMetadata, Song, SongMetadata } from './types';
 
 /* Types */
 export interface AlbumState {
   status: 'idle' | 'loading' | 'failed';
-  loadingArtists: boolean;
+  loading: boolean;
   albums: Album[];
   albumMetadata: { [key: string]: AlbumMetadata };
   songs: Song[];
@@ -22,7 +23,7 @@ export interface AlbumState {
 
 const initialState: AlbumState = {
   status: 'idle',
-  loadingArtists: false,
+  loading: false,
   albums: [],
   albumMetadata: {},
   songs: [],
@@ -38,15 +39,12 @@ export const albumSlice = createSlice({
       state.status = action.payload ? 'loading' : 'idle';
     },
     setLoadingArtists: (state, action: PayloadAction<boolean>) => {
-      state.loadingArtists = action.payload;
+      state.loading = action.payload;
     },
     setAlbums: (state, action: PayloadAction<Album[]>) => {
       state.albums = action.payload;
     },
-    setAlbumMetadata: (
-      state,
-      action: PayloadAction<{ id: string; metadata: AlbumMetadata }>
-    ) => {
+    setAlbumMetadata: (state, action: PayloadAction<{ id: string; metadata: AlbumMetadata }>) => {
       if (action.payload.id) {
         state.albumMetadata[action.payload.id] = action.payload.metadata;
       }
@@ -54,10 +52,7 @@ export const albumSlice = createSlice({
     setSongs: (state, action: PayloadAction<Song[]>) => {
       state.songs = action.payload;
     },
-    setSongMetadata: (
-      state,
-      action: PayloadAction<{ id: string; metadata: SongMetadata }>
-    ) => {
+    setSongMetadata: (state, action: PayloadAction<{ id: string; metadata: SongMetadata }>) => {
       if (action.payload.id) {
         state.songMetadata[action.payload.id] = action.payload.metadata;
       }
@@ -96,12 +91,21 @@ export const albumSlice = createSlice({
       .addCase(fetchAlbumSongListAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.songs = action.payload;
+      })
+      .addCase(fetchSongByIdAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchSongByIdAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        if (action.payload) {
+          state.songs.push(action.payload);
+        }
       });
   },
 });
 
 export const {
-  setLoadingStatus,
+  setLoadingStatus: setAlbumLoadingStatus,
   setAlbums,
   setAlbumMetadata,
   setSongs,
