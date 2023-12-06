@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'react-toastify';
 import Link from 'next/link';
 import {
   useSelector,
@@ -9,13 +10,19 @@ import {
   Album,
 } from '@/lib/redux';
 import { useFindArtist } from '@/hooks/useFindArtist';
+import { useAlbumContract } from '@/hooks/useAlbumContract';
 import { getActiveAccount } from '@/utils/account';
 import AlbumTable from '@/components/Album/AlbumTable';
+
+const toastFunction = (string: any) => {
+  toast.info(string, { position: toast.POSITION.TOP_RIGHT });
+};
 
 const AllAlbums = () => {
   const dispatch = useDispatch();
   const albums = useSelector(selectAlbums);
   const artist = useFindArtist();
+  const { mintAlbum } = useAlbumContract();
 
   const fetchAlbumList = useCallback(() => {
     dispatch(fetchAllAlbumsAsync());
@@ -26,8 +33,15 @@ const AllAlbums = () => {
     fetchAlbumList();
   }, [dispatch, fetchAlbumList]);
 
-  const handleBuyAlbum = (album: Album) => {
+  const handleBuyAlbum = async (album: Album) => {
     console.log('handleBuyAlbum', album);
+    try {
+      await mintAlbum(album.albumid, album.contract, () => {
+        toastFunction("You have successfully minted the album");
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

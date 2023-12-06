@@ -115,9 +115,10 @@ export const useAlbumContract = (contractAddress?: string) => {
   const mintAlbum = useCallback(
     async (
       albumId: string,
+      contractAddress: string,
       callback: (albumId: string) => void
     ): Promise<boolean> => {
-      if (!api || !contract) {
+      if (!api) {
         console.error('Api is not ready');
         return false;
       }
@@ -127,11 +128,12 @@ export const useAlbumContract = (contractAddress?: string) => {
         return false;
       }
 
+      const _contract = new ContractPromise(api, contractAbi, contractAddress);
       const account = getActiveAccount();
       console.log('****account', account);
 
       const options = { value: 0, storageDepositLimit: null, gasLimit };
-      const queryTx = await contract.query.mintAlbum(account, options, albumId);
+      const queryTx = await _contract.query.mintAlbum(account, options, albumId);
 
       console.log('*****queryTx=', queryTx);
       if (!queryTx.result?.isOk) {
@@ -139,7 +141,7 @@ export const useAlbumContract = (contractAddress?: string) => {
         return false;
       }
 
-      const tx = await contract.tx.mintAlbum(options, albumId);
+      const tx = await _contract.tx.mintAlbum(options, albumId);
       console.log('*****tx=', tx);
 
       const unsub = await tx.signAndSend(

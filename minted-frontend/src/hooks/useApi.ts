@@ -8,7 +8,7 @@ export const useApi = () => {
 
   useEffect(() => {
     (async () => {
-      const _api = await ApiPromise.create({ provider: wsProvider });
+      const _api = await ApiPromise.create({ provider: wsProvider });      
       setApi(_api);
 
       const { chainSS58, chainDecimals, chainTokens } = _api.registry;
