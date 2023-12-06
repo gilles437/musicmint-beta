@@ -1,38 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 
-import { AlbumMetadata } from '@/lib/redux';
+import { Album, AlbumMetadata } from '@/lib/redux';
 import Loader from '@/components/Loader';
 import { useAlbumContract } from '@/hooks/useAlbumContract';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
-import { useFindAlbumById } from '@/hooks/useFindAlbumById';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
-
 import EditAlbumForm, { CreateAlbumInput } from './AlbumForm';
 
-const toastFunction = (string: any) => {
-  toast.info(string, { position: toast.POSITION.TOP_RIGHT });
-};
+type Props = {
+  album: Album;
+}
 
-const EditAlbum = () => {
-  const { query } = useRouter();
-
-  const [albumId, setAlbumId] = useState<string>('');
+const EditAlbum = ({ album }: Props) => {
   const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const album = useFindAlbumById(albumId);
   const albumMetadata = useAlbumMetadata(album);
   const { createAlbum } = useAlbumContract(album?.contract);
-
-  useEffect(() => {
-    if (query?.id) {
-      setAlbumId(query?.id as string);
-    }
-  }, [query?.id]);
 
   const handleUpdateAlbum = async (input: CreateAlbumInput) => {
     console.log('handleUpdateAlbum', input);
@@ -70,18 +57,17 @@ const EditAlbum = () => {
         metaUrl,
         (albumId: string) => {
           setIsLoading(false);
-          setAlbumId(albumId);
-          toastFunction(`New Album TokenId is: ${Number(albumId)}`);
+          toast.info(`New Album TokenId is: ${Number(albumId)}`);
         }
       );
       console.log('success', success);
 
       if (success) {
-        toastFunction(`Album Metadata saved on ${metaUrl}`);
+        toast.info(`Album Metadata saved on ${metaUrl}`);
         return true;
       } else {
         setIsLoading(false);
-        toastFunction(`Something wrong to create Album`);
+        toast.error(`Something wrong to create Album`);
       }
     } catch (error) {
       console.log(error);
@@ -96,25 +82,11 @@ const EditAlbum = () => {
   }
 
   return (
-    <section className="projects section-padding style-12">
-      <div className="container">
-        <div className="mb-3">
-          <Link
-            href="/album/owned"
-            className="d-flex"
-            style={{ justifyContent: 'flex-end' }}
-          >
-            <h4>Back to My Album</h4>
-          </Link>
-        </div>
-
-        <EditAlbumForm
-          album={album}
-          metadata={albumMetadata}
-          onSubmit={handleUpdateAlbum}
-        />
-      </div>
-    </section>
+    <EditAlbumForm
+      album={album}
+      metadata={albumMetadata}
+      onSubmit={handleUpdateAlbum}
+    />
   );
 };
 

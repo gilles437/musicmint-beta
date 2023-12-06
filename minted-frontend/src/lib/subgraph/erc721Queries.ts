@@ -74,7 +74,7 @@ export const QUERY_GET_ALBUM_TRANSFERS = (from: string) => gql`
   }
 `;
 
-export const QUERY_GET_SONGS = (albumId: string) => gql`
+export const QUERY_GET_ALBUM_SONGS = (albumId: string) => gql`
   query getCollections {
     collections(where: {songid_gt: 0, albumid_eq: ${albumId}}) {
       albumid

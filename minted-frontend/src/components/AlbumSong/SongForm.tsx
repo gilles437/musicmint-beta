@@ -132,7 +132,9 @@ const SongForm = ({ onSubmit }: Props) => {
 
   return (
     <div className="mt-3" style={{ borderTop: '1px solid' }}>
-      <h2 className="mt-3">Songs</h2>
+      <div className="text-center mb-3 pb-3">
+        <h2 className="mt-3">Add Song</h2>
+      </div>
       <div className="row">
         <div className="col-md-6 col-sm-12">
           <div className="">

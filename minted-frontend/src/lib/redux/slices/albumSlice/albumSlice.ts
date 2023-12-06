@@ -2,8 +2,12 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 /* Instruments */
-import { fetchOwnedAlbumListAsync, fetchAllAlbumsAsync } from './thunks';
-import { Album, AlbumMetadata, SongMetadata } from './types';
+import {
+  fetchOwnedAlbumListAsync,
+  fetchAllAlbumsAsync,
+  fetchAlbumSongListAsync,
+} from './thunks';
+import { Album, AlbumMetadata, Song, SongMetadata } from './types';
 
 /* Types */
 export interface AlbumState {
@@ -11,6 +15,7 @@ export interface AlbumState {
   loadingArtists: boolean;
   albums: Album[];
   albumMetadata: { [key: string]: AlbumMetadata };
+  songs: Song[];
   songMetadata: { [key: string]: SongMetadata };
 }
 
@@ -19,6 +24,7 @@ const initialState: AlbumState = {
   loadingArtists: false,
   albums: [],
   albumMetadata: {},
+  songs: [],
   songMetadata: {},
 };
 
@@ -43,6 +49,9 @@ export const albumSlice = createSlice({
       if (action.payload.id) {
         state.albumMetadata[action.payload.id] = action.payload.metadata;
       }
+    },
+    setSongs: (state, action: PayloadAction<Song[]>) => {
+      state.songs = action.payload;
     },
     setSongMetadata: (
       state,
@@ -70,6 +79,13 @@ export const albumSlice = createSlice({
       .addCase(fetchAllAlbumsAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         state.albums = action.payload;
+      })
+      .addCase(fetchAlbumSongListAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchAlbumSongListAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.songs = action.payload;
       });
   },
 });
@@ -78,5 +94,6 @@ export const {
   setLoadingStatus,
   setAlbums,
   setAlbumMetadata,
+  setSongs,
   setSongMetadata,
 } = albumSlice.actions;

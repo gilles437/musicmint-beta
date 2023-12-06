@@ -8,5 +8,7 @@ export const selectAlbums = (state: ReduxState) => state.album.albums;
 
 export const selectAlbumMetadata = (state: ReduxState) => state.album.albumMetadata;
 
+export const selectSongs = (state: ReduxState) => state.album.songs;
+
 export const selectSongMetadata = (state: ReduxState) => state.album.songMetadata;
 

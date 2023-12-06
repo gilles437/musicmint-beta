@@ -89,7 +89,7 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
 
   return (
     <div>
-      <div className="text-center mb-3">
+      <div className="text-center mb-3 pb-3">
         <h2>{album ? 'Edit Album' : 'Create Album'}</h2>
       </div>
       <div className="row">

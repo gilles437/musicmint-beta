@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useSongMetadata } from '@/hooks/useSongMetadata';
 import { Song } from '@/lib/redux';
 
@@ -15,11 +16,8 @@ const SongRow = ({ song, onRemove }: Props) => {
       <td>
         <img
           src={metadata?.image || ''}
-          alt=""
-          style={{
-            width: '60px',
-            height: '60px',
-          }}
+          alt="Song"
+          style={{ width: '60px', height: '60px' }}
         />
       </td>
       <td>
@@ -30,7 +28,7 @@ const SongRow = ({ song, onRemove }: Props) => {
       </td>
       <td>{song.maxsupply}</td>
       <td>{metadata?.price || ''}</td>
-      <td>09:35 11/02/2023</td>
+      <td>{dayjs(song.timestamp).format('MM/DD/YYYY HH:mm')}</td>
       <td>
         <button
           className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
