@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import React, { useEffect } from "react";
 //= Components
-import EditAlbum from "@/components/album/edit";
+import EditAlbum from "@/components/Album/edit";
 
 const EditAlbumMain: NextPage = () => {
   useEffect(() => {
