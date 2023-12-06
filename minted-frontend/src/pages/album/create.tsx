@@ -1,13 +1,16 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import React, { useEffect } from "react";
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import Link from 'next/link';
+import React, { useEffect } from 'react';
+//= Contants
+import Routes from '@/constants/routes';
 //= Sections
-import { CreateAlbum } from "@/sections/Album";
+import { CreateAlbum } from '@/sections/Album';
 
 const CreateAlbumMain: NextPage = () => {
   useEffect(() => {
-    document.body.classList.add("home-style-12");
-    return () => document.body.classList.remove("home-style-12");
+    document.body.classList.add('home-style-12');
+    return () => document.body.classList.remove('home-style-12');
   }, []);
 
   return (
@@ -17,7 +20,20 @@ const CreateAlbumMain: NextPage = () => {
       </Head>
 
       <main>
-        <CreateAlbum />
+        <section className="projects section-padding style-12">
+          <div className="container">
+            <div className="mb-3">
+              <Link
+                href={Routes.ALBUM_OWNED}
+                className="d-flex"
+                style={{ justifyContent: 'flex-end' }}
+              >
+                <h4>Back to My Album</h4>
+              </Link>
+            </div>
+            <CreateAlbum />
+          </div>
+        </section>
       </main>
     </>
   );

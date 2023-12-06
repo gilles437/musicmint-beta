@@ -55,7 +55,7 @@ const Album = () => {
             <AlbumTable
               albums={albums}
               actions={(album: Album) => (
-                <Link href={`/album/edit?id=${album.id}`}>
+                <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
                   <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
                     Edit
                   </button>

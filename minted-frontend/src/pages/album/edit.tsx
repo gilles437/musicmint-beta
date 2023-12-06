@@ -1,30 +1,23 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+//=Constants
+import Routes from '@/constants/routes';
 //=Hooks
-import { useFindAlbumById } from '@/hooks/useFindAlbumById';
+import { useQueryAlbum } from '@/hooks/useQueryAlbum';
 //= Sections
 import { EditAlbum } from '@/sections/Album';
 import CreateSong from '@/sections/Song/CreateSong';
 import AlbumSongs from '@/sections/Song/AlbumSongs';
 
 const EditAlbumMain: NextPage = () => {
-  const { query } = useRouter();
-  const [albumId, setAlbumId] = useState<string>('');
-  const album = useFindAlbumById(albumId);
+  const album = useQueryAlbum();
 
   useEffect(() => {
     document.body.classList.add('home-style-12');
     return () => document.body.classList.remove('home-style-12');
   }, []);
-
-  useEffect(() => {
-    if (query?.id) {
-      setAlbumId(query?.id as string);
-    }
-  }, [query?.id]);
 
   return (
     <>
@@ -37,7 +30,7 @@ const EditAlbumMain: NextPage = () => {
           <div className="container">
             <div className="mb-3">
               <Link
-                href="/album/owned"
+                href={Routes.ALBUM_OWNED}
                 className="d-flex"
                 style={{ justifyContent: 'flex-end' }}
               >

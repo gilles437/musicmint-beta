@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
+import Routes from '@/constants/routes';
 import {
   useSelector,
   useDispatch,
@@ -52,7 +53,7 @@ const AllAlbums = () => {
         </div>
         <div className="mb-5">
           {!!artist && (
-            <Link className="d-flex" href="/album/owned">
+            <Link className="d-flex" href={Routes.ALBUM_OWNED}>
               <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
                 My Albums
               </button>
