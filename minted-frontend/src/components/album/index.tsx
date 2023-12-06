@@ -37,44 +37,6 @@ const Album = () => {
     }
   }, [artists]);
 
-  useEffect(() => {
-    // const getStorageAlbum = async () => {
-    //   const storageAlbumsData = localStorage.getItem("albums");
-    //   const storageAlbums = storageAlbumsData
-    //     ? JSON.parse(storageAlbumsData)
-    //     : [];
-
-    //   if (storageAlbums.length) {
-    //     const albumMetaData = (
-    //       await Promise.all(
-    //         storageAlbums.map(async (album: storageAlbumType) => {
-    //           const axiosConfig = {
-    //             method: "get",
-    //             url: `https://ipfs.io/ipfs/${album.metadata}`,
-    //             headers: {
-    //               accept: "application/json",
-    //               "Content-Type": "application/json",
-    //             },
-    //           };
-
-    //           try {
-    //             const { data } = await axios(axiosConfig);
-    //             return data;
-    //           } catch (error) {
-    //             console.error(error);
-    //             return null;
-    //           }
-    //         })
-    //       )
-    //     ).filter((data) => data !== null);
-    //     setAlbumMetaData(albumMetaData);
-    //   }
-    // };
-    // getStorageAlbum()
-    //   .then(() => {})
-    //   .catch(() => {});
-  }, []);
-
   return (
     <section className="projects section-padding style-12">
       <div className="container">
