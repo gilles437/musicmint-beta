@@ -29,7 +29,7 @@ export const fetchOwnedAlbumList = async (owner: string): Promise<Album[]> => {
   return result.collections;
 };
 
-export const fetchAlbumById = async (contract: string, albumId: string): Promise<Album | null> => {
+export const fetchAlbumById = async (contract: string, albumId: number): Promise<Album | null> => {
   const result: FetchType<Album> = await request(
     ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
     QUERY_GET_ALBUM_BY_ID(contract, albumId)
@@ -40,7 +40,7 @@ export const fetchAlbumById = async (contract: string, albumId: string): Promise
   return null;
 };
 
-export const fetchAlbumSongList = async (albumId: string): Promise<Song[]> => {
+export const fetchAlbumSongList = async (albumId: number): Promise<Song[]> => {
   const result: FetchType<Song> = await request(
     ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
     QUERY_GET_ALBUM_SONGS(albumId)

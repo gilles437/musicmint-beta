@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { selectAlbums, useSelector } from '@/lib/redux';
 
-export const useFindAlbumById = (contract: string, albumId: string) => {
+export const useFindAlbumById = (contract: string, albumId: number) => {
   const albumList = useSelector(selectAlbums);
 
   return useMemo(() => {

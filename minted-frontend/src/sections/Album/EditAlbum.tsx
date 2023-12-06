@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { Album, AlbumMetadata } from '@/lib/redux';
 import Loader from '@/components/Loader';
-import { useAlbumContract } from '@/hooks/useAlbumContract';
+import { useAlbum } from '@/hooks/useAlbum';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
@@ -19,7 +19,7 @@ const EditAlbum = ({ album }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const albumMetadata = useAlbumMetadata(album);
-  const { createAlbum } = useAlbumContract(album?.contract);
+  const { createAlbum } = useAlbum(album?.contract);
 
   const handleUpdateAlbum = async (input: CreateAlbumInput) => {
     console.log('handleUpdateAlbum', input);
@@ -55,7 +55,7 @@ const EditAlbum = ({ album }: Props) => {
         Number(input.maxSupply),
         Number(input.price),
         metaUrl,
-        (albumId: string) => {
+        (albumId: number) => {
           setIsLoading(false);
           toast.info(`New Album TokenId is: ${Number(albumId)}`);
         }

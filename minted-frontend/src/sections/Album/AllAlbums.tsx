@@ -11,7 +11,7 @@ import {
   Album,
 } from '@/lib/redux';
 import { useFindArtist } from '@/hooks/useFindArtist';
-import { useAlbumContract } from '@/hooks/useAlbumContract';
+import { useAlbum } from '@/hooks/useAlbum';
 import { getActiveAccount } from '@/utils/account';
 import AlbumTable from '@/components/Album/AlbumTable';
 
@@ -23,7 +23,7 @@ const AllAlbums = () => {
   const dispatch = useDispatch();
   const albums = useSelector(selectAlbums);
   const artist = useFindArtist();
-  const { mintAlbum } = useAlbumContract();
+  const { mintAlbum } = useAlbum();
 
   const fetchAlbumList = useCallback(() => {
     dispatch(fetchAllAlbumsAsync());

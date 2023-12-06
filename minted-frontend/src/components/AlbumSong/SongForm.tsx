@@ -82,54 +82,6 @@ const SongForm = ({ onSubmit }: Props) => {
     });
   };
 
-  /*const fetchSongsFromStorage = async () => {
-    const storageAlbumsData = localStorage.getItem('albums');
-    const storageAlbums = storageAlbumsData
-      ? JSON.parse(storageAlbumsData)
-      : [];
-    console.log('fetchSongsFromStorage');
-    if (storageAlbums.length && showSongs) {
-      const albumMetaData = (
-        await Promise.all(
-          storageAlbums[storageAlbums.length - 1].songs.map(
-            async (song: string) => {
-              const axiosConfig = {
-                method: 'get',
-                url: `https://ipfs.io/ipfs/${song}`,
-                headers: {
-                  accept: 'application/json',
-                  'Content-Type': 'application/json',
-                },
-              };
-
-              try {
-                const { data } = await axios(axiosConfig);
-                return data;
-              } catch (error) {
-                console.error(error);
-                return null;
-              }
-            }
-          )
-        )
-      ).filter((data) => data !== null);
-      console.log({ albumMetaData });
-      setSongMetaData(albumMetaData);
-    }
-  };
-
-  const removeSongs = async (id: number) => {
-    const storageAlbumsData = localStorage.getItem('albums');
-    const storageAlbums = storageAlbumsData
-      ? JSON.parse(storageAlbumsData)
-      : [];
-    console.log('fetchSongsFromStorage');
-    storageAlbums[storageAlbums.length - 1].songs.splice(id, 1);
-    localStorage.setItem('albums', JSON.stringify(storageAlbums));
-    await fetchSongsFromStorage();
-    toastFunction(`Deleted Song SuccessFully`);
-  };*/
-
   return (
     <div className="mt-3" style={{ borderTop: '1px solid' }}>
       <div className="text-center mb-3 pb-3">
@@ -201,66 +153,6 @@ const SongForm = ({ onSubmit }: Props) => {
           </div>
         </div>
       </div>
-      {/* {songMetaData.length > 0 ? (
-        <div className="mb-5">
-          <div className="row">
-            <div className="col-sm-12 col-md-9">
-              <div className="mt-5 table-responsive">
-                <table className="table table-hover table-success table-striped">
-                  <thead className="thead-dark">
-                    <tr>
-                      <th scope="col">Title</th>
-                      <th scope="col"></th>
-                      <th scope="col"></th>
-                      <th scope="col">MaxSupply</th>
-                      <th scope="col">Price</th>
-                      <th scope="col">Created On</th>
-                      <th scope="col"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {songMetaData.map(
-                      (song: SongMetadataType, index: number) => (
-                        <tr key={index}>
-                          <td scope="row">{song.title}</td>
-                          <td>
-                            <img
-                              src={song.image}
-                              alt=""
-                              style={{
-                                width: "60px",
-                                height: "60px",
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <audio controls>
-                              <source src={song.sound} type="audio/mpeg" />
-                              Your browser does not support the audio element.
-                            </audio>
-                          </td>
-                          <td>{song.maxSupply}</td>
-                          <td>{song.price}</td>
-                          <td>09:35 11/02/2023</td>
-                          <td>
-                            <button
-                              className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                              onClick={(e) => removeSongs(index)}
-                              disabled={isLoading}
-                            >
-                              Remove
-                            </button>
-                          </td>
-                        </tr>
-                      )
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : null} */}
     </div>
   );
 };

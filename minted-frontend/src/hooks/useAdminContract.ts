@@ -29,14 +29,12 @@ export const useAdminContract = () => {
       console.error("Api is not ready");
       return null;
     }
-    console.log("****wallet", wallet);
     if (!wallet) {
       console.error("Please connect your wallet!");
       return null;
     }
 
     const account = getActiveAccount();
-    console.log("****account", account);
     if (!account) {
       console.error("Invalid account!");
       return null;

@@ -6,7 +6,7 @@ import Loader from '@/components/Loader';
 import { AlbumMetadata, fetchAlbumByIdAsync, useDispatch } from '@/lib/redux';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
-import { useAlbumContract } from '@/hooks/useAlbumContract';
+import { useAlbum } from '@/hooks/useAlbum';
 
 import CreateAlbumForm, { CreateAlbumInput } from './AlbumForm';
 
@@ -15,7 +15,7 @@ const CreateAlbum = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [contractAddress, setContractAddress] = useState('');
-  const { createAlbum } = useAlbumContract(contractAddress);
+  const { createAlbum } = useAlbum(contractAddress);
 
   useEffect(() => {
     if (router.query?.contract) {
@@ -23,7 +23,7 @@ const CreateAlbum = () => {
     }
   }, [router.query?.contract]);
 
-  const onAlbumCreated = async (albumId: string) => {
+  const onAlbumCreated = async (albumId: number) => {
     console.log('onAlbumCreated', albumId);
     await dispatch(fetchAlbumByIdAsync({ contract: contractAddress, albumId }));
 
@@ -62,7 +62,7 @@ const CreateAlbum = () => {
         Number(input.maxSupply),
         Number(input.price),
         metaUrl,
-        (albumId: string) => {
+        (albumId: number) => {
           setIsLoading(false);
           onAlbumCreated(albumId);
           toast.info(`New Album TokenId is: ${Number(albumId)}`);

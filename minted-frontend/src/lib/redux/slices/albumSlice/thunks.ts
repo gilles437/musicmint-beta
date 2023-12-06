@@ -28,14 +28,14 @@ export const fetchOwnedAlbumListAsync = createAppAsyncThunk(
 
 export const fetchAlbumByIdAsync = createAppAsyncThunk(
   'album/fetchAlbumByIdAsync',
-  async ({ contract, albumId }: { contract: string; albumId: string }) => {
+  async ({ contract, albumId }: { contract: string; albumId: number }) => {
     return await fetchAlbumById(contract, albumId);
   }
 );
 
 export const fetchAlbumSongListAsync = createAppAsyncThunk(
   'album/fetchAlbumSongListAsync',
-  async (albumId: string) => {
+  async (albumId: number) => {
     return await fetchAlbumSongList(albumId);
   }
 );

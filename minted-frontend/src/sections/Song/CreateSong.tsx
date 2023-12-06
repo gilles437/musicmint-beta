@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { Album, SongMetadata } from '@/lib/redux';
 import CreateSongForm, { CreateSongInput } from '@/components/AlbumSong/SongForm';
 import Loader from '@/components/Loader';
-import { useAlbumContract } from '@/hooks/useAlbumContract';
+import { useAlbumSong } from '@/hooks/useAlbumSong';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import { createIpfsUrl } from '@/utils/ipfs';
 
@@ -12,13 +12,9 @@ type Props = {
   album: Album;
 };
 
-const toastFunction = (string: any) => {
-  toast.info(string, { position: toast.POSITION.TOP_RIGHT });
-};
-
 const CreateSong = ({ album }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { createSong } = useAlbumContract(album?.contract);
+  const { createSong } = useAlbumSong(album?.contract);
 
   const handleCreateSong = async (input: CreateSongInput) => {
     console.log('handleCreateSong', input);
@@ -65,19 +61,19 @@ const CreateSong = ({ album }: Props) => {
         Number(input.maxSupply),
         Number(input.price),
         metaUrl,
-        (albumId: string) => {
+        (albumId: number) => {
           setIsLoading(false);
-          toastFunction(`New Song TokenId is: ${Number(albumId)}`);
+          toast.info(`New Song TokenId is: ${Number(albumId)}`);
         }
       );
       console.log('success', success);
 
       if (success) {
-        toastFunction(`Song Metadata saved on ${metaUrl}`);
+        toast.info(`Song Metadata saved on ${metaUrl}`);
         return true;
       } else {
         setIsLoading(false);
-        toastFunction(`Something wrong to create song`);
+        toast.error(`Something wrong to create song`);
       }
     } catch (error) {
       console.log(error);
