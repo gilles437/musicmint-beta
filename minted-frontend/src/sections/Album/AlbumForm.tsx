@@ -147,7 +147,12 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
         <div className="col-md-6 col-sm-12">
           {!!metadata && (
             <div>
-              <Image src={metadata.image || '/images/album.png'} alt="Album"></Image>
+              <Image 
+                src={metadata.image || '/images/album.png'} 
+                alt="Album"
+                width={420}
+                height={420}
+              />
             </div>
           )}
         </div>

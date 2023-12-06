@@ -40,7 +40,7 @@ export const useAlbum = (contractAddress?: string) => {
   }, [api, contractAddress]);
 
   const request = useMemo(() => {
-    if (!api || !contract) {
+    if (!api) {
       console.error('Api is not ready');
       return null;
     }
@@ -57,7 +57,6 @@ export const useAlbum = (contractAddress?: string) => {
 
     return {
       api,
-      contract,
       wallet,
       account,
       options: { value: 0, storageDepositLimit: null, gasLimit },
@@ -72,12 +71,11 @@ export const useAlbum = (contractAddress?: string) => {
       metaUrl: string,
       callback: (albumId: number) => void
     ): Promise<boolean> => {
-      if (!request) {
-        console.error('Api is not ready');
+      if (!request || !contract) {
         return false;
       }
 
-      const { contract, signer, options, account } = request;
+      const { signer, options, account } = request;
       const priceInWei = Number(tokenPrice) * 10 ** chainDecimals;
 
       const queryTx = await contract.query.createAlbum(
@@ -110,8 +108,9 @@ export const useAlbum = (contractAddress?: string) => {
         if (contractEvents?.length && contractEvents[0].args?.length > 1) {
           const albumId = contractEvents[0].args[1];
           callback(Number(albumId));
+        } else {
+          callback(-1);
         }
-        callback(-1);
       };
 
       const unsub = await tx.signAndSend(account, signer, (result) => {
@@ -122,7 +121,7 @@ export const useAlbum = (contractAddress?: string) => {
       });
       return true;
     },
-    [request, chainDecimals]
+    [request, contract, chainDecimals]
   );
 
   const deleteAlbum = useCallback(
@@ -130,12 +129,11 @@ export const useAlbum = (contractAddress?: string) => {
       albumId: number,
       callback: (albumId: number) => void
     ): Promise<boolean> => {
-      if (!request) {
-        console.error('Api is not ready');
+      if (!request || !contract) {
         return false;
       }
 
-      const { contract, signer, options, account } = request;
+      const { signer, options, account } = request;
       const queryTx = await contract.query.deleteAlbum(
         account,
         options,
@@ -158,7 +156,7 @@ export const useAlbum = (contractAddress?: string) => {
       });
       return true;
     },
-    [request]
+    [request, contract]
   );
 
   const mintAlbum = useCallback(
@@ -168,7 +166,6 @@ export const useAlbum = (contractAddress?: string) => {
       callback: (albumId: number) => void
     ): Promise<boolean> => {
       if (!request) {
-        console.error('Api is not ready');
         return false;
       }
 

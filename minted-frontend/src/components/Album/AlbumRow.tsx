@@ -20,7 +20,9 @@ const AlbumRow = ({ album, showOwner, actions }: Props) => {
         <Image
           src={metadata?.image || '/images/album.png'}
           alt="Album"
-          style={{ width: '60px', height: '60px', borderRadius: '16px' }}
+          width={60}
+          height={60}
+          style={{ borderRadius: '16px' }}
         />
       </td>
       {!!showOwner && <td>{beatifyAddress(album.from)}</td>}

@@ -24,8 +24,8 @@ export const useAlbumSong = (contractAddress?: string) => {
   }, [api, contractAddress]);
 
   const request = useMemo(() => {
-    if (!api || !contract) {
-      console.error('Api is not ready');
+    if (!api) {
+      console.error('API is not ready');
       return null;
     }
     if (!wallet) {
@@ -41,13 +41,12 @@ export const useAlbumSong = (contractAddress?: string) => {
 
     return {
       api,
-      contract,
       wallet,
       account,
       options: { value: 0, storageDepositLimit: null, gasLimit },
       signer: { signer: wallet.signer },
     };
-  }, [api, contract, wallet, gasLimit]);
+  }, [api, wallet, gasLimit]);
 
   const createSong = useCallback(
     async (
@@ -57,12 +56,11 @@ export const useAlbumSong = (contractAddress?: string) => {
       metaUrl: string,
       callback: (albumId: number) => void
     ): Promise<boolean> => {
-      if (!request) {
-        console.error('Api is not ready');
+      if (!request || !contract) {
         return false;
       }
 
-      const { contract, signer, options, account } = request;
+      const { signer, options, account } = request;
       const priceInWei = Number(tokenPrice) * 10 ** chainDecimals;
 
       const queryTx = await contract.query.createSong(
@@ -98,8 +96,9 @@ export const useAlbumSong = (contractAddress?: string) => {
         if (contractEvents?.length && contractEvents[0].args?.length > 2) {
           const songId = contractEvents[0].args[2];
           callback(Number(songId));
+        } else {
+          callback(-1);
         }
-        callback(-1);
       };
 
       const unsub = await tx.signAndSend(account, signer, (result) => {
@@ -110,7 +109,7 @@ export const useAlbumSong = (contractAddress?: string) => {
       });
       return true;
     },
-    [request, chainDecimals]
+    [request, contract, chainDecimals]
   );
 
   const deleteSong = useCallback(
@@ -119,12 +118,11 @@ export const useAlbumSong = (contractAddress?: string) => {
       songId: string,
       callback: (albumId: number) => void
     ): Promise<boolean> => {
-      if (!request) {
-        console.error('Api is not ready');
+      if (!request || !contract) {
         return false;
       }
 
-      const { contract, signer, options, account } = request;
+      const { signer, options, account } = request;
       const queryTx = await contract.query.deleteSong(
         account,
         options,
@@ -149,7 +147,7 @@ export const useAlbumSong = (contractAddress?: string) => {
       });
       return true;
     },
-    [request]
+    [request, contract]
   );
 
   const mintSong = useCallback(
@@ -160,7 +158,6 @@ export const useAlbumSong = (contractAddress?: string) => {
       callback: (success: boolean) => void
     ): Promise<boolean> => {
       if (!request) {
-        console.error('Api is not ready');
         return false;
       }
 
