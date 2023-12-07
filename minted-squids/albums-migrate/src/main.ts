@@ -4,7 +4,7 @@ import * as ss58 from '@subsquid/ss58'
 import assert from 'assert'
 
 import * as albums from "./abi/albums"
-import {Account, Collections, Owner, Transfer} from './model'
+import {MintAlbums, MintSongs, Collections, Owner, Transfer} from './model'
 import {events} from './types'
 import { env } from 'process'
 
@@ -44,6 +44,8 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
     await ctx.store.save([...ownersMap.values()])
 
     const collections: Collections[] = [];
+    const mintAlbums: MintAlbums[] = [];
+    const mintSongs: MintSongs[] = [];
     txs.map(tx => {
         if (tx.action == 'add') {
             const collection = new Collections({
@@ -61,9 +63,53 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
             })
             collections.push(collection);
         }
+        else if(tx.action == 'mint' && tx.song_id == 0){ //mint_album
+            const mintAlbum = new MintAlbums({
+                id: tx.id,
+                block: tx.block,
+                uri: tx.uri,
+                timestamp: tx.timestamp,
+                from: tx.from,
+                to: tx.to,
+                songid: tx.song_id,
+                albumid: tx.album_id,
+                maxsupply: tx.max_supply,
+                price: tx.price,
+                contract: tx.contract
+            })
+            mintAlbums.push(mintAlbum);
+        }
+        else if(tx.action == 'mint' && tx.song_id != 0){ //mint_song
+            const mintSong = new MintSongs({
+                id: tx.id,
+                block: tx.block,
+                uri: tx.uri,
+                timestamp: tx.timestamp,
+                from: tx.from,
+                to: tx.to,
+                songid: tx.song_id,
+                albumid: tx.album_id,
+                maxsupply: tx.max_supply,
+                price: tx.price,
+                contract: tx.contract
+            })
+            mintSongs.push(mintSong);
+        }
     })
-    console.log('collections', collections)
-    await ctx.store.insert(collections)
+    if(collections.length){
+        console.log('collections', collections)
+        await ctx.store.insert(collections)
+    }
+
+    if(mintAlbums.length){
+        console.log('mintAlbums', mintAlbums)
+        await ctx.store.insert(mintAlbums)
+    }
+
+    if(mintSongs.length){
+        console.log('mintSongs', mintSongs)
+        await ctx.store.insert(mintSongs)
+    }
 
     let removeAdminItems: string[] = [];
     let removeSuperAdminItems: string[] = [];
@@ -128,18 +174,18 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
     for (const block of ctx.blocks) {
         for (const event of block.events) {
             if (event.name === 'Contracts.ContractEmitted') {
-                console.log("event", event)
+                // console.log("event", event)
                 const contract = event.args.contract;
-                console.log('contract', encodeAddress(contract));
+                // console.log('contract', encodeAddress(contract));
 
                 const album = decodeEvent(event)
                 if (!album) {
                     continue;
                 }
-                console.log('album', album)
+                // console.log('album', album)
               
-                console.log('album.kind', album.__kind)
-                console.log('album.albumId', album.albumId, album.songId)
+                // console.log('album.kind', album.__kind)
+                // console.log('album.albumId', album.albumId, album.songId)
 
                 if (album.__kind === 'ItemCreated') {
                     records.push({
@@ -174,6 +220,7 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
                     })
                 }
                 else if (album.__kind === 'ItemMinted') {
+                    console.log("ItemMinted", album)
                     records.push({
                         id: event.id,
                         from: album.from && encodeAddress(album.from),
