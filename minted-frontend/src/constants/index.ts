@@ -6,11 +6,11 @@ export enum ChainId {
 export const DEFAULT_CHAIN = ChainId.AllFEATTestNET;
 
 export const ADMIN_SUBGRAPH_URLS: { [chainId: number]: string } = {
-  [ChainId.AllFEATTestNET]: "https://subsquid.mintedwaves.com/graphql",
+  [ChainId.AllFEATTestNET]: process.env.NEXT_PUBLIC_SUBSQUID_ADMIN_URL as string,
 };
 
 export const ALBUM_SUBGRAPH_URLS: { [chainId: number]: string } = {
-  [ChainId.AllFEATTestNET]: "http://192.64.115.5:5556/graphql",
+  [ChainId.AllFEATTestNET]: process.env.NEXT_PUBLIC_SUBSQUID_ALBUM_URL as string,
 };
 
 export const ALLFEAT_CONTRACT = "5D5G8y4Gusc89E2XjetuwuNAN5GdhnQKUByQJ9NxkCdFwwBG";
