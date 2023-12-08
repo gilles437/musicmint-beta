@@ -61,65 +61,63 @@ const Album = () => {
 
   const handleConfirmDeletion = () => {
     setShowDeleteConfirm(false);
-    selectedAlbum && handleDeleteAlbum(selectedAlbum)
-  }
+    selectedAlbum && handleDeleteAlbum(selectedAlbum);
+  };
 
   return (
-    <section className="projects section-padding style-12">
-      <div className="container">
-        <div className="text-center mb-3">
-          <h2>My Albums</h2>
-        </div>
-        <div className="mb-5">
-          {!!artist && (
-            <Link
-              className="d-flex"
-              href={{
-                pathname: `/album/create`,
-                query: { contract: artist.contract },
-              }}
-            >
-              <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
-                Create Album
-              </button>
-            </Link>
-          )}
-          <div className="col-sm-12">
-            <AlbumTable
-              albums={albums}
-              actions={(album: Album) => (
-                <>
-                  <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
-                    <Button variant="link" size="sm">
-                      Edit
-                    </Button>
-                  </Link>
-                  <LoadingButton
-                    variant="link"
-                    style={{ marginLeft: '12px' }}
-                    loading={!!(isLoading && selectedAlbum === album)}
-                    disabled={!!isLoading}
-                    onClick={() => {
-                      setSelectedAlbum(album);
-                      setShowDeleteConfirm(true);
-                    }}
-                  >
-                    Delete
-                  </LoadingButton>
-                </>
-              )}
-            />
-          </div>
-        </div>
-        <DeleteConfirmModal
-          show={showDeleteConfirm}
-          title="Delete Album"
-          description="Are you sure to delete the album?"
-          onConfirm={handleConfirmDeletion}
-          onCancel={() => setShowDeleteConfirm(false)}
-        />
+    <>
+      <div className="text-center mb-3">
+        <h2>My Albums</h2>
       </div>
-    </section>
+      <div className="mb-5">
+        {!!artist && (
+          <Link
+            className="d-flex"
+            href={{
+              pathname: `/album/create`,
+              query: { contract: artist.contract },
+            }}
+          >
+            <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+              Create Album
+            </button>
+          </Link>
+        )}
+        <div className="col-sm-12">
+          <AlbumTable
+            albums={albums}
+            actions={(album: Album) => (
+              <>
+                <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
+                  <Button variant="link" size="sm">
+                    Edit
+                  </Button>
+                </Link>
+                <LoadingButton
+                  variant="link"
+                  style={{ marginLeft: '12px' }}
+                  loading={!!(isLoading && selectedAlbum === album)}
+                  disabled={!!isLoading}
+                  onClick={() => {
+                    setSelectedAlbum(album);
+                    setShowDeleteConfirm(true);
+                  }}
+                >
+                  Delete
+                </LoadingButton>
+              </>
+            )}
+          />
+        </div>
+      </div>
+      <DeleteConfirmModal
+        show={showDeleteConfirm}
+        title="Delete Album"
+        description="Are you sure to delete the album?"
+        onConfirm={handleConfirmDeletion}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
+    </>
   );
 };
 
