@@ -85,9 +85,9 @@ const CreateAlbum = () => {
     return false;
   };
 
-  if (isLoading) {
+  /*if (isLoading) {
     return <Loader />;
-  }
+  }*/
 
   return <CreateAlbumForm onSubmit={handleCreateAlbum} />;
 };

@@ -1,7 +1,9 @@
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import Form from 'react-bootstrap/Form';
 import { Album, AlbumMetadata } from '@/lib/redux';
+import LoadingButton from '@/components/LoadingButton';
 
 export type CreateAlbumInput = {
   title: string;
@@ -24,6 +26,7 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
   const [price, setPrice] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
+  const [validated, setValidated] = useState(false);
 
   useEffect(() => {
     if (album && metadata) {
@@ -40,7 +43,18 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
   };
 
   const handleSubmit = (e: any) => {
-    e.preventDefault();
+    const form = e.currentTarget;
+    console.log('handleSubmit', form);
+    if (form.checkValidity() === false) {
+      console.log('handleSubmit--error');
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+
+    console.log('handleSubmit--validated');
+    setValidated(true);
+
     if (!validateFields()) {
       return;
     }
@@ -53,8 +67,11 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
       price,
     } as CreateAlbumInput;
 
+    setIsLoading(true);
+
     onSubmit(input).then((success) => {
       success && emptyFields();
+      setIsLoading(false);
     });
   };
 
@@ -66,89 +83,101 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
 
   const validateFields = () => {
     if (!title) {
-      toastFunction('Please provide a title');
+      toast.warn('Please provide a title');
       return false;
     }
     if (!description) {
-      toastFunction('Please provide a description');
+      toast.warn('Please provide a description');
       return false;
     }
     if (!price) {
-      toastFunction('Please provide a price');
+      toast.warn('Please provide a price');
       return false;
     }
     if (!selectedImage) {
-      toastFunction('Please provide an image');
+      toast.warn('Please provide an image');
       return false;
     }
     return true;
   };
 
-  const toastFunction = (string: any) => {
-    toast.info(string, { position: toast.POSITION.TOP_RIGHT });
-  };
-
   return (
-    <div>
+    <Form noValidate validated={validated} onSubmit={handleSubmit}>
       <div className="text-center mb-3 pb-3">
         <h2>{album ? 'Edit Album' : 'Create Album'}</h2>
       </div>
       <div className="row">
         <div className="col-md-6 col-sm-12">
-          <div className="mt-3">
-            <h5>Title</h5>
-            <input
+          <Form.Group className="mt-3" controlId="title">
+            <Form.Label>Title</Form.Label>
+            <Form.Control
+              required
               type="text"
-              placeholder="Enter Title..."
-              style={{ width: '70%', height: '100%' }}
-              value={title ? title : ''}
+              placeholder="Album Title"
+              value={title || ''}
               onChange={(e: any) => setTitle(e.target.value)}
             />
-          </div>
-          <div className="mt-3">
-            <h5>Description</h5>
-            <textarea
-              cols={30}
+            <Form.Control.Feedback type="invalid">Title is required</Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mt-3" controlId="description">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              required
+              as="textarea"
               rows={3}
-              value={description ? description : ''}
+              cols={30}
+              placeholder="Description"
+              value={description || ''}
               onChange={(e: any) => setDescription(e.target.value)}
-              style={{ width: '70%', height: '100%' }}
             />
-          </div>
-          <div className="mt-3">
-            <h5 className="">Image</h5>
-            <input
+            <Form.Control.Feedback>Description is required</Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mt-3" controlId="image">
+            <Form.Label>Image</Form.Label>
+            <Form.Control
+              required
               type="file"
               accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
               onChange={handleImageChange}
             />
-          </div>
-          <div className="mt-3">
-            <h5>Max Supply</h5>
-            <input
+            <Form.Control.Feedback>Image is required</Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mt-3" controlId="maxSupply">
+            <Form.Label>Max Supply</Form.Label>
+            <Form.Control
+              required
+              as="input"
               type="number"
               min={1}
-              placeholder="Enter Max Supply..."
-              value={maxSupply ? maxSupply : ''}
-              onChange={(e: any) => setMaxSupply(e.target.value)}
+              placeholder="Max Supply"
+              value={maxSupply || ''}
+              onChange={(e: any) => setMaxSupply(Number(e.target.value))}
             />
-          </div>
-          <div className="mt-3">
-            <h5>Price</h5>
-            <input
-              type="text"
-              placeholder="Enter Price..."
-              value={price ? price : ''}
+            <Form.Control.Feedback>Max Supply is required</Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group className="mt-3" controlId="price">
+            <Form.Label>Price (AFT)</Form.Label>
+            <Form.Control
+              required
+              as="input"
+              type="number"
+              min={1}
+              value={price || ''}
+              placeholder="Album Price"
               onChange={(e: any) => setPrice(e.target.value)}
             />
-            <span className="ms-3">AFT</span>
-          </div>
+            <Form.Control.Feedback>Price is required</Form.Control.Feedback>
+          </Form.Group>
         </div>
         <div className="col-md-6 col-sm-12">
           {!!metadata && (
             <div>
-              <Image 
-                src={metadata.image || '/images/album.png'} 
+              <Image
+                src={metadata.image || '/images/album.png'}
                 alt="Album"
                 width={420}
                 height={420}
@@ -158,16 +187,16 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
         </div>
       </div>
 
-      <div className="text-center mt-5">
-        <button
-          className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-          onClick={handleSubmit}
-          disabled={isLoading}
-        >
-          {album ? 'Update' : 'Create'} Album
-        </button>
+      <div className="row">
+        <div className="col-md-6 col-sm-12">
+          <div className="text-end mt-5">
+            <LoadingButton loading={isLoading} type="submit">
+              <span>{album ? 'Update' : 'Create'} Album</span>
+            </LoadingButton>
+          </div>
+        </div>
       </div>
-    </div>
+    </Form>
   );
 };
 
