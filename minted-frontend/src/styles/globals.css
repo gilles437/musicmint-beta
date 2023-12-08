@@ -50,3 +50,7 @@ html, body {
   text-overflow: ellipsis;
   width: 300px;
 }
+
+.modal-content {
+  background-color: #121212;
+}

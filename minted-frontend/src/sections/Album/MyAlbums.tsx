@@ -1,5 +1,6 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
+import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
 import {
   useSelector,
@@ -9,16 +10,22 @@ import {
   fetchArtistListAsync,
   Album,
 } from '@/lib/redux';
+import AlbumTable from '@/components/Album/AlbumTable';
 import { useAlbum } from '@/hooks/useAlbum';
 import { useFindArtist } from '@/hooks/useFindArtist';
 import { getActiveAccount } from '@/utils/account';
-import AlbumTable from '@/components/Album/AlbumTable';
+import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
+import LoadingButton from '@/components/LoadingButton';
 
 const Album = () => {
   const dispatch = useDispatch();
   const albums = useSelector(selectAlbums);
   const artist = useFindArtist();
   const { deleteAlbum } = useAlbum();
+  const [selectedAlbum, setSelectedAlbum] = useState<Album>();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  console.log('showDeleteConfirm', showDeleteConfirm)
 
   const fetchAlbumList = useCallback(
     (owner: string) => {
@@ -35,16 +42,20 @@ const Album = () => {
   }, [dispatch, fetchAlbumList]);
 
   const handleDeleteAlbum = async (album: Album) => {
-    console.log('handleDeleteAlbum', album);
     try {
+      setLoading(true);
+
       const success = await deleteAlbum(album.albumid, album.contract, (albumId) => {
         toast.info('You have successfully deleted your album');
+        setLoading(false);
       });
       if (!success) {
+        setLoading(false);
         toast.error('Failed to delete album');
       }
     } catch (error) {
       console.error(error);
+      setLoading(false);
       toast.error('Something went wrong!');
     }
   };
@@ -75,21 +86,33 @@ const Album = () => {
               actions={(album: Album) => (
                 <>
                   <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
-                    <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+                    <Button variant="success" size="sm">
                       Edit
-                    </button>
+                    </Button>
                   </Link>
-                  <button
-                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-red1"
-                    onClick={() => handleDeleteAlbum(album)}
+                  <LoadingButton
+                    variant="danger"
+                    style={{ marginLeft: '12px' }}
+                    loading={!!isLoading}
+                    onClick={() => {
+                      setSelectedAlbum(album);
+                      setShowDeleteConfirm(true);
+                    }}
                   >
                     Delete
-                  </button>
+                  </LoadingButton>
                 </>
               )}
             />
           </div>
         </div>
+        <DeleteConfirmModal
+          show={showDeleteConfirm}
+          title="Delete Album"
+          description="Are you sure to delete the album?"
+          onConfirm={() => selectedAlbum && handleDeleteAlbum(selectedAlbum)}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
       </div>
     </section>
   );
