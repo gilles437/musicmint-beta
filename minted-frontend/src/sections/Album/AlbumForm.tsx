@@ -72,6 +72,7 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
               type="text"
               name="title"
               placeholder="Album Title"
+              disabled={isLoading}
               isInvalid={!!(formik.touched.title && formik.errors.title)}
               value={formik.values.title}
               onChange={formik.handleChange}
@@ -86,8 +87,9 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
             <Form.Control
               required
               as="textarea"
-              rows={3}
+              rows={6}
               cols={30}
+              disabled={isLoading}
               placeholder="Description"
               isInvalid={!!(formik.touched.description && formik.errors.description)}
               value={formik.values.description}
@@ -104,6 +106,7 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
               required
               type="file"
               accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+              disabled={isLoading}
               isInvalid={!!(formik.touched.image && formik.errors.image)}
               onChange={(e: any) => formik.setFieldValue('image', e.target.files[0])}
             />
@@ -120,6 +123,7 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
               type="number"
               min={1}
               placeholder="Max Supply"
+              disabled={isLoading}
               isInvalid={!!(formik.touched.maxSupply && formik.errors.maxSupply)}
               value={formik.values.maxSupply}
               onChange={formik.handleChange}
@@ -137,6 +141,7 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
               type="number"
               min={1}
               placeholder="Album Price"
+              disabled={isLoading}
               isInvalid={!!(formik.touched.price && formik.errors.price)}
               value={formik.values.price}
               onChange={formik.handleChange}
