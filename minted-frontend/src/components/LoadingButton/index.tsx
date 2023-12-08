@@ -9,6 +9,7 @@ interface Props extends ButtonProps {
 const LoadingButton = ({ loading, children, ...props }: Props) => {
   return (
     <Button variant="primary" disabled={!!loading} style={{ alignItems: 'center' }} {...props}>
+      {children}
       {!!loading && (
         <Spinner
           as="span"
@@ -16,10 +17,9 @@ const LoadingButton = ({ loading, children, ...props }: Props) => {
           size="sm"
           role="status"
           aria-hidden="true"
-          style={{ marginRight: '8px' }}
+          style={{ marginLeft: '8px' }}
         />
       )}
-      {children}
     </Button>
   );
 };

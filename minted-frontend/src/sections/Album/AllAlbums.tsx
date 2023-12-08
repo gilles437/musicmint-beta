@@ -14,16 +14,15 @@ import { useFindArtist } from '@/hooks/useFindArtist';
 import { useAlbum } from '@/hooks/useAlbum';
 import { getActiveAccount } from '@/utils/account';
 import AlbumTable from '@/components/Album/AlbumTable';
-
-const toastFunction = (string: any) => {
-  toast.info(string, { position: toast.POSITION.TOP_RIGHT });
-};
+import LoadingButton from '@/components/LoadingButton';
 
 const AllAlbums = () => {
   const dispatch = useDispatch();
   const albums = useSelector(selectAlbums);
   const artist = useFindArtist();
   const { mintAlbum } = useAlbum();
+  const [selectedAlbum, setSelectedAlbum] = useState<Album>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchAlbumList = useCallback(() => {
     dispatch(fetchAllAlbumsAsync());
@@ -37,12 +36,24 @@ const AllAlbums = () => {
   const handleBuyAlbum = async (album: Album) => {
     console.log('handleBuyAlbum', album);
     try {
-      await mintAlbum(album.albumid, album.contract, () => {
-        toastFunction("You have successfully minted the album");
-      });
-    } catch (err) {
-      console.error(err);
+      setIsLoading(true);
+      setSelectedAlbum(album);
+
+      const mintedId = await mintAlbum(album.albumid, album.contract);
+      if (mintedId) {
+        return toast.info('You have successfully minted the album');
+      }
+    } catch (err: any) {
+      if (err && err.message === 'Cancelled') {
+        toast.error(`Transaction cancelled`);
+        return false;
+      }
+    } finally {
+      setIsLoading(false);
     }
+
+    toast.error(`Something went wrong`);
+    return false;
   };
 
   return (
@@ -65,17 +76,19 @@ const AllAlbums = () => {
               showOwner={true}
               actions={(album: Album) => {
                 const activeAccount = getActiveAccount();
+                if (activeAccount === album.from) {
+                  return <></>;
+                }
+
                 return (
-                  <>
-                    {activeAccount !== album.from && (
-                      <button
-                        className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                        onClick={() => handleBuyAlbum(album)}
-                      >
-                        Buy
-                      </button>
-                    )}
-                  </>
+                  <LoadingButton
+                    loading={!!(isLoading && album == selectedAlbum)}
+                    disabled={isLoading}
+                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                    onClick={() => handleBuyAlbum(album)}
+                  >
+                    Buy
+                  </LoadingButton>
                 );
               }}
             />
