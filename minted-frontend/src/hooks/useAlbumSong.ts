@@ -53,66 +53,56 @@ export const useAlbumSong = (contractAddress?: string) => {
       albumId: number,
       maxSupply: number,
       tokenPrice: number,
-      metaUrl: string,
-      callback: (albumId: number) => void
-    ): Promise<boolean> => {
-      if (!request || !contract) {
-        return false;
-      }
-      
-      try {
-        const { signer, options, account } = request;
-        const priceInWei = Number(tokenPrice) * 10 ** chainDecimals;
+      metaUrl: string
+    ): Promise<number | null> => {
+      return new Promise<number | null>(async (resolve, reject) => {
+        try {
+          if (!request || !contract) {
+            return reject('API is not ready');
+          }
 
-        const queryTx = await contract.query.createSong(
-          account,
-          options,
-          albumId,
-          maxSupply,
-          priceInWei,
-          metaUrl
-        );
+          const { signer, options, account } = request;
+          const priceInWei = Number(tokenPrice) * 10 ** chainDecimals;
 
-        console.log('*****queryTx=', queryTx);
-        if (!queryTx.result?.isOk) {
-          console.error('****queryTx.error', queryTx.result.asErr);
-          return false;
-        }
-
-        const tx = await contract.tx.createSong(
-          options,
-          albumId,
-          maxSupply,
-          priceInWei,
-          metaUrl
-        );
-        console.log('*****tx=', tx);
-
-        const onSuccess = (result: any) => {
-          const event: ContractEventsType = JSON.parse(
-            JSON.stringify(result, null, 2)
+          const queryTx = await contract.query.createSong(
+            account,
+            options,
+            albumId,
+            maxSupply,
+            priceInWei,
+            metaUrl
           );
-          console.log('*****create.song.event', event);
-          const { contractEvents } = event;
-          if (contractEvents?.length && contractEvents[0].args?.length > 2) {
-            const songId = contractEvents[0].args[2];
-            callback(Number(songId));
-          } else {
-            callback(-1);
-          }
-        };
 
-        const unsub = await tx.signAndSend(account, signer, (result) => {
-          if (result.status.isFinalized) {
-            onSuccess(result);
-            unsub();
+          console.log('*****queryTx=', queryTx);
+          if (!queryTx.result?.isOk) {
+            console.error('****queryTx.error', queryTx.result.asErr);
+            return reject();
           }
-        });
-        return true;
-      } catch (err) {
-        console.error(typeof(err), err);
-        return false;
-      }
+
+          const tx = await contract.tx.createSong(options, albumId, maxSupply, priceInWei, metaUrl);
+          console.log('*****tx=', tx);
+
+          const unsub = await tx.signAndSend(account, signer, (result) => {
+            if (!result.status.isFinalized) {
+              return;
+            }
+
+            const event: ContractEventsType = JSON.parse(JSON.stringify(result, null, 2));
+            console.log('*****create.song.event', event);
+
+            let songId = -1;
+            const { contractEvents } = event;
+            if (contractEvents?.length && contractEvents[0].args?.length > 2) {
+              songId = Number(contractEvents[0].args[2]);
+            }
+
+            unsub();
+            resolve(songId);
+          });
+        } catch (err) {
+          reject(err);
+        }
+      });
     },
     [request, contract, chainDecimals]
   );
@@ -126,15 +116,10 @@ export const useAlbumSong = (contractAddress?: string) => {
       if (!request || !contract) {
         return false;
       }
-      
+
       try {
         const { signer, options, account } = request;
-        const queryTx = await contract.query.deleteSong(
-          account,
-          options,
-          albumId,
-          songId
-        );
+        const queryTx = await contract.query.deleteSong(account, options, albumId, songId);
 
         if (!queryTx.result?.isOk) {
           console.error('****queryTx.error', queryTx.result.asErr);
@@ -153,7 +138,7 @@ export const useAlbumSong = (contractAddress?: string) => {
         });
         return true;
       } catch (err) {
-        console.error(typeof(err), err);
+        console.error(typeof err, err);
         return false;
       }
     },
@@ -175,12 +160,7 @@ export const useAlbumSong = (contractAddress?: string) => {
         const { api, signer, options, account } = request;
 
         const contract = new ContractPromise(api, contractAbi, contractAddress);
-        const queryTx = await contract.query.mintSong(
-          account,
-          options,
-          albumId,
-          songId
-        );
+        const queryTx = await contract.query.mintSong(account, options, albumId, songId);
 
         if (!queryTx.result?.isOk) {
           console.error('****queryTx.error', queryTx.result.asErr);
@@ -199,7 +179,7 @@ export const useAlbumSong = (contractAddress?: string) => {
         });
         return true;
       } catch (err) {
-        console.error(typeof(err), err);
+        console.error(typeof err, err);
         return false;
       }
     },

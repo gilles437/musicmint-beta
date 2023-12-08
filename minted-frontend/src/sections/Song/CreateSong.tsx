@@ -67,28 +67,29 @@ const CreateSong = ({ album }: Props) => {
         }
 
         const metaUrl = createIpfsUrl(metadataId);
-        console.log('metaUrl', metaUrl);
-        const success = await createSong(
+        toast.info(`Song Metadata saved on ${metaUrl}`);
+
+        const songId = await createSong(
           album.albumid,
           Number(input.maxSupply),
           Number(input.price),
-          metaUrl,
-          (songId: number) => {
-            onSongCreated(songId);
-            toast.info(`New Song TokenId is: ${Number(songId)}`);
-          }
+          metaUrl
         );
-        console.log('success', success);
+        console.log('songId', songId);
 
-        if (success) {
-          toast.info(`Song Metadata saved on ${metaUrl}`);
+        if (songId && songId > 0) {
+          onSongCreated(songId);
+          toast.info(`New Song TokenId is: ${Number(songId)}`);
           return true;
-        } else {
-          toast.error(`Something wrong to create song`);
         }
-      } catch (error) {
-        console.log(error);
+      } catch (err: any) {
+        if (err && err.message === 'Cancelled') {
+          toast.error(`Transaction cancelled`);
+          return false;
+        }
       }
+
+      toast.error(`Something wrong to create song`);
       return false;
     },
     [album, createSong, onSongCreated]
