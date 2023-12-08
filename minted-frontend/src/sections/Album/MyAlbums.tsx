@@ -86,12 +86,12 @@ const Album = () => {
               actions={(album: Album) => (
                 <>
                   <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
-                    <Button variant="success" size="sm">
+                    <Button variant="link" size="sm">
                       Edit
                     </Button>
                   </Link>
                   <LoadingButton
-                    variant="danger"
+                    variant="link"
                     style={{ marginLeft: '12px' }}
                     loading={!!isLoading}
                     onClick={() => {

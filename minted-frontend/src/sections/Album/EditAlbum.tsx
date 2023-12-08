@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
-import Link from 'next/link';
 
 import { Album, AlbumMetadata } from '@/lib/redux';
-import Loader from '@/components/Loader';
 import { useAlbum } from '@/hooks/useAlbum';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import { createIpfsUrl } from '@/utils/ipfs';
@@ -15,17 +13,12 @@ type Props = {
 }
 
 const EditAlbum = ({ album }: Props) => {
-  const [selectedImageFileCid, setSelectedImageFileCid] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
-
   const albumMetadata = useAlbumMetadata(album);
   const { createAlbum } = useAlbum(album?.contract);
 
-  const handleUpdateAlbum = async (input: CreateAlbumInput) => {
+  const handleUpdateAlbum = useCallback(async (input: CreateAlbumInput) => {
     console.log('handleUpdateAlbum', input);
     try {
-      setIsLoading(true);
-
       let imageCid = null;
       if (input.image) {
         imageCid = await uploadFile(input.image);
@@ -33,7 +26,6 @@ const EditAlbum = ({ album }: Props) => {
           console.error('error when uploading image nft');
           return false;
         }
-        setSelectedImageFileCid(imageCid);
       }
 
       const imageUrl = albumMetadata?.image || '';
@@ -56,7 +48,6 @@ const EditAlbum = ({ album }: Props) => {
         Number(input.price),
         metaUrl,
         (albumId: number) => {
-          setIsLoading(false);
           toast.info(`New Album TokenId is: ${Number(albumId)}`);
         }
       );
@@ -66,20 +57,13 @@ const EditAlbum = ({ album }: Props) => {
         toast.info(`Album Metadata saved on ${metaUrl}`);
         return true;
       } else {
-        setIsLoading(false);
         toast.error(`Something wrong to create Album`);
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      setIsLoading(false);
     }
     return false;
-  };
-
-  if (isLoading) {
-    return <Loader />;
-  }
+  }, [createAlbum, createAlbum]);
 
   return (
     <EditAlbumForm

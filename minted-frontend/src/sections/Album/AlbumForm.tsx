@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { Album, AlbumMetadata } from '@/lib/redux';
@@ -26,16 +26,14 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const formik = useFormik({
-    initialValues: {
-      title: '',
-      description: '',
-      image: null,
-      maxSupply: 0,
-      price: '',
-    },
-    validationSchema: formSchema,
+    initialValues: initialValues,
+    validationSchema: validationSchema,
     onSubmit: (values) => {
-      handleSubmit(values);
+      setIsLoading(true);
+      onSubmit(values).then((success) => {
+        success && emptyFields();
+        setIsLoading(false);
+      });
     },
   });
 
@@ -46,16 +44,7 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
       formik.setFieldValue('maxSupply', album.maxsupply);
       formik.setFieldValue('price', metadata.price);
     }
-  }, [formik, album, metadata]);
-
-  const handleSubmit = (values: CreateAlbumInput) => {
-    setIsLoading(true);
-
-    onSubmit(values).then((success) => {
-      success && emptyFields();
-      setIsLoading(false);
-    });
-  };
+  }, [album, metadata]);
 
   const emptyFields = () => {};
 
@@ -65,97 +54,103 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
         <h2>{album ? 'Edit Album' : 'Create Album'}</h2>
       </div>
       <Row className="mt-3">
-        <div className="col-md-6 col-sm-12">
-          <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="title">
-            <Form.Label>Title</Form.Label>
-            <Form.Control
-              type="text"
-              name="title"
-              placeholder="Album Title"
-              disabled={isLoading}
-              isInvalid={!!(formik.touched.title && formik.errors.title)}
-              value={formik.values.title}
-              onChange={formik.handleChange}
-            />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {formik.errors.title}
-            </Form.Control.Feedback>
-          </Form.Group>
+        <Col xs="12" sm="6">
+          <Row>
+            <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="title">
+              <Form.Label>Title</Form.Label>
+              <Form.Control
+                type="text"
+                name="title"
+                placeholder="Album Title"
+                disabled={isLoading}
+                isInvalid={!!(formik.touched.title && formik.errors.title)}
+                value={formik.values.title}
+                onChange={formik.handleChange}
+              />
+              {!!formik.touched.title && (
+                <Form.Control.Feedback type="invalid" tooltip>
+                  {formik.errors.title}
+                </Form.Control.Feedback>
+              )}
+            </Form.Group>
 
-          <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="description">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              required
-              as="textarea"
-              rows={6}
-              cols={30}
-              disabled={isLoading}
-              placeholder="Description"
-              isInvalid={!!(formik.touched.description && formik.errors.description)}
-              value={formik.values.description}
-              onChange={formik.handleChange}
-            />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {formik.errors.description}
-            </Form.Control.Feedback>
-          </Form.Group>
+            <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="description">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={6}
+                cols={30}
+                disabled={isLoading}
+                placeholder="Description"
+                isInvalid={!!(formik.touched.description && formik.errors.description)}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+              />
+              {!!formik.touched.description && (
+                <Form.Control.Feedback type="invalid" tooltip>
+                  {formik.errors.description}
+                </Form.Control.Feedback>
+              )}
+            </Form.Group>
 
-          <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="image">
-            <Form.Label>Image</Form.Label>
-            <Form.Control
-              required
-              type="file"
-              accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-              disabled={isLoading}
-              isInvalid={!!(formik.touched.image && formik.errors.image)}
-              onChange={(e: any) => formik.setFieldValue('image', e.target.files[0])}
-            />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {formik.errors.image}
-            </Form.Control.Feedback>
-          </Form.Group>
+            <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="image">
+              <Form.Label>Image</Form.Label>
+              <Form.Control
+                type="file"
+                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                disabled={isLoading}
+                isInvalid={!!(formik.touched.image && formik.errors.image)}
+                onChange={(e: any) => formik.setFieldValue('image', e.target.files[0])}
+              />
+              {!!formik.touched.image && (
+                <Form.Control.Feedback type="invalid" tooltip>
+                  {formik.errors.image}
+                </Form.Control.Feedback>
+              )}
+            </Form.Group>
 
-          <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="maxSupply">
-            <Form.Label>Max Supply</Form.Label>
-            <Form.Control
-              required
-              as="input"
-              type="number"
-              min={1}
-              placeholder="Max Supply"
-              disabled={isLoading}
-              isInvalid={!!(formik.touched.maxSupply && formik.errors.maxSupply)}
-              value={formik.values.maxSupply}
-              onChange={formik.handleChange}
-            />
-            <Form.Control.Feedback type="invalid" tooltip>
-              {formik.errors.maxSupply}
-            </Form.Control.Feedback>
-          </Form.Group>
+            <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="maxSupply">
+              <Form.Label>Max Supply</Form.Label>
+              <Form.Control
+                as="input"
+                type="number"
+                min={1}
+                placeholder="Max Supply"
+                disabled={isLoading}
+                isInvalid={!!(formik.touched.maxSupply && formik.errors.maxSupply)}
+                value={formik.values.maxSupply}
+                onChange={formik.handleChange}
+              />
+              {!!formik.touched.maxSupply && (
+                <Form.Control.Feedback type="invalid" tooltip>
+                  {formik.errors.maxSupply}
+                </Form.Control.Feedback>
+              )}
+            </Form.Group>
 
-          <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="price">
-            <Form.Label>Price (AFT)</Form.Label>
-            <Form.Control
-              required
-              as="input"
-              type="number"
-              min={1}
-              placeholder="Album Price"
-              disabled={isLoading}
-              isInvalid={!!(formik.touched.price && formik.errors.price)}
-              value={formik.values.price}
-              onChange={formik.handleChange}
-            />
-            {!!formik.touched.price && (
-              <Form.Control.Feedback type="invalid" tooltip>
-                {formik.errors.price}
-              </Form.Control.Feedback>
-            )}
-          </Form.Group>
-        </div>
-        <div className="col-md-6 col-sm-12">
+            <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="price">
+              <Form.Label>Price (AFT)</Form.Label>
+              <Form.Control
+                as="input"
+                type="number"
+                min={1}
+                placeholder="Album Price"
+                disabled={isLoading}
+                isInvalid={!!(formik.touched.price && formik.errors.price)}
+                value={formik.values.price}
+                onChange={formik.handleChange}
+              />
+              {!!formik.touched.price && (
+                <Form.Control.Feedback type="invalid" tooltip>
+                  {formik.errors.price}
+                </Form.Control.Feedback>
+              )}
+            </Form.Group>
+          </Row>
+        </Col>
+        <Col xs="12" sm="6">
           {!!metadata && (
-            <div>
+            <div className="text-center" style={{ marginTop: 45 }}>
               <Image
                 src={metadata.image || '/images/album.png'}
                 alt="Album"
@@ -164,23 +159,35 @@ const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
               />
             </div>
           )}
-        </div>
+        </Col>
       </Row>
 
-      <div className="row">
-        <div className="col-md-6 col-sm-12">
+      <Row>
+        <Col xs="12" sm="6">
           <div className="text-end mt-5">
-            <LoadingButton loading={isLoading} type="submit">
+            <LoadingButton
+              loading={isLoading}
+              type="submit"
+              className="color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+            >
               <span>{album ? 'Update' : 'Create'} Album</span>
             </LoadingButton>
           </div>
-        </div>
-      </div>
+        </Col>
+      </Row>
     </Form>
   );
 };
 
-const formSchema = yup.object().shape({
+const initialValues = {
+  title: '',
+  description: '',
+  image: null,
+  maxSupply: 0,
+  price: '',
+};
+
+const validationSchema = yup.object().shape({
   title: yup.string().required('Title required'),
   description: yup.string().required('Description required'),
   image: yup.mixed().required('Image required'),
