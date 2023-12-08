@@ -25,7 +25,6 @@ const Album = () => {
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  console.log('showDeleteConfirm', showDeleteConfirm)
 
   const fetchAlbumList = useCallback(
     (owner: string) => {
@@ -45,20 +44,25 @@ const Album = () => {
     try {
       setLoading(true);
 
-      const success = await deleteAlbum(album.albumid, album.contract, (albumId) => {
-        toast.info('You have successfully deleted your album');
-        setLoading(false);
-      });
-      if (!success) {
-        setLoading(false);
-        toast.error('Failed to delete album');
+      const deletedAlbumId = await deleteAlbum(album.albumid, album.contract);
+      if (deletedAlbumId) {
+        return toast.info('You have successfully deleted your album');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err: any) {
+      console.error(err);
+      if (err && err.message === 'Cancelled') {
+        return toast.error(`Transaction cancelled`);
+      }
+    } finally {
       setLoading(false);
-      toast.error('Something went wrong!');
     }
+    toast.error('Something went wrong!');
   };
+
+  const handleConfirmDeletion = () => {
+    setShowDeleteConfirm(false);
+    selectedAlbum && handleDeleteAlbum(selectedAlbum)
+  }
 
   return (
     <section className="projects section-padding style-12">
@@ -93,7 +97,8 @@ const Album = () => {
                   <LoadingButton
                     variant="link"
                     style={{ marginLeft: '12px' }}
-                    loading={!!isLoading}
+                    loading={!!(isLoading && selectedAlbum === album)}
+                    disabled={!!isLoading}
                     onClick={() => {
                       setSelectedAlbum(album);
                       setShowDeleteConfirm(true);
@@ -110,7 +115,7 @@ const Album = () => {
           show={showDeleteConfirm}
           title="Delete Album"
           description="Are you sure to delete the album?"
-          onConfirm={() => selectedAlbum && handleDeleteAlbum(selectedAlbum)}
+          onConfirm={handleConfirmDeletion}
           onCancel={() => setShowDeleteConfirm(false)}
         />
       </div>

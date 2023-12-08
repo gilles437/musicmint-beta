@@ -96,10 +96,10 @@ export const useAlbum = (contractAddress?: string) => {
             if (!result.status.isFinalized) {
               return;
             }
-            
+
             const event: ContractEventsType = JSON.parse(JSON.stringify(result, null, 2));
             console.log('*****create.album.event', event);
-            
+
             let albumId = -1;
             const { contractEvents } = event;
             if (contractEvents?.length && contractEvents[0].args?.length > 1) {
@@ -118,42 +118,37 @@ export const useAlbum = (contractAddress?: string) => {
   );
 
   const deleteAlbum = useCallback(
-    async (
-      albumId: number,
-      contractAddress: string,
-      callback: (albumId: number) => void
-    ): Promise<boolean> => {
-      if (!request) {
-        return false;
-      }
-
-      try {
-        const { api, signer, options, account } = request;
-
-        const contract_ = new ContractPromise(api, contractAbi, contractAddress);
-        console.log('contract_', contract_);
-        const queryTx = await contract_.query.deleteAlbum(account, options, albumId);
-
-        if (!queryTx.result?.isOk) {
-          console.error('****queryTx.error', queryTx.result.asErr);
-          return false;
-        }
-
-        const tx = await contract_.tx.deleteAlbum(options, albumId);
-        console.log('*****tx=', tx);
-
-        const unsub = await tx.signAndSend(account, signer, (result) => {
-          if (result.status.isFinalized) {
-            callback(albumId);
-            unsub();
+    async (albumId: number, contractAddress: string): Promise<number | null> => {
+      return new Promise<number>(async (resolve, reject) => {
+        try {
+          if (!request) {
+            return reject('API not ready');
           }
-        });
 
-        return true;
-      } catch (err) {
-        console.error(typeof err, err);
-        return false;
-      }
+          const { api, signer, options, account } = request;
+
+          const contract_ = new ContractPromise(api, contractAbi, contractAddress);
+          console.log('contract_', contract_);
+          const queryTx = await contract_.query.deleteAlbum(account, options, albumId);
+
+          if (!queryTx.result?.isOk) {
+            console.error('****queryTx.error', queryTx.result.asErr);
+            return reject(queryTx.result.asErr);
+          }
+
+          const tx = await contract_.tx.deleteAlbum(options, albumId);
+          console.log('*****tx=', tx);
+
+          const unsub = await tx.signAndSend(account, signer, (result) => {
+            if (result.status.isFinalized) {
+              unsub();
+              resolve(albumId);
+            }
+          });
+        } catch (err) {
+          reject(err);
+        }
+      });
     },
     [request]
   );

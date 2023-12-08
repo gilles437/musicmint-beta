@@ -83,6 +83,7 @@ const CreateSong = ({ album }: Props) => {
           return true;
         }
       } catch (err: any) {
+        console.error(err);
         if (err && err.message === 'Cancelled') {
           toast.error(`Transaction cancelled`);
           return false;
