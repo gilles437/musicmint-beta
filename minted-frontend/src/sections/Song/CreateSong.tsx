@@ -26,7 +26,7 @@ const CreateSong = ({ album }: Props) => {
         })
       );
     },
-    [album]
+    [dispatch, album]
   );
 
   const handleCreateSong = useCallback(

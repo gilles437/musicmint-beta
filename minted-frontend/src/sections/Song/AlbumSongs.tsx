@@ -27,7 +27,7 @@ const AlbumSongs = ({ album }: Props) => {
 
   useEffect(() => {
     dispatch(fetchAlbumSongListAsync(album.albumid));
-  }, [album]);
+  }, [dispatch, album]);
 
   const handleRemoveSong = async (song: Song) => {
     try {

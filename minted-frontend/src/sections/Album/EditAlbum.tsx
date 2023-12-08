@@ -18,7 +18,7 @@ const EditAlbum = ({ album }: Props) => {
 
   const handleUpdateAlbum = useCallback(async (input: CreateAlbumInput) => {
     console.log('handleUpdateAlbum', input);
-    try {
+    /*try {
       let imageCid = null;
       if (input.image) {
         imageCid = await uploadFile(input.image);
@@ -61,9 +61,9 @@ const EditAlbum = ({ album }: Props) => {
       }
     } catch (error) {
       console.log(error);
-    }
+    }*/
     return false;
-  }, [createAlbum, createAlbum]);
+  }, [/*createAlbum*/]);
 
   return (
     <EditAlbumForm
