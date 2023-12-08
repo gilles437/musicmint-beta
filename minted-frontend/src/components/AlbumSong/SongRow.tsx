@@ -4,10 +4,10 @@ import { Song } from '@/lib/redux';
 
 type Props = {
   song: Song;
-  onRemove: (song: Song) => void;
+  actions?: (song: Song) => React.ReactElement;
 };
 
-const SongRow = ({ song, onRemove }: Props) => {
+const SongRow = ({ song, actions }: Props) => {
   const metadata = useSongMetadata(song);
 
   return (
@@ -29,7 +29,8 @@ const SongRow = ({ song, onRemove }: Props) => {
       <td>{song.maxsupply}</td>
       <td>{metadata?.price || ''}</td>
       <td>{dayjs(song.timestamp).format('MM/DD/YYYY HH:mm')}</td>
-      <td>
+      <td>{actions ? actions(song) : ''}</td>
+      {/* <td>
         <button
           className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
           onClick={() => onRemove(song)}
@@ -37,7 +38,7 @@ const SongRow = ({ song, onRemove }: Props) => {
         >
           Remove
         </button>
-      </td>
+      </td> */}
     </tr>
   );
 };

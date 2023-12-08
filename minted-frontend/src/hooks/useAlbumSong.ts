@@ -108,39 +108,35 @@ export const useAlbumSong = (contractAddress?: string) => {
   );
 
   const deleteSong = useCallback(
-    async (
-      albumId: number,
-      songId: string,
-      callback: (albumId: number) => void
-    ): Promise<boolean> => {
-      if (!request || !contract) {
-        return false;
-      }
-
-      try {
-        const { signer, options, account } = request;
-        const queryTx = await contract.query.deleteSong(account, options, albumId, songId);
-
-        if (!queryTx.result?.isOk) {
-          console.error('****queryTx.error', queryTx.result.asErr);
-          return false;
-        }
-
-        const tx = await contract.tx.deleteSong(options, albumId, songId);
-        console.log('*****tx=', tx);
-
-        const unsub = await tx.signAndSend(account, signer, (result) => {
-          console.log('*****tx**result=', result.status.isFinalized);
-          if (result.status.isFinalized) {
-            callback(albumId);
-            unsub();
+    async (albumId: number, songId: number): Promise<number | null> => {
+      return new Promise<number | null>(async (resolve, reject) => {
+        try {
+          if (!request || !contract) {
+            return reject('API is not ready');
           }
-        });
-        return true;
-      } catch (err) {
-        console.error(typeof err, err);
-        return false;
-      }
+
+          const { signer, options, account } = request;
+          const queryTx = await contract.query.deleteSong(account, options, albumId, songId);
+
+          if (!queryTx.result?.isOk) {
+            console.error('****queryTx.error', queryTx.result.asErr);
+            return reject(queryTx.result.asErr);
+          }
+
+          const tx = await contract.tx.deleteSong(options, albumId, songId);
+          console.log('*****tx=', tx);
+
+          const unsub = await tx.signAndSend(account, signer, (result) => {
+            console.log('*****tx**result=', result.status.isFinalized);
+            if (result.status.isFinalized) {
+              unsub();
+              resolve(albumId);
+            }
+          });
+        } catch (err) {
+          reject(err);
+        }
+      });
     },
     [request, contract]
   );

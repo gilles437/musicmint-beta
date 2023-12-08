@@ -3,13 +3,10 @@ import SongRow from "./SongRow";
 
 type Props = {
   songs: Song[];
+  actions?: (song: Song) => React.ReactElement;
 }
 
-const SongTable = ({ songs }: Props) => {
-  const onRemoveSong = async (song: Song) => {
-    
-  }
-
+const SongTable = ({ songs, actions }: Props) => {
   return (
     <div className="mt-5 table-responsive">
       <table className="table table-hover table-success table-striped">
@@ -27,7 +24,7 @@ const SongTable = ({ songs }: Props) => {
         <tbody>
           {(songs || []).map(
             (song: Song, index: number) => (
-              <SongRow key={index} song={song} onRemove={onRemoveSong} />
+              <SongRow key={index} song={song} actions={actions} />
             )
           )}
         </tbody>
