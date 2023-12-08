@@ -183,7 +183,7 @@ const initialValues = {
   title: '',
   description: '',
   image: null,
-  maxSupply: 0,
+  maxSupply: '',
   price: '',
 };
 

@@ -26,7 +26,7 @@ const CreateAlbum = () => {
     await dispatch(fetchAlbumByIdAsync({ contract: contractAddress, albumId }));
 
     const timerId = setTimeout(() => {
-      router.push(`/album/edit?contract=${contractAddress}&albumId=${albumId}`)
+      router.push(`/album/edit?contract=${contractAddress}&albumId=${albumId}`);
     }, 2000);
     return () => clearTimeout(timerId);
   };
@@ -54,26 +54,24 @@ const CreateAlbum = () => {
       }
 
       const metaUrl = createIpfsUrl(metadataId);
-      const success = await createAlbum(
-        Number(input.maxSupply),
-        Number(input.price),
-        metaUrl,
-        (albumId: number) => {
-          onAlbumCreated(albumId);
-          toast.info(`New Album TokenId is: ${Number(albumId)}`);
-        }
-      );
-      console.log('success', success);
+      toast.info(`New Album Metadata saved on ${metaUrl}`);
 
-      if (success) {
-        toast.info(`New Album Metadata saved on ${metaUrl}`);
+      const albumId = await createAlbum(Number(input.maxSupply), Number(input.price), metaUrl);
+      console.log('albumId', albumId);
+
+      if (albumId && albumId > 0) {
+        onAlbumCreated(albumId);
+        toast.info(`New Album TokenId is: ${Number(albumId)}`);
         return true;
-      } else {
-        toast.error(`Something wrong to create Album`);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (err: any) {
+      if (err && err.message === 'Cancelled') {
+        toast.error(`Transaction cancelled`);
+        return false;
+      }
     }
+    
+    toast.error(`Something wrong to create song`);
     return false;
   };
 

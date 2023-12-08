@@ -76,7 +76,7 @@ export const useAlbumSong = (contractAddress?: string) => {
           console.log('*****queryTx=', queryTx);
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
-            return reject();
+            return reject(queryTx.result.asErr);
           }
 
           const tx = await contract.tx.createSong(options, albumId, maxSupply, priceInWei, metaUrl);

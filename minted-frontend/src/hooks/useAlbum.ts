@@ -66,66 +66,53 @@ export const useAlbum = (contractAddress?: string) => {
   }, [api, contract, wallet, gasLimit]);
 
   const createAlbum = useCallback(
-    async (
-      maxSupply: number,
-      tokenPrice: number,
-      metaUrl: string,
-      callback: (albumId: number) => void
-    ): Promise<boolean> => {
-      if (!request || !contract) {
-        return false;
-      }
-      
-      try {
-        const { signer, options, account } = request;
-        const priceInWei = Number(tokenPrice) * 10 ** chainDecimals;
+    async (maxSupply: number, tokenPrice: number, metaUrl: string): Promise<number | null> => {
+      return new Promise<number | null>(async (resolve, reject) => {
+        try {
+          if (!request || !contract) {
+            return reject('API is not ready');
+          }
 
-        const queryTx = await contract.query.createAlbum(
-          account,
-          options,
-          maxSupply,
-          priceInWei,
-          metaUrl
-        );
+          const { signer, options, account } = request;
+          const priceInWei = Number(tokenPrice) * 10 ** chainDecimals;
 
-        if (!queryTx.result?.isOk) {
-          console.error('****queryTx.error', queryTx.result.asErr);
-          return false;
-        }
-
-        const tx = await contract.tx.createAlbum(
-          options,
-          maxSupply,
-          priceInWei,
-          metaUrl
-        );
-        console.log('*****tx=', tx);
-
-        const onSuccess = (result: any) => {
-          const event: ContractEventsType = JSON.parse(
-            JSON.stringify(result, null, 2)
+          const queryTx = await contract.query.createAlbum(
+            account,
+            options,
+            maxSupply,
+            priceInWei,
+            metaUrl
           );
-          console.log('*****create.album.event', event);
-          const { contractEvents } = event;
-          if (contractEvents?.length && contractEvents[0].args?.length > 1) {
-            const albumId = contractEvents[0].args[1];
-            callback(Number(albumId));
-          } else {
-            callback(-1);
-          }
-        };
 
-        const unsub = await tx.signAndSend(account, signer, (result) => {
-          if (result.status.isFinalized) {
-            onSuccess(result);
-            unsub();
+          if (!queryTx.result?.isOk) {
+            console.error('****queryTx.error', queryTx.result.asErr);
+            return reject(queryTx.result.asErr);
           }
-        });
-        return true;
-      } catch (err) {
-        console.error(typeof(err), err);
-        return false;
-      }
+
+          const tx = await contract.tx.createAlbum(options, maxSupply, priceInWei, metaUrl);
+          console.log('*****tx=', tx);
+
+          const unsub = await tx.signAndSend(account, signer, (result) => {
+            if (!result.status.isFinalized) {
+              return;
+            }
+            
+            const event: ContractEventsType = JSON.parse(JSON.stringify(result, null, 2));
+            console.log('*****create.album.event', event);
+            
+            let albumId = -1;
+            const { contractEvents } = event;
+            if (contractEvents?.length && contractEvents[0].args?.length > 1) {
+              albumId = Number(contractEvents[0].args[1]);
+            }
+
+            unsub();
+            resolve(albumId);
+          });
+        } catch (err) {
+          reject(err);
+        }
+      });
     },
     [request, contract, chainDecimals]
   );
@@ -139,17 +126,13 @@ export const useAlbum = (contractAddress?: string) => {
       if (!request) {
         return false;
       }
-      
+
       try {
         const { api, signer, options, account } = request;
 
         const contract_ = new ContractPromise(api, contractAbi, contractAddress);
-        console.log('contract_', contract_)
-        const queryTx = await contract_.query.deleteAlbum(
-          account,
-          options,
-          albumId
-        );
+        console.log('contract_', contract_);
+        const queryTx = await contract_.query.deleteAlbum(account, options, albumId);
 
         if (!queryTx.result?.isOk) {
           console.error('****queryTx.error', queryTx.result.asErr);
@@ -168,7 +151,7 @@ export const useAlbum = (contractAddress?: string) => {
 
         return true;
       } catch (err) {
-        console.error(typeof(err), err);
+        console.error(typeof err, err);
         return false;
       }
     },
@@ -184,7 +167,7 @@ export const useAlbum = (contractAddress?: string) => {
       if (!request) {
         return false;
       }
-      
+
       try {
         const { api, signer, options, account } = request;
 
@@ -208,7 +191,7 @@ export const useAlbum = (contractAddress?: string) => {
         });
         return true;
       } catch (err) {
-        console.error(typeof(err), err);
+        console.error(typeof err, err);
         return false;
       }
     },
