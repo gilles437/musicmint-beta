@@ -41,7 +41,7 @@ export const useAlbum = (contractAddress?: string) => {
 
   const request = useMemo(() => {
     if (!api) {
-      console.error('Api is not ready');
+      console.error('API is not ready');
       return null;
     }
     if (!wallet) {
@@ -55,6 +55,7 @@ export const useAlbum = (contractAddress?: string) => {
       return null;
     }
 
+    console.info('API Ready!!!');
     return {
       api,
       wallet,
@@ -74,52 +75,57 @@ export const useAlbum = (contractAddress?: string) => {
       if (!request || !contract) {
         return false;
       }
+      
+      try {
+        const { signer, options, account } = request;
+        const priceInWei = Number(tokenPrice) * 10 ** chainDecimals;
 
-      const { signer, options, account } = request;
-      const priceInWei = Number(tokenPrice) * 10 ** chainDecimals;
+        const queryTx = await contract.query.createAlbum(
+          account,
+          options,
+          maxSupply,
+          priceInWei,
+          metaUrl
+        );
 
-      const queryTx = await contract.query.createAlbum(
-        account,
-        options,
-        maxSupply,
-        priceInWei,
-        metaUrl
-      );
+        if (!queryTx.result?.isOk) {
+          console.error('****queryTx.error', queryTx.result.asErr);
+          return false;
+        }
 
-      if (!queryTx.result?.isOk) {
-        console.error('****queryTx.error', queryTx.result.asErr);
+        const tx = await contract.tx.createAlbum(
+          options,
+          maxSupply,
+          priceInWei,
+          metaUrl
+        );
+        console.log('*****tx=', tx);
+
+        const onSuccess = (result: any) => {
+          const event: ContractEventsType = JSON.parse(
+            JSON.stringify(result, null, 2)
+          );
+          console.log('*****create.album.event', event);
+          const { contractEvents } = event;
+          if (contractEvents?.length && contractEvents[0].args?.length > 1) {
+            const albumId = contractEvents[0].args[1];
+            callback(Number(albumId));
+          } else {
+            callback(-1);
+          }
+        };
+
+        const unsub = await tx.signAndSend(account, signer, (result) => {
+          if (result.status.isFinalized) {
+            onSuccess(result);
+            unsub();
+          }
+        });
+        return true;
+      } catch (err) {
+        console.error(typeof(err), err);
         return false;
       }
-
-      const tx = await contract.tx.createAlbum(
-        options,
-        maxSupply,
-        priceInWei,
-        metaUrl
-      );
-      console.log('*****tx=', tx);
-
-      const onSuccess = (result: any) => {
-        const event: ContractEventsType = JSON.parse(
-          JSON.stringify(result, null, 2)
-        );
-        console.log('*****create.album.event', event);
-        const { contractEvents } = event;
-        if (contractEvents?.length && contractEvents[0].args?.length > 1) {
-          const albumId = contractEvents[0].args[1];
-          callback(Number(albumId));
-        } else {
-          callback(-1);
-        }
-      };
-
-      const unsub = await tx.signAndSend(account, signer, (result) => {
-        if (result.status.isFinalized) {
-          onSuccess(result);
-          unsub();
-        }
-      });
-      return true;
     },
     [request, contract, chainDecimals]
   );
@@ -127,36 +133,46 @@ export const useAlbum = (contractAddress?: string) => {
   const deleteAlbum = useCallback(
     async (
       albumId: number,
+      contractAddress: string,
       callback: (albumId: number) => void
     ): Promise<boolean> => {
-      if (!request || !contract) {
+      if (!request) {
         return false;
       }
+      
+      try {
+        const { api, signer, options, account } = request;
 
-      const { signer, options, account } = request;
-      const queryTx = await contract.query.deleteAlbum(
-        account,
-        options,
-        albumId
-      );
+        const contract_ = new ContractPromise(api, contractAbi, contractAddress);
+        console.log('contract_', contract_)
+        const queryTx = await contract_.query.deleteAlbum(
+          account,
+          options,
+          albumId
+        );
 
-      if (!queryTx.result?.isOk) {
-        console.error('****queryTx.error', queryTx.result.asErr);
-        return false;
-      }
-
-      const tx = await contract.tx.createAlbum(options, albumId);
-      console.log('*****tx=', tx);
-
-      const unsub = await tx.signAndSend(account, signer, (result) => {
-        if (result.status.isFinalized) {
-          callback(albumId);
-          unsub();
+        if (!queryTx.result?.isOk) {
+          console.error('****queryTx.error', queryTx.result.asErr);
+          return false;
         }
-      });
-      return true;
+
+        const tx = await contract_.tx.deleteAlbum(options, albumId);
+        console.log('*****tx=', tx);
+
+        const unsub = await tx.signAndSend(account, signer, (result) => {
+          if (result.status.isFinalized) {
+            callback(albumId);
+            unsub();
+          }
+        });
+
+        return true;
+      } catch (err) {
+        console.error(typeof(err), err);
+        return false;
+      }
     },
-    [request, contract]
+    [request]
   );
 
   const mintAlbum = useCallback(
@@ -168,28 +184,33 @@ export const useAlbum = (contractAddress?: string) => {
       if (!request) {
         return false;
       }
+      
+      try {
+        const { api, signer, options, account } = request;
 
-      const { api, signer, options, account } = request;
+        const contract_ = new ContractPromise(api, contractAbi, contractAddress);
+        const queryTx = await contract_.query.mintAlbum(account, options, albumId);
 
-      const contract = new ContractPromise(api, contractAbi, contractAddress);
-      const queryTx = await contract.query.mintAlbum(account, options, albumId);
+        if (!queryTx.result?.isOk) {
+          console.error('****queryTx.error', queryTx.result.asErr);
+          return false;
+        }
 
-      if (!queryTx.result?.isOk) {
-        console.error('****queryTx.error', queryTx.result.asErr);
+        const tx = await contract_.tx.mintAlbum(options, albumId);
+        console.log('*****tx=', tx);
+
+        const unsub = await tx.signAndSend(account, signer, (result) => {
+          console.log('*****tx**result=', result.status.isFinalized);
+          if (result.status.isFinalized) {
+            callback(albumId);
+            unsub();
+          }
+        });
+        return true;
+      } catch (err) {
+        console.error(typeof(err), err);
         return false;
       }
-
-      const tx = await contract.tx.mintAlbum(options, albumId);
-      console.log('*****tx=', tx);
-
-      const unsub = await tx.signAndSend(account, signer, (result) => {
-        console.log('*****tx**result=', result.status.isFinalized);
-        if (result.status.isFinalized) {
-          callback(albumId);
-          unsub();
-        }
-      });
-      return true;
     },
     [request]
   );
