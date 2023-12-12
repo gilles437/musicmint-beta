@@ -25,6 +25,7 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
         return;
     }
     
+    console.log("txs", txs)
     const ownerIds = new Set<string>()
     txs.forEach(tx => {
         if (tx.from) {
@@ -97,7 +98,7 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
         }
     })
     if(collections.length){
-        console.log('collections', collections)
+        // console.log('collections', collections)
         await ctx.store.insert(collections)
     }
 
@@ -111,37 +112,49 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
         await ctx.store.insert(mintSongs)
     }
 
-    let removeAdminItems: string[] = [];
-    let removeSuperAdminItems: string[] = [];
-    txs.map(tx => {
-        if(tx.action == "delete") {
-            //if(tx.contract && tx.contract != "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM" ){
-                removeAdminItems.push(tx.contract)
-            //}
-            // if(tx.contract == "5C4hrfjw9DjXZTzV3MwzrrAr9P1MJhSrvWGWqi1eSuyUpnhM" && tx.to){
-            //  removeSuperAdminItems.push(tx.to);
-            //}
-        }
-    })
-    console.log({removeAdminItems})
-    console.log({removeSuperAdminItems})
-
-    const uniqueAdminArray = [...new Set(removeAdminItems)];
-    console.log({uniqueAdminArray})
-    const uniqueSuperAdminArray = [...new Set(removeSuperAdminItems)];
-    console.log({uniqueSuperAdminArray})
-
-    const transferAdminRemoveItem = await ctx.store.find(Transfer, {
-        where:{
-            contract: In([...uniqueAdminArray])
-        }
-    }).then(data => {
-        return data;
-    })
-    console.log({transferAdminRemoveItem})
+    let removeAlbumItems: Collections[] = [];
+    let removeSongItems: Collections[] = [];
     await Promise.all(
-        transferAdminRemoveItem.map(async (item)=>{
-            await ctx.store.remove(Transfer, item.id)
+        txs.map(async (tx) => {
+            if(tx.action == 'delete'){
+                const collectionsRemoveItem = await ctx.store.find(Collections, {
+                    where:{
+                        albumid: tx.album_id,
+                        songid: tx.song_id,
+                        contract: tx.contract
+                    }
+                }).then(data => {
+                    return data;
+                })
+                console.log({collectionsRemoveItem})
+                //delete_album
+                if(tx.song_id == 0){
+                    removeAlbumItems.concat(collectionsRemoveItem)
+                }
+                //delete_song
+                else{
+                    removeSongItems.concat(collectionsRemoveItem)
+                }
+            }
+        })
+    )
+    console.log({removeAlbumItems})
+    console.log({removeSongItems})
+
+    const uniqueAlbumArray = [...new Set(removeAlbumItems)];
+    console.log({uniqueAlbumArray})
+    const uniqueSongArray = [...new Set(removeSongItems)];
+    console.log({uniqueSongArray})
+
+    await Promise.all(
+        uniqueAlbumArray.map(async (item)=>{
+            await ctx.store.remove(Collections, item.id)
+        })
+    )
+
+    await Promise.all(
+        uniqueSongArray.map(async (item)=>{
+            await ctx.store.remove(Collections, item.id)
         })
     )
 })
@@ -204,6 +217,7 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
                     })
                 }
                 else if (album.__kind === 'ItemDeleted') {
+                    console.log("ItemDeleted", album)
                     records.push({
                         id: event.id,
                         from: '',
