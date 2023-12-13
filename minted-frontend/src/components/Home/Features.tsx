@@ -31,8 +31,6 @@ const Features = () => {
 
   useEffect(() => {
     dispatch(fetchArtistListAsync());
-    // const account = getActiveAccount();
-    // fetchAlbumList(account);
   }, [dispatch, fetchAlbumList]);
 
   useEffect(() => {
