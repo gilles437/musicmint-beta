@@ -25,7 +25,6 @@ const Features = () => {
   const [position] = useState({ from: 2150, to: 2500 });
   const dispatch = useDispatch();
   const albums = useSelector(selectAlbums);
-  const account = getActiveAccount();
 
   const fetchAlbumList = useCallback(
     (owner: string) => {
@@ -36,6 +35,7 @@ const Features = () => {
 
   useEffect(() => {
     dispatch(fetchArtistListAsync());
+    const account = getActiveAccount();
     fetchAlbumList(account);
   }, [dispatch, fetchAlbumList]);
 
