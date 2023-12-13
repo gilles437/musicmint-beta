@@ -4,7 +4,7 @@ import * as ss58 from '@subsquid/ss58'
 import assert from 'assert'
 
 import * as albums from "./abi/albums"
-import {MintAlbums, MintSongs, Collections, Owner, Transfer} from './model'
+import { MintItems, Collections, Owner } from './model'
 import {events} from './types'
 import { env } from 'process'
 
@@ -45,8 +45,7 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
     await ctx.store.save([...ownersMap.values()])
 
     const collections: Collections[] = [];
-    const mintAlbums: MintAlbums[] = [];
-    const mintSongs: MintSongs[] = [];
+    const mintItems: MintItems[] = [];
     txs.map(tx => {
         if (tx.action == 'add') {
             const collection = new Collections({
@@ -64,8 +63,8 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
             })
             collections.push(collection);
         }
-        else if(tx.action == 'mint' && tx.song_id == 0){ //mint_album
-            const mintAlbum = new MintAlbums({
+        else if(tx.action == 'mint'){ //mint_album
+            const mintAlbum = new MintItems({
                 id: tx.id,
                 block: tx.block,
                 uri: tx.uri,
@@ -78,23 +77,7 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
                 price: tx.price,
                 contract: tx.contract
             })
-            mintAlbums.push(mintAlbum);
-        }
-        else if(tx.action == 'mint' && tx.song_id != 0){ //mint_song
-            const mintSong = new MintSongs({
-                id: tx.id,
-                block: tx.block,
-                uri: tx.uri,
-                timestamp: tx.timestamp,
-                from: tx.from,
-                to: tx.to,
-                songid: tx.song_id,
-                albumid: tx.album_id,
-                maxsupply: tx.max_supply,
-                price: tx.price,
-                contract: tx.contract
-            })
-            mintSongs.push(mintSong);
+            mintItems.push(mintAlbum);
         }
     })
     if(collections.length){
@@ -102,18 +85,12 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
         await ctx.store.insert(collections)
     }
 
-    if(mintAlbums.length){
-        console.log('mintAlbums', mintAlbums)
-        await ctx.store.insert(mintAlbums)
+    if(mintItems.length){
+        console.log('mintItems', mintItems)
+        await ctx.store.insert(mintItems)
     }
 
-    if(mintSongs.length){
-        console.log('mintSongs', mintSongs)
-        await ctx.store.insert(mintSongs)
-    }
-
-    let removeAlbumItems: Collections[] = [];
-    let removeSongItems: Collections[] = [];
+    let removeItems: Collections[] = [];
     await Promise.all(
         txs.map(async (tx) => {
             if(tx.action == 'delete'){
@@ -127,33 +104,18 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
                     return data;
                 })
                 console.log({collectionsRemoveItem})
-                //delete_album
-                if(tx.song_id == 0){
-                    removeAlbumItems.concat(collectionsRemoveItem)
-                }
-                //delete_song
-                else{
-                    removeSongItems.concat(collectionsRemoveItem)
-                }
+                removeItems.concat(collectionsRemoveItem)
+                
             }
         })
     )
-    console.log({removeAlbumItems})
-    console.log({removeSongItems})
+    console.log({removeItems})
 
-    const uniqueAlbumArray = [...new Set(removeAlbumItems)];
+    const uniqueAlbumArray = [...new Set(removeItems)];
     console.log({uniqueAlbumArray})
-    const uniqueSongArray = [...new Set(removeSongItems)];
-    console.log({uniqueSongArray})
 
     await Promise.all(
         uniqueAlbumArray.map(async (item)=>{
-            await ctx.store.remove(Collections, item.id)
-        })
-    )
-
-    await Promise.all(
-        uniqueSongArray.map(async (item)=>{
             await ctx.store.remove(Collections, item.id)
         })
     )
@@ -204,7 +166,7 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
                     records.push({
                         id: event.id,
                         from: album.from && encodeAddress(album.from),
-                        to: 'toto',
+                        to: '',
                         block: block.header.height,
                         timestamp: new Date(block.header.timestamp || 0),
                         uri: album.uri,
@@ -221,7 +183,7 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
                     records.push({
                         id: event.id,
                         from: '',
-                        to: 'toto',
+                        to: '',
                         block: block.header.height,
                         timestamp: new Date(block.header.timestamp || 0),
                         uri:'',

@@ -37,23 +37,7 @@ type Collections @entity {
   contract: ID!
 }
 
-type MintSongs @entity {
-  id: ID!
-  block: Int! @index
-  timestamp: DateTime! @index
-  extrinsicHash: String @index
-  from: String! @index
-  to: String! @index
-  uri: String @index
-  albumid: Int! @index
-  songid: Int! @index
-  maxsupply: Int! @index
-  price: BigInt! @index
-  contract: ID!
-}
-
-
-type MintAlbums @entity {
+type MintItems @entity {
   id: ID!
   block: Int! @index
   timestamp: DateTime! @index
