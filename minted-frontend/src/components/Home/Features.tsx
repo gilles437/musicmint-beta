@@ -1,17 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore, { Autoplay } from 'swiper';
+import { getActiveAccount } from '@/utils/account';
+
 // import CountTo from '../CountTo';
 import features from '@/data/NFTMarketplace/features.json';
 
+import {
+  useSelector,
+  useDispatch,
+  selectAlbums,
+  fetchOwnedAlbumListAsync,
+  fetchArtistListAsync,
+} from '@/lib/redux';
+
 import "swiper/css";
 import "swiper/css/autoplay";
+import AlbumItem from '../Album/AlbumItem';
 
 SwiperCore.use([Autoplay]);
 
 const Features = () => {
   const [load, setLoad] = useState(false);
   const [position] = useState({ from: 2150, to: 2500 });
+  const dispatch = useDispatch();
+  const albums = useSelector(selectAlbums);
+  const account = getActiveAccount();
+
+  const fetchAlbumList = useCallback(
+    (owner: string) => {
+      dispatch(fetchOwnedAlbumListAsync(owner));
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    dispatch(fetchArtistListAsync());
+    fetchAlbumList(account);
+  }, [dispatch, fetchAlbumList]);
 
   useEffect(() => {
     setLoad(true);
@@ -31,23 +57,7 @@ const Features = () => {
         <div className="content">
           <div className="row justify-content-center">
             {
-              features.map((feature, index) => (
-                <div className="col-lg-3 col-sm-6" key={index}>
-                  <a href="#" className="feature-card">
-                    <div className="img icon-65 rounded-circle overflow-hidden img-cover me-3">
-                      <img src={feature.image} alt="" />
-                    </div>
-                    <div className="info">
-                      <h5> {feature.name} </h5>
-                      <p>
-                        Rise:
-                        <span className="color-yellowGreen ms-1"> $1200000 </span>
-                        {/* <CountTo className="counter color-yellowGreen" from={0} to={feature.rise} speed={1500} position={position} /> */}
-                      </p>
-                    </div>
-                  </a>
-                </div>
-              ))
+              albums.map((album, index) => <AlbumItem album={album} key={index}/>)
             }
           </div>
         </div>
