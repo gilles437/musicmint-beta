@@ -84,7 +84,7 @@ const Projects = () => {
               {projects.projects.map((project, index) => (
                 <SwiperSlide key={index}>
                   <div className={` mix ${project.filter}`} key={index}>
-                    <div className="project-card">
+                    <Link href="/album/detail" className="project-card hover-shadow">
                       <div className="top-inf">
                         <span>
                           <i className="fas fa-heart"></i> {project.hearts}
@@ -96,7 +96,7 @@ const Projects = () => {
                       </div>
                       <div className="img img-cover">
                         <img src={project.image} alt="" />
-                        <Link
+                        {/* <Link
                           href="/album/detail"
                           className="butn bg-yellowGreen rounded-3 hover-shadow"
                         >
@@ -104,7 +104,7 @@ const Projects = () => {
                             <i className="fal fa-shopping-basket me-1"></i> Buy
                             Now
                           </span>
-                        </Link>
+                        </Link> */}
                       </div>
                       <div className="info">
                         <small>
@@ -125,7 +125,7 @@ const Projects = () => {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 </SwiperSlide>
               ))}
