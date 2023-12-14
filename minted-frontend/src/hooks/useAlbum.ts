@@ -93,6 +93,7 @@ export const useAlbum = (contractAddress?: string) => {
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
+            console.log('*****tx**result=', result.status.isFinalized);
             if (!result.status.isFinalized) {
               return;
             }
@@ -136,10 +137,13 @@ export const useAlbum = (contractAddress?: string) => {
             return reject(queryTx.result.asErr);
           }
 
+          console.log('deleteAlbum, albumId=', albumId)
           const tx = await contract_.tx.deleteAlbum(options, albumId);
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
+            // console.log('*****tx**result=', result.toHuman());
+            console.log('*****tx**result=', result.status.isFinalized);
             if (result.status.isFinalized) {
               unsub();
               resolve(albumId);
@@ -177,7 +181,7 @@ export const useAlbum = (contractAddress?: string) => {
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
-            console.log('*****tx**result=', result.toHuman());
+            // console.log('*****tx**result=', result.toHuman());
             console.log('*****tx**result=', result.status.isFinalized);
             if (result.status.isFinalized) {
               unsub();
