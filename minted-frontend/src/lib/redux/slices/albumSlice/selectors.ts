@@ -6,6 +6,8 @@ import type { ReduxState } from '@/lib/redux'
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectAlbums = (state: ReduxState) => state.album.albums;
 
+export const selectMintedAlbums = (state: ReduxState) => state.album.mintedAlbums;
+
 export const selectAlbumMetadata = (state: ReduxState) => state.album.albumMetadata;
 
 export const selectSongs = (state: ReduxState) => state.album.songs;

@@ -70,6 +70,24 @@ export const QUERY_GET_ALBUMS = (from: string) => gql`
   }
 `;
 
+export const QUERY_GET_MINTED_ALBUMS = (to: string) => gql`
+  query getMintItems {
+    mintItems(where: {to_eq: "${to}", songid_eq: 0}) {
+      albumid
+      block
+      contract
+      extrinsicHash
+      from
+      id
+      maxsupply
+      price
+      timestamp
+      to
+      uri
+    }
+  }
+`;
+
 export const QUERY_GET_ALBUM_BY_ID = (contract: string, albumId: number) => gql`
   query getCollections {
     collections(where: {contract_eq: "${contract}", albumid_eq: ${albumId}}) {

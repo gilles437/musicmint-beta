@@ -3,6 +3,7 @@ import { request } from 'graphql-request';
 import { DEFAULT_CHAIN, ALBUM_SUBGRAPH_URLS } from '@/constants';
 import {
   QUERY_GET_ALBUMS,
+  QUERY_GET_MINTED_ALBUMS,
   QUERY_GET_ALL_ALBUMS,
   QUERY_GET_ALBUM_SONGS,
   QUERY_GET_ALBUM_BY_ID,
@@ -12,6 +13,10 @@ import { Album, Song } from './types';
 
 interface FetchType<T> {
   collections: T[];
+}
+
+interface MintFetchType<T> {
+  mintItems: T[];
 }
 
 export const fetchAllAlbumList = async (): Promise<Album[]> => {
@@ -28,6 +33,15 @@ export const fetchOwnedAlbumList = async (owner: string): Promise<Album[]> => {
     QUERY_GET_ALBUMS(owner)
   );
   return result.collections;
+};
+
+export const fetchMintedAlbumList = async (owner: string): Promise<Album[]> => {
+  const result: MintFetchType<Album> = await request(
+    ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
+    QUERY_GET_MINTED_ALBUMS(owner)
+  );
+  console.log('result.mintItems', result.mintItems)
+  return result.mintItems;
 };
 
 export const fetchAlbumById = async (contract: string, albumId: number): Promise<Album | null> => {

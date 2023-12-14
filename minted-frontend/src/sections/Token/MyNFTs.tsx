@@ -1,14 +1,16 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
 import {
   useSelector,
   useDispatch,
-  selectAlbums,
-  fetchOwnedAlbumListAsync,
+  selectMintedAlbums,
+  fetchMintedAlbumListAsync,
+  fetchAllAlbumsAsync,
   fetchArtistListAsync,
   Album,
+  selectAlbums,
 } from '@/lib/redux';
 import AlbumTable from '@/components/Album/AlbumTable';
 import { useAlbum } from '@/hooks/useAlbum';
@@ -19,26 +21,35 @@ import LoadingButton from '@/components/LoadingButton';
 
 const MyNFTs = () => {
   const dispatch = useDispatch();
-  const albums = useSelector(selectAlbums);
-  const artist = useFindArtist();
+  const allAlbums = useSelector(selectAlbums);
+  const mintedAlbums = useSelector(selectMintedAlbums);
+  // const artist = useFindArtist();
   const { deleteAlbum } = useAlbum();
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
-  const fetchAlbumList = useCallback(
-    (owner: string) => {
-      dispatch(fetchOwnedAlbumListAsync(owner));
-    },
-    [dispatch]
-  );
-
   useEffect(() => {
-    dispatch(fetchArtistListAsync());
+    dispatch(fetchAllAlbumsAsync());
+    // dispatch(fetchArtistListAsync());
 
     const account = getActiveAccount();
-    fetchAlbumList(account);
-  }, [dispatch, fetchAlbumList]);
+    dispatch(fetchMintedAlbumListAsync(account));
+  }, [dispatch]);
+
+  const myAlbums = useMemo(() => {
+    if (allAlbums?.length && mintedAlbums?.length) {
+      const result = [];
+      for (const minted of mintedAlbums) {
+        const item = allAlbums.find(i => i.albumid === minted.albumid);
+        if (item) {
+          result.push({ ...item, uri: item.uri });
+        }
+      }
+      return result;
+    }
+    return mintedAlbums;
+  }, [allAlbums, mintedAlbums]);
 
   const handleDeleteAlbum = async (album: Album) => {
     try {
@@ -85,7 +96,7 @@ const MyNFTs = () => {
         )} */}
         <div className="col-sm-12">
           <AlbumTable
-            albums={albums}
+            albums={myAlbums}
             actions={(album: Album) => (
               <>
                 {/* <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
