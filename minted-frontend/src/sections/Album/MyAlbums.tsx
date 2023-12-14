@@ -43,8 +43,10 @@ const Album = () => {
   const handleDeleteAlbum = async (album: Album) => {
     try {
       setLoading(true);
-
+      console.log("delete albumId",album.albumid)
       const deletedAlbumId = await deleteAlbum(album.albumid, album.contract);
+      console.log("deletedAlbumId",deletedAlbumId)
+
       if (deletedAlbumId) {
         return toast.info('You have successfully deleted your album');
       }

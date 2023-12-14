@@ -175,6 +175,7 @@ export const useAlbum = (contractAddress?: string) => {
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
+            console.log('*****tx**result=', result.toHuman());
             console.log('*****tx**result=', result.status.isFinalized);
             if (result.status.isFinalized) {
               unsub();

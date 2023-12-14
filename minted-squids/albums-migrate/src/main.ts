@@ -81,7 +81,7 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
         }
     })
     if(collections.length){
-        // console.log('collections', collections)
+        console.log('collections', collections)
         await ctx.store.insert(collections)
     }
 
@@ -90,7 +90,6 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
         await ctx.store.insert(mintItems)
     }
 
-    let removeItems: Collections[] = [];
     await Promise.all(
         txs.map(async (tx) => {
             if(tx.action == 'delete'){
@@ -104,19 +103,14 @@ processor.run(new TypeormDatabase({supportHotBlocks: true}), async (ctx) => {
                     return data;
                 })
                 console.log({collectionsRemoveItem})
-                removeItems.concat(collectionsRemoveItem)
-                
+                if(collectionsRemoveItem.length){
+                    const uniqueAlbumArray = [...new Set(collectionsRemoveItem)];
+                    console.log({uniqueAlbumArray})
+                    uniqueAlbumArray.map(async (item)=>{
+                        await ctx.store.remove(Collections, item.id)
+                    })
+                }                
             }
-        })
-    )
-    console.log({removeItems})
-
-    const uniqueAlbumArray = [...new Set(removeItems)];
-    console.log({uniqueAlbumArray})
-
-    await Promise.all(
-        uniqueAlbumArray.map(async (item)=>{
-            await ctx.store.remove(Collections, item.id)
         })
     )
 })
@@ -157,12 +151,13 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
                 if (!album) {
                     continue;
                 }
-                // console.log('album', album)
+                console.log('album', album)
               
                 // console.log('album.kind', album.__kind)
                 // console.log('album.albumId', album.albumId, album.songId)
 
                 if (album.__kind === 'ItemCreated') {
+                    console.log("ItemCreated", album)
                     records.push({
                         id: event.id,
                         from: album.from && encodeAddress(album.from),
