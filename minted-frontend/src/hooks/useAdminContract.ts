@@ -4,16 +4,16 @@ import { useCallback, useMemo } from "react";
 
 import { ALLFEAT_CONTRACT } from "@/constants";
 import contractAbi from "@/contracts/admin/admin.json"; // Replace by your contract ABI
+import { useApi } from "@/contexts/Polkadot";
 import { ContractFile as ArtistContract } from "@/contracts/album/albums1";
 import { useWallets } from "@/contexts/Wallets";
 import { getActiveAccount } from "@/utils/account";
 
 import { Artist } from "../lib/redux/slices/adminSlice";
-import { useApi } from "./useApi";
 import { useGasLimit } from "./useGasLimit";
 
 export const useAdminContract = () => {
-  const api = useApi();
+  const { api } = useApi();
   const gasLimit = useGasLimit(api);
   const { wallet } = useWallets();
 

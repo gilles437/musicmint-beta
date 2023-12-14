@@ -2,10 +2,10 @@ import { ContractPromise } from '@polkadot/api-contract';
 import { useCallback, useMemo } from 'react';
 
 import contractAbi from '@/contracts/album/albums.json';
+import { useApi } from '@/contexts/Polkadot';
 import { useWallets } from '@/contexts/Wallets';
 import { getActiveAccount } from '@/utils/account';
 
-import { useApi } from './useApi';
 import { useGasLimit } from './useGasLimit';
 import { useChainDecimals } from './useChainDecimals';
 
@@ -27,7 +27,7 @@ export interface ContractEventsType {
 }
 
 export const useAlbum = (contractAddress?: string) => {
-  const api = useApi();
+  const { api } = useApi();
   const gasLimit = useGasLimit(api);
   const chainDecimals = useChainDecimals(api);
   const { wallet } = useWallets();
