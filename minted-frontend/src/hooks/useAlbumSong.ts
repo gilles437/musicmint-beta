@@ -163,7 +163,7 @@ export const useAlbumSong = (contractAddress?: string) => {
           return false;
         }
 
-        const tx = await contract.tx.mintAlbum(options, albumId);
+        const tx = await contract.tx.mintSong(options, albumId);
         console.log('*****tx=', tx);
 
         const unsub = await tx.signAndSend(account, signer, (result) => {
