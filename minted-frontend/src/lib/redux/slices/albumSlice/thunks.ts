@@ -2,6 +2,7 @@
 import { createAppAsyncThunk } from '@/lib/redux/createAppAsyncThunk';
 import {
   fetchOwnedAlbumList,
+  fetchMintedAlbumList,
   fetchAllAlbumList,
   fetchAlbumSongList,
   fetchAlbumById,
@@ -21,6 +22,13 @@ export const fetchOwnedAlbumListAsync = createAppAsyncThunk(
   'album/fetchOwnedAlbumListAsync',
   async (owner: string) => {
     return await fetchOwnedAlbumList(owner);
+  }
+);
+
+export const fetchMintedAlbumListAsync = createAppAsyncThunk(
+  'album/fetchMintedAlbumListAsync',
+  async (owner: string) => {
+    return await fetchMintedAlbumList(owner);
   }
 );
 

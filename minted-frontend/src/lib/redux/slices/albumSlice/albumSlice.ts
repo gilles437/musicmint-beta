@@ -8,6 +8,7 @@ import {
   fetchAlbumByIdAsync,
   fetchAlbumSongListAsync,
   fetchSongByIdAsync,
+  fetchMintedAlbumListAsync,
 } from './thunks';
 import { Album, AlbumMetadata, Song, SongMetadata } from './types';
 
@@ -16,6 +17,7 @@ export interface AlbumState {
   status: 'idle' | 'loading' | 'failed';
   loading: boolean;
   albums: Album[];
+  mintedAlbums: Album[];
   albumMetadata: { [key: string]: AlbumMetadata };
   songs: Song[];
   songMetadata: { [key: string]: SongMetadata };
@@ -25,6 +27,7 @@ const initialState: AlbumState = {
   status: 'idle',
   loading: false,
   albums: [],
+  mintedAlbums: [],
   albumMetadata: {},
   songs: [],
   songMetadata: {},
@@ -84,6 +87,13 @@ export const albumSlice = createSlice({
         if (action.payload) {
           state.albums.push(action.payload);
         }
+      })
+      .addCase(fetchMintedAlbumListAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchMintedAlbumListAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.mintedAlbums = action.payload;
       })
       .addCase(fetchAlbumSongListAsync.pending, (state) => {
         state.status = 'loading';

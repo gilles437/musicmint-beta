@@ -39,7 +39,7 @@ const AllAlbums = () => {
       setIsLoading(true);
       setSelectedAlbum(album);
 
-      const mintedId = await mintAlbum(album.albumid, album.contract);
+      const mintedId = await mintAlbum(album.albumid, album.price, album.contract);
       if (mintedId) {
         return toast.info('You have successfully minted the album');
       }

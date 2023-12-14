@@ -13,7 +13,7 @@ const AlbumTable = ({ albums, showOwner, actions }: Props) => {
       <table className="table table-hover table-success table-striped">
         <thead className="thead-dark">
           <tr>
-            <th scope="col">Address</th>
+            <th scope="col">Title</th>
             <th scope="col"></th>
             {!!showOwner && <th scope="col">Owner</th>}
             <th scope="col">Price</th>

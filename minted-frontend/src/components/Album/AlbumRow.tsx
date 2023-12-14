@@ -11,7 +11,9 @@ type Props = {
 };
 
 const AlbumRow = ({ album, showOwner, actions }: Props) => {
+  console.log('album~~~~~~~~~~~~~~~', album)
   const metadata = useAlbumMetadata(album);
+  console.log('metadata', metadata)
 
   return (
     <tr>

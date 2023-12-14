@@ -93,6 +93,7 @@ export const useAlbum = (contractAddress?: string) => {
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
+            console.log('*****tx**result=', result.status.isFinalized);
             if (!result.status.isFinalized) {
               return;
             }
@@ -136,10 +137,13 @@ export const useAlbum = (contractAddress?: string) => {
             return reject(queryTx.result.asErr);
           }
 
+          console.log('deleteAlbum, albumId=', albumId)
           const tx = await contract_.tx.deleteAlbum(options, albumId);
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
+            // console.log('*****tx**result=', result.toHuman());
+            console.log('*****tx**result=', result.status.isFinalized);
             if (result.status.isFinalized) {
               unsub();
               resolve(albumId);
@@ -154,7 +158,7 @@ export const useAlbum = (contractAddress?: string) => {
   );
 
   const mintAlbum = useCallback(
-    async (albumId: number, contractAddress: string): Promise<number | null> => {
+    async (albumId: number, price: string, contractAddress: string): Promise<number | null> => {
       return new Promise<number | null>(async (resolve, reject) => {
         try {
           if (!request) {
@@ -162,19 +166,22 @@ export const useAlbum = (contractAddress?: string) => {
           }
 
           const { api, signer, options, account } = request;
+          const mintOptions = { ...options, value: price };
+          console.log('mintOptions', mintOptions)
 
           const contract_ = new ContractPromise(api, contractAbi, contractAddress);
-          const queryTx = await contract_.query.mintAlbum(account, options, albumId);
+          const queryTx = await contract_.query.mintAlbum(account, mintOptions, albumId);
 
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
             return reject(queryTx.result.asErr);
           }
 
-          const tx = await contract_.tx.mintAlbum(options, albumId);
+          const tx = await contract_.tx.mintAlbum(mintOptions, albumId);
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
+            // console.log('*****tx**result=', result.toHuman());
             console.log('*****tx**result=', result.status.isFinalized);
             if (result.status.isFinalized) {
               unsub();
