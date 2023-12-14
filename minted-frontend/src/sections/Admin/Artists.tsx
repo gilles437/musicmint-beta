@@ -12,10 +12,6 @@ import {
 import { useAdminContract } from "@/hooks/useAdminContract";
 import { useFindAddress } from "@/hooks/useFindAddress";
 
-const toastFunction = (string: any) => {
-  toast.warn(string, { position: toast.POSITION.TOP_RIGHT });
-};
-
 const ArtistsSection = () => {
   const dispatch = useDispatch();
   const {
@@ -42,13 +38,14 @@ const ArtistsSection = () => {
   };
 
   const addAdmin = async (newContractAddress: string) => {
+    console.log('addAdmin', newContractAddress);
     if (!newAdminInput) {
-      toastFunction("Please input address");
+      toast.warn("Please input address");
       return;
     }
 
     if (!newContractAddress) {
-      toastFunction("Please contract address");
+      toast.warn("Please contract address");
       return;
     }
 
@@ -58,30 +55,30 @@ const ArtistsSection = () => {
     );
 
     if (success) {
-      toastFunction("Artist has been successfully added");
+      toast.success("Artist has been successfully added");
       setNewAdminInput("");
       const timerId = setTimeout(() => fetchArtistList(), 5000);
       return () => clearTimeout(timerId);
     } else {
-      toastFunction("Failed to add artist");
+      toast.warn("Failed to add artist");
     }
   };
 
   const removeAdmin = async (artistAddress: string) => {
     if (!artistAddress) {
-      toastFunction("Please input address");
+      toast.warn("Please input address");
       return;
     }
 
     // Check if it is super admin.
     if (!isSuperAdmin()) {
-      toastFunction("Current selected account is not SuperAdmin !");
+      toast.warn("Current selected account is not SuperAdmin !");
       return;
     }
 
     const artist = artistList.find((i) => i.to == artistAddress);
     if (!artist) {
-      toastFunction("Invalid address!");
+      toast.warn("Invalid address!");
       return;
     }
 
@@ -91,12 +88,12 @@ const ArtistsSection = () => {
     );
 
     if (success) {
-      toastFunction("Artist has been successfully removed");
+      toast.success("Artist has been successfully removed");
       setNewAdminInput("");
       const timerId = setTimeout(() => fetchArtistList(), 5000);
       return () => clearTimeout(timerId);
     } else {
-      toastFunction("Failed to remove artist");
+      toast.warn("Failed to remove artist");
     }
   };
 
@@ -106,23 +103,22 @@ const ArtistsSection = () => {
 
   const deployAdminContract = async () => {
     if (!newAdminInput) {
-      toastFunction("You should input address!");
+      toast.warn("You should input address!");
       return;
     }
 
     // Check if it is super admin.
     if (!isSuperAdmin()) {
-      toastFunction("Current selected account is not SuperAdmin!");
+      toast.warn("Current selected account is not SuperAdmin!");
       return;
     }
 
-    console.log(`~~~~~~~~~~~~~~~~~~~~~~b1`)
     if (findAddress(newAdminInput)) {
-      toastFunction("Account is already added !");
+      toast.warn("Account is already added !");
       return;
     }
 
-    console.log(`~~~~~~~~~~~~~~~~~~~~~~b2`)
+    console.log(`start deploy contract`, newAdminInput)
     await adminContract.deployArtistContract(
       newAdminInput,
       (contractAddress: string) => {
