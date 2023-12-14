@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Artist } from '@/lib/redux';
 import features from '@/data/NFTMarketplace/features.json';
+import { useArtistMetadata } from '@/hooks/useArtistMetadata';
 
 type Props = {
   artist: Artist;
@@ -10,15 +11,17 @@ type Props = {
 const imageUrl = () => {
   const index = Math.floor(Math.random() * 100) % features.length;
   return features[index].image;
-}
+};
 
 const ArtistAvatar = ({ artist }: Props) => {
+  const metadata = useArtistMetadata(artist.to);
+
   return (
     <div className="col-lg-3 col-sm-6">
       <a href="#" className="feature-card">
         <div className="img icon-65 rounded-circle overflow-hidden img-cover me-3">
           <Image
-            src={imageUrl()}
+            src={metadata?.image || imageUrl()}
             alt="Album"
             width={60}
             height={60}
@@ -26,11 +29,16 @@ const ArtistAvatar = ({ artist }: Props) => {
           />
         </div>
         <div className="info">
-          <h5> Artist </h5>
-          <p>
-            Price:
-            <span className="color-yellowGreen ms-1"> 20 </span>
-            {/* <CountTo className="counter color-yellowGreen" from={0} to={feature.rise} speed={1500} position={position} /> */}
+          <h5> {metadata?.name || 'Artist'}  </h5>
+          <p
+            style={{
+              width: '132px',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden',
+              fontSize: '12px',
+            }}
+          >
+            {metadata?.description || '...'}
           </p>
         </div>
       </a>
