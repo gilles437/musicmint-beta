@@ -63,13 +63,13 @@ const AllAlbums = () => {
           <h2>All Albums</h2>
         </div>
         <div className="mb-5">
-          {!!artist && (
+          {/* {!!artist && (
             <Link className="d-flex" href={Routes.ALBUM_OWNED}>
               <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
                 My Albums
               </button>
             </Link>
-          )}
+          )} */}
           <div className="col-sm-12">
             <AlbumTable
               albums={albums}
