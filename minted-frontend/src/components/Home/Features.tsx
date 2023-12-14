@@ -91,7 +91,7 @@ const Features = () => {
             <SwiperSlide className="swiper-slide">
               <a href="#">
                 {' '}
-                <img src="/assets/img/icons/star3.png" alt="" /> <h2> Sell your nft </h2>{' '}
+                <img src="/assets/img/icons/star3.png" alt="" /> <h2> Sell your albums </h2>{' '}
               </a>
             </SwiperSlide>
             <SwiperSlide className="swiper-slide">
@@ -103,13 +103,13 @@ const Features = () => {
             <SwiperSlide className="swiper-slide">
               <a href="#">
                 {' '}
-                <img src="/assets/img/icons/star3.png" alt="" /> <h2> nft’s great </h2>{' '}
+                <img src="/assets/img/icons/star3.png" alt="" /> <h2> Album's great </h2>{' '}
               </a>
             </SwiperSlide>
             <SwiperSlide className="swiper-slide">
               <a href="#">
                 {' '}
-                <img src="/assets/img/icons/star3.png" alt="" /> <h2> Sell your nft </h2>{' '}
+                <img src="/assets/img/icons/star3.png" alt="" /> <h2> Sell your albums </h2>{' '}
               </a>
             </SwiperSlide>
           </Swiper>
