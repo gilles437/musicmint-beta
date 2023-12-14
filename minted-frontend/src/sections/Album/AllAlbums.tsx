@@ -1,38 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
-import Link from 'next/link';
-import Routes from '@/constants/routes';
-import {
-  useSelector,
-  useDispatch,
-  selectAlbums,
-  fetchAllAlbumsAsync,
-  fetchArtistListAsync,
-  Album,
-} from '@/lib/redux';
-import { useFindArtist } from '@/hooks/useFindArtist';
+import { useSelector, selectAlbums, Album } from '@/lib/redux';
 import { useAlbum } from '@/hooks/useAlbum';
-import { getActiveAccount } from '@/utils/account';
-import AlbumTable from '@/components/Album/AlbumTable';
 import LoadingButton from '@/components/LoadingButton';
 import AlbumCard from '@/components/Album/AlbumCard';
 
 const AllAlbums = () => {
-  const dispatch = useDispatch();
   const albums = useSelector(selectAlbums);
-  const artist = useFindArtist();
   const { mintAlbum } = useAlbum();
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [isLoading, setIsLoading] = useState(false);
-
-  const fetchAlbumList = useCallback(() => {
-    dispatch(fetchAllAlbumsAsync());
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchArtistListAsync());
-    fetchAlbumList();
-  }, [dispatch, fetchAlbumList]);
 
   const handleBuyAlbum = async (album: Album) => {
     console.log('handleBuyAlbum', album);
@@ -84,37 +61,6 @@ const AllAlbums = () => {
               </div>
             ))}
           </div>
-
-          {/* {!!artist && (
-            <Link className="d-flex" href={Routes.ALBUM_OWNED}>
-              <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
-                My Albums
-              </button>
-            </Link>
-          )} */}
-          {/* <div className="col-sm-12">
-            <AlbumTable
-              albums={albums}
-              showOwner={true}
-              actions={(album: Album) => {
-                const activeAccount = getActiveAccount();
-                if (activeAccount === album.from) {
-                  return <></>;
-                }
-
-                return (
-                  <LoadingButton
-                    loading={!!(isLoading && album == selectedAlbum)}
-                    disabled={isLoading}
-                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                    onClick={() => handleBuyAlbum(album)}
-                  >
-                    Buy
-                  </LoadingButton>
-                );
-              }}
-            />
-          </div> */}
         </div>
       </div>
     </section>
