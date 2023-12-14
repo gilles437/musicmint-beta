@@ -15,6 +15,7 @@ import { useAlbum } from '@/hooks/useAlbum';
 import { getActiveAccount } from '@/utils/account';
 import AlbumTable from '@/components/Album/AlbumTable';
 import LoadingButton from '@/components/LoadingButton';
+import AlbumCard from '@/components/Album/AlbumCard';
 
 const AllAlbums = () => {
   const dispatch = useDispatch();
@@ -56,6 +57,19 @@ const AllAlbums = () => {
     return false;
   };
 
+  const listenButton = (album: Album) => (
+    <LoadingButton
+      loading={!!(isLoading && album == selectedAlbum)}
+      disabled={isLoading}
+      size="sm"
+      className="btn rounded-3 color-000 border-1 border brd-light bg-yellowGreen"
+      style={{ padding: '6px 16px' }}
+      onClick={() => handleBuyAlbum(album)}
+    >
+      Listen
+    </LoadingButton>
+  );
+
   return (
     <section className="projects section-padding style-12">
       <div className="container">
@@ -63,6 +77,14 @@ const AllAlbums = () => {
           <h2>All Albums</h2>
         </div>
         <div className="mb-5">
+          <div className="row">
+            {(albums || []).map((album, index) => (
+              <div key={index} className="col-3">
+                <AlbumCard album={album} actionButton={listenButton} />
+              </div>
+            ))}
+          </div>
+
           {/* {!!artist && (
             <Link className="d-flex" href={Routes.ALBUM_OWNED}>
               <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
@@ -70,7 +92,7 @@ const AllAlbums = () => {
               </button>
             </Link>
           )} */}
-          <div className="col-sm-12">
+          {/* <div className="col-sm-12">
             <AlbumTable
               albums={albums}
               showOwner={true}
@@ -92,7 +114,7 @@ const AllAlbums = () => {
                 );
               }}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

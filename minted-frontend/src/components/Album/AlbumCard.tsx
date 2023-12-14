@@ -5,50 +5,43 @@ import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 
 type Props = {
   album: Album;
+  actionButton?: (album: Album) => React.ReactElement;
 };
 
-const AlbumCard = ({ album }: Props) => {
+const AlbumCard = ({ album, actionButton }: Props) => {
   const metadata = useAlbumMetadata(album);
 
   return (
     <div className={`mix `}>
       <Link href="/album/detail" className="project-card hover-shadow">
         <div className="top-inf">
-          <span>
-            <i className="fas fa-heart"></i> {200}
-          </span>
-          <span>
-            <i className="fas fa-sort color-yellowGreen"></i>
-            {1000}
-          </span>
+          <div>
+            <div>Max Supply</div>
+            <div className="color-yellowGreen">{album.maxsupply} / {album.maxsupply}</div>
+          </div>
+          <div>
+            <div>Price</div>
+            <div className="color-yellowGreen">{metadata?.price} AFT</div>
+          </div>
         </div>
         <div className="img img-cover">
           <img src={metadata?.image} alt="" />
-          {/* <Link
-            href="/album/detail"
-            className="butn bg-yellowGreen rounded-3 hover-shadow"
-          >
-            <span className="text-dark">
-              <i className="fal fa-shopping-basket me-1"></i> Buy
-              Now
-            </span>
-          </Link> */}
         </div>
         <div className="info">
-          <small>
-            Highest bid
-            <span className="color-yellowGreen">{1000}</span>
-          </small>
-          <h6> {metadata?.title || ''} </h6>
+          <div className="d-flex justify-content-between">
+            <div>
+              <small>
+                <span style={{ paddingRight: 4 }}>Price</span>
+                <span className="color-yellowGreen">{metadata?.price} AFT</span>
+              </small>
+              <h6> {metadata?.title || ''} </h6>
+            </div>
+            <div>
+              {!!actionButton && <>{actionButton(album)}</>}
+            </div>
+          </div>
           <div className="btm-inf">
-            <p>
-              <i className="fal fa-users color-yellowGreen"></i>
-              {500}+ Place Bit
-            </p>
-            <p>
-              <i className="fal fa-history color-yellowGreen"></i>
-              History
-            </p>
+            <p><small>{metadata?.description}</small></p>
           </div>
         </div>
       </Link>
