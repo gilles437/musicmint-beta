@@ -1,9 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ContractPromise } from "@polkadot/api-contract";
-import { WeightV2 } from "@polkadot/types/interfaces";
 import { toast } from "react-toastify";
-import { useApi } from "@/hooks/useApi";
-import { useWallets } from "@/contexts/Wallets";
 import { beatifyAddress, getActiveAccount } from "@/utils/account";
 import Identicon from "@polkadot/react-identicon";
 import {
@@ -15,12 +11,6 @@ import {
 } from "@/lib/redux";
 import { useFindAddress } from "@/hooks/useFindAddress";
 import { useAdminContract } from "@/hooks/useAdminContract";
-
-interface adminListType {
-  to: string;
-  contract: string;
-  timestamp: string;
-}
 
 const toastFunction = (string: any) => {
   toast.warn(string, { position: toast.POSITION.TOP_RIGHT });

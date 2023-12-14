@@ -116,11 +116,13 @@ const ArtistsSection = () => {
       return;
     }
 
+    console.log(`~~~~~~~~~~~~~~~~~~~~~~b1`)
     if (findAddress(newAdminInput)) {
       toastFunction("Account is already added !");
       return;
     }
 
+    console.log(`~~~~~~~~~~~~~~~~~~~~~~b2`)
     await adminContract.deployArtistContract(
       newAdminInput,
       (contractAddress: string) => {

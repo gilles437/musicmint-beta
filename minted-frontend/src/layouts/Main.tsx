@@ -7,10 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 //= Components
 import { Providers } from '@/lib/providers'
 import PreLoader from "@/components/PreLoader";
-import WalletProvider from "@/contexts/Wallets";
 import ScrollToTop from "@/components/ScrollToTop";
 //= Scripts
-import fixStylesheetsOrder from "@/common/fixStylesheetsOrder";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -19,10 +17,6 @@ type Props = {
 };
 
 const MainLayout = ({ children }: Props) => {
-  // useEffect(() => {
-  //   fixStylesheetsOrder(isRTL);
-  // }, [isRTL]);
-
   return (
     <>
       {/* <Head>
@@ -37,11 +31,9 @@ const MainLayout = ({ children }: Props) => {
       {/* <PreLoader /> */}
 
       <Providers>
-        <WalletProvider>
           <Navbar />
           {children}
           <Footer />
-        </WalletProvider>
       </Providers>
 
       <ToastContainer

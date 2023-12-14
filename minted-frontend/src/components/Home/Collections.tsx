@@ -64,7 +64,7 @@ const Collections = () => {
                 <span className="mx-2"> collections </span>
               </h6>
               <h2>
-                Top <span> Collection </span>
+                Trending <span> Collection </span>
               </h2>
             </div>
           </div>

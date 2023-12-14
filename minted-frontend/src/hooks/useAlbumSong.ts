@@ -3,15 +3,15 @@ import { useCallback, useMemo } from 'react';
 
 import contractAbi from '@/contracts/album/albums.json';
 import { useWallets } from '@/contexts/Wallets';
+import { useApi } from '@/contexts/Polkadot';
 import { getActiveAccount } from '@/utils/account';
 
-import { useApi } from './useApi';
 import { useGasLimit } from './useGasLimit';
 import { useChainDecimals } from './useChainDecimals';
 import { ContractEventsType } from './useAlbum';
 
 export const useAlbumSong = (contractAddress?: string) => {
-  const api = useApi();
+  const { api } = useApi();
   const gasLimit = useGasLimit(api);
   const chainDecimals = useChainDecimals(api);
   const { wallet } = useWallets();

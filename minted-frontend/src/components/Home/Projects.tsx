@@ -69,10 +69,10 @@ const Projects = () => {
             <div className="section-head style-12">
               <h6 className="mb-3">
                 <img src="/assets/img/icons/star2.png" alt="" className="icon" />
-                <span className="mx-2"> NFTs </span>
+                <span className="mx-2"> Albums </span>
               </h6>
               <h2>
-                Top <span> NFT </span>
+                Top <span> Albums </span>
               </h2>
             </div>
           </div>
@@ -80,7 +80,7 @@ const Projects = () => {
             <a href="/album" className="butn bg-yellowGreen rounded-3 hover-shadow">
               <span className="text-dark">
                 <img className="icon-20 me-1" src="/assets/img/icons/star3.png" alt="" />
-                All NFTs
+                All Albums
               </span>
             </a>
           </div>

@@ -6,13 +6,15 @@ import React, { useEffect } from 'react';
 import Routes from '@/constants/routes';
 //=Hooks
 import { useQueryAlbum } from '@/hooks/useQueryAlbum';
+import { useFetchAllAlbums } from '@/hooks/useFetchAllAlbums';
 //= Sections
 import { EditAlbum } from '@/sections/Album';
 import CreateSong from '@/sections/Song/CreateSong';
 import AlbumSongs from '@/sections/Song/AlbumSongs';
 
-const EditAlbumMain: NextPage = () => {
+const EditAlbumPage: NextPage = () => {
   const album = useQueryAlbum();
+  useFetchAllAlbums();
 
   useEffect(() => {
     document.body.classList.add('home-style-12');
@@ -52,4 +54,4 @@ const EditAlbumMain: NextPage = () => {
   );
 };
 
-export default EditAlbumMain;
+export default EditAlbumPage;

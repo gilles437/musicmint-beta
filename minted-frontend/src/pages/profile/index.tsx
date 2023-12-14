@@ -3,11 +3,12 @@ import Head from "next/head";
 import React, { useEffect } from "react";
 
 import dynamic from "next/dynamic";
-const CreateProfile = dynamic(() => import("@/components/Profile"), {
+
+const Profile = dynamic(() => import("@/sections/Profile"), {
   ssr: false,
 });
 
-const Profile: NextPage = () => {
+const ProfilePage: NextPage = () => {
   useEffect(() => {
     document.body.classList.add("home-style-12");
     return () => document.body.classList.remove("home-style-12");
@@ -20,10 +21,10 @@ const Profile: NextPage = () => {
       </Head>
 
       <main>
-        <CreateProfile />
+        <Profile />
       </main>
     </>
   );
 };
 
-export default Profile;
+export default ProfilePage;

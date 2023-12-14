@@ -43,9 +43,9 @@ const Album = () => {
   const handleDeleteAlbum = async (album: Album) => {
     try {
       setLoading(true);
-      console.log("delete albumId",album.albumid)
+      console.log('delete albumId', album.albumid);
       const deletedAlbumId = await deleteAlbum(album.albumid, album.contract);
-      console.log("deletedAlbumId",deletedAlbumId)
+      console.log('deletedAlbumId', deletedAlbumId);
 
       if (deletedAlbumId) {
         return toast.info('You have successfully deleted your album');
@@ -91,15 +91,18 @@ const Album = () => {
             actions={(album: Album) => (
               <>
                 <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
-                  <Button variant="link" size="sm">
+                  <Button
+                    variant="link"
+                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                  >
                     Edit
                   </Button>
                 </Link>
                 <LoadingButton
-                  variant="link"
+                  loading={!!(isLoading && album == selectedAlbum)}
+                  disabled={isLoading}
+                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
                   style={{ marginLeft: '12px' }}
-                  loading={!!(isLoading && selectedAlbum === album)}
-                  disabled={!!isLoading}
                   onClick={() => {
                     setSelectedAlbum(album);
                     setShowDeleteConfirm(true);
