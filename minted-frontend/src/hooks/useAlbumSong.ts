@@ -145,6 +145,7 @@ export const useAlbumSong = (contractAddress?: string) => {
     async (
       albumId: number,
       songId: string,
+      price: string,
       contractAddress: string,
       callback: (success: boolean) => void
     ): Promise<boolean> => {
@@ -154,16 +155,18 @@ export const useAlbumSong = (contractAddress?: string) => {
 
       try {
         const { api, signer, options, account } = request;
+        const mintOptions = { ...options, value: price };
+        console.log('mintOptions', mintOptions)
 
         const contract = new ContractPromise(api, contractAbi, contractAddress);
-        const queryTx = await contract.query.mintSong(account, options, albumId, songId);
+        const queryTx = await contract.query.mintSong(account, mintOptions, albumId, songId);
 
         if (!queryTx.result?.isOk) {
           console.error('****queryTx.error', queryTx.result.asErr);
           return false;
         }
 
-        const tx = await contract.tx.mintSong(options, albumId);
+        const tx = await contract.tx.mintSong(mintOptions, albumId);
         console.log('*****tx=', tx);
 
         const unsub = await tx.signAndSend(account, signer, (result) => {

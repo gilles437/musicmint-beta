@@ -4,6 +4,7 @@ export interface Album {
   maxsupply: number;
   from: string;
   to: string;
+  price: string;
   contract: string;
   uri: string;
   timestamp: string;
@@ -25,6 +26,7 @@ export interface Song {
   maxsupply: number;
   from: string;
   to: string;
+  price: string;
   uri: string;
   timestamp: string;
 }
