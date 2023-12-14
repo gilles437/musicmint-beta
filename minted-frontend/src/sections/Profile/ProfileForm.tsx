@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -57,6 +57,13 @@ const ProfileForm = ({ profile, onSubmit }: Props) => {
 
   const emptyFields = () => {};
 
+  const profileImage = useMemo(() => {
+    if (formik.values.image) {
+      return URL.createObjectURL(formik.values.image);
+    }
+    return profile?.image;
+  }, [formik, profile?.image]);
+
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
       <div className="text-center mb-3">
@@ -66,18 +73,18 @@ const ProfileForm = ({ profile, onSubmit }: Props) => {
         <Row>
           <Col xs="12" sm="3"></Col>
           <Col xs="12" sm="6">
-            {!!profile?.image && (
+            {!!profileImage && (
               <div className="text-center" style={{ marginTop: 45 }}>
                 <Image
                   style={{ borderRadius: 100 }}
-                  src={profile.image || '/images/album.png'}
+                  src={profileImage || '/images/album.png'}
                   alt="Avatar"
                   width={210}
                   height={210}
                 />
               </div>
             )}
-              
+
             <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="name">
               <Form.Label>Title</Form.Label>
               <Form.Control
@@ -191,7 +198,7 @@ const ProfileForm = ({ profile, onSubmit }: Props) => {
                 type="submit"
                 className="color-000 fw-bold border-1 border brd-light bg-yellowGreen"
               >
-                <span>{profile ? 'Update' : 'Create'} Album</span>
+                <span>Update Profile</span>
               </LoadingButton>
             </div>
           </Col>
