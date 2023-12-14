@@ -33,6 +33,7 @@ const ArtistAvatar = ({ artist }: Props) => {
           <p
             style={{
               width: '132px',
+              height: '36px',
               textOverflow: 'ellipsis',
               overflow: 'hidden',
               fontSize: '12px',
