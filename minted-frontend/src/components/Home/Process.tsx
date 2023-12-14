@@ -18,7 +18,7 @@ const Process = () => {
             {
               processSteps.map((step, index) => (
                 <div className={`col-lg-3 col-sm-6 ${index % 2 !== 0 ? 'pt-lg-5' : ''}`} key={index}>
-                  <a href="#" className="process-card">
+                  <a href={step.link} className="process-card">
                     <div className="icon">
                       <img src={step.icon} alt="" />
                     </div>
