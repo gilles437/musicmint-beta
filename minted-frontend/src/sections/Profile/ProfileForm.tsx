@@ -46,14 +46,14 @@ const ProfileForm = ({ profile, onSubmit }: Props) => {
   });
 
   useEffect(() => {
-    if (profile && profile) {
+    if (profile) {
       formik.setFieldValue('name', profile.name);
       formik.setFieldValue('description', profile.description);
       formik.setFieldValue('twitter', profile.twitter);
       formik.setFieldValue('instagram', profile.instagram);
       formik.setFieldValue('youtube', profile.youtube);
     }
-  }, [profile, profile]);
+  }, [profile]);
 
   const emptyFields = () => {};
 
