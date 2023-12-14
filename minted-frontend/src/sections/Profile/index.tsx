@@ -16,7 +16,7 @@ const CreateProfile = () => {
       if (storageProfile) {
         const axiosConfig = {
           method: 'get',
-          url: `https://ipfs.io/ipfs/${storageProfile}`,
+          url: createIpfsUrl(storageProfile),
           headers: {
             accept: 'application/json',
             'Content-Type': 'application/json',

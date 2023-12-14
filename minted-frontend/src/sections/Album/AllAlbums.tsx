@@ -60,7 +60,7 @@ const AllAlbums = () => {
     <section className="projects section-padding style-12">
       <div className="container">
         <div className="text-center mb-3">
-          <h2>Albums</h2>
+          <h2>All Albums</h2>
         </div>
         <div className="mb-5">
           {!!artist && (
