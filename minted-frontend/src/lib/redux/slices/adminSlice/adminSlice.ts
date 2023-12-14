@@ -3,7 +3,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 /* Instruments */
 import { fetchSuperAdminListAsync, fetchArtistListAsync } from './thunks';
-import { Artist, SuperAdmin } from './types';
+import { Artist, ArtistMetadata, SuperAdmin } from './types';
 
 /* Types */
 export interface AdminState {
@@ -12,6 +12,7 @@ export interface AdminState {
   loadingArtists: boolean;
   superAdmins: SuperAdmin[];
   artists: Artist[];
+  artistMetadata: { [key: string]: ArtistMetadata };
 }
 
 const initialState: AdminState = {
@@ -20,6 +21,7 @@ const initialState: AdminState = {
   loadingArtists: false,
   superAdmins: [],
   artists: [],
+  artistMetadata: {},
 };
 
 export const adminSlice = createSlice({
@@ -38,6 +40,14 @@ export const adminSlice = createSlice({
     },
     setArtists: (state, action: PayloadAction<Artist[]>) => {
       state.artists = action.payload;
+    },
+    setArtistMetadata: (
+      state,
+      action: PayloadAction<{ address: string; metadata: ArtistMetadata }>
+    ) => {
+      if (action.payload.address) {
+        state.artistMetadata[action.payload.address] = action.payload.metadata;
+      }
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -61,4 +71,5 @@ export const adminSlice = createSlice({
   },
 });
 
-export const { setLoadingStatus, setSuperAdmins, setArtists } = adminSlice.actions;
+export const { setLoadingStatus, setSuperAdmins, setArtists, setArtistMetadata } =
+  adminSlice.actions;

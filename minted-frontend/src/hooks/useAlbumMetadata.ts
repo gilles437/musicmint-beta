@@ -9,7 +9,7 @@ import {
   useSelector,
 } from '@/lib/redux';
 
-const fetchAlbumMetadata = (url: string) => {
+export const fetchMetadata = (url: string) => {
   const request = {
     method: 'GET',
     url,
@@ -19,7 +19,7 @@ const fetchAlbumMetadata = (url: string) => {
     },
   };
   return axios(request)
-    .then(({ data }: { data: AlbumMetadata }) => {
+    .then(({ data }: { data: any }) => {
       return data;
     })
     .catch((e) => {
@@ -43,7 +43,7 @@ export const useAlbumMetadata = (album?: Album | null) => {
 
   useEffect(() => {
     if (album && album.uri && !metadata) {
-      fetchAlbumMetadata(album.uri).then((meta) => {
+      fetchMetadata(album.uri).then((meta) => {
         meta && dispatch(setAlbumMetadata({ metadata: meta, id: album.id }));
       });
     }

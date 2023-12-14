@@ -33,21 +33,21 @@ const AlbumCard = ({ album, actionButton }: Props) => {
           <img src={metadata?.image} alt="" />
         </div>
         <div className="info">
-          <div className="d-flex justify-content-between">
-            <div>
-              <small>
-                <span style={{ paddingRight: 4 }}>Price</span>
-                <span className="color-yellowGreen">{metadata?.price} AFT</span>
-              </small>
-              <h6> {metadata?.title || ''} </h6>
-            </div>
-            <div>{!!actionButton && <>{actionButton(album)}</>}</div>
+          <div>
+            <small>
+              <span style={{ paddingRight: 4 }}>Price</span>
+              <span className="color-yellowGreen">{metadata?.price} AFT</span>
+            </small>
+            <h6> {metadata?.title || ''} </h6>
           </div>
           <div className="btm-inf">
             <p>
-              <small>{metadata?.description}</small>
+              <small style={{ height: 42, textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                {metadata?.description}
+              </small>
             </p>
           </div>
+            <div>{!!actionButton && <>{actionButton(album)}</>}</div>
         </div>
       </Link>
     </div>

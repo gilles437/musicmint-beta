@@ -7,3 +7,5 @@ import type { ReduxState } from '@/lib/redux'
 export const selectSuperAdmins = (state: ReduxState) => state.admin.superAdmins;
 
 export const selectArtists = (state: ReduxState) => state.admin.artists;
+
+export const selectArtistMetadata = (state: ReduxState) => state.admin.artistMetadata;
