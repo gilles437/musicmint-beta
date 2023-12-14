@@ -59,16 +59,17 @@ const ProfileForm = ({ profile, onSubmit }: Props) => {
 
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
-      <div className="text-center mb-3 pb-3">
+      <div className="text-center mb-3">
         <h2>Update Your Profile</h2>
       </div>
-      <div className="mt-3" style={{ margin: '0 auto'}}>
+      <div className="mt-3">
         <Row>
           <Col xs="12" sm="3"></Col>
           <Col xs="12" sm="6">
             {!!profile?.image && (
               <div className="text-center" style={{ marginTop: 45 }}>
                 <Image
+                  style={{ borderRadius: 100 }}
                   src={profile.image || '/images/album.png'}
                   alt="Avatar"
                   width={210}

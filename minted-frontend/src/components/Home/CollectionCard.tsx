@@ -20,7 +20,7 @@ const CollectionCard = ({ album }: Props) => {
         <p>
           <img src="/assets/img/icons/star2.png" alt="" />
           <span className="text-white"> {12} </span>
-          <span> Items </span>
+          <span style={{ paddingLeft: 4 }}> Items </span>
         </p>
       </div>
       <div className="auther-img">
@@ -30,11 +30,11 @@ const CollectionCard = ({ album }: Props) => {
         <div className="main-img img-cover">
           <img src={metadata?.image || ''} alt="" />
         </div>
-        <div className="sub-imgs">
+        {/* <div className="sub-imgs">
           {subImages.map((img, idx) => (
             <img src={img} alt="" key={idx} />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
