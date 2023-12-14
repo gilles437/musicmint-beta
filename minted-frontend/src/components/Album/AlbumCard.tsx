@@ -13,11 +13,16 @@ const AlbumCard = ({ album, actionButton }: Props) => {
 
   return (
     <div className={`mix `}>
-      <Link href="/album/detail" className="project-card hover-shadow">
+      <Link
+        href={`/album/detail?contract=${album.contract}&albumId=${album.albumid}`}
+        className="project-card hover-shadow"
+      >
         <div className="top-inf">
           <div>
             <div>Max Supply</div>
-            <div className="color-yellowGreen">{album.maxsupply} / {album.maxsupply}</div>
+            <div className="color-yellowGreen">
+              {album.maxsupply} / {album.maxsupply}
+            </div>
           </div>
           <div>
             <div>Price</div>
@@ -36,12 +41,12 @@ const AlbumCard = ({ album, actionButton }: Props) => {
               </small>
               <h6> {metadata?.title || ''} </h6>
             </div>
-            <div>
-              {!!actionButton && <>{actionButton(album)}</>}
-            </div>
+            <div>{!!actionButton && <>{actionButton(album)}</>}</div>
           </div>
           <div className="btm-inf">
-            <p><small>{metadata?.description}</small></p>
+            <p>
+              <small>{metadata?.description}</small>
+            </p>
           </div>
         </div>
       </Link>

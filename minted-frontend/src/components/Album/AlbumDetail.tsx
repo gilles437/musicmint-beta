@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Album } from '@/lib/redux';
+import { Album, AlbumMetadata } from '@/lib/redux';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import LoadingButton from '../LoadingButton';
 
@@ -30,7 +30,7 @@ const AlbumDetail = ({ album, onBuyAlbum }: Props) => {
           <p>{metadata ? Number(metadata.price) * 0.12 : 0} USD</p>
         </div>
         <div className="mt-3 album-bottom-border">
-          <p>{metadata?.description}</p>
+          <h2>{metadata?.description}</h2>
         </div>
         <div className="mt-3 d-grid">
           <LoadingButton
