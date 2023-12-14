@@ -21,7 +21,7 @@ jobs:
             git fetch
             git pull
             cd minted-frontend
-            pm2 stop test
+            pm2 stop minted
             rm -rf .next out
             yarn build
-            pm2 restart test
+            pm2 restart minted
