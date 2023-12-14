@@ -2,7 +2,7 @@ name: MintedWave
 on:
   push:
     branches:
-      - dev
+      - deploy
   workflow_dispatch: 
 jobs:
   deploy:
@@ -17,7 +17,7 @@ jobs:
           port: "22"
           script: |
             cd workspace/minted
-            git checkout dev
+            git checkout deploy
             git fetch
             git pull
             cd minted-frontend
