@@ -21,7 +21,7 @@ const Navbar = () => {
             <input
               type="text"
               className="form-control"
-              placeholder="Search NFT"
+              placeholder="Search Album"
             />
           </div>
         </div>
@@ -63,7 +63,7 @@ const Navbar = () => {
             </li>
             <li className="nav-item">
               <Link href="/discover" className="nav-link">
-                Discover NFTs
+                Discover Albums
               </Link>
             </li>
             <li className="nav-item">
@@ -100,7 +100,7 @@ const Navbar = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Search NFT"
+                placeholder="Search Album"
               />
             </div>
           </div>

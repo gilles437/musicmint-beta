@@ -13,7 +13,7 @@ const Discover: NextPage = () => {
   return (
     <>
       <Head>
-        <title>MintedWave - Discover NFTs</title>
+        <title>MintedWave - Discover Albums</title>
       </Head>
 
       <main>
