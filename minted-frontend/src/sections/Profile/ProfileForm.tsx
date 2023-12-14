@@ -46,14 +46,14 @@ const ProfileForm = ({ profile, onSubmit }: Props) => {
   });
 
   useEffect(() => {
-    if (profile && profile) {
+    if (profile) {
       formik.setFieldValue('name', profile.name);
       formik.setFieldValue('description', profile.description);
       formik.setFieldValue('twitter', profile.twitter);
       formik.setFieldValue('instagram', profile.instagram);
       formik.setFieldValue('youtube', profile.youtube);
     }
-  }, [profile, profile]);
+  }, [profile]);
 
   const emptyFields = () => {};
 
@@ -86,11 +86,11 @@ const ProfileForm = ({ profile, onSubmit }: Props) => {
             )}
 
             <Form.Group as={Col} md="12" className="mt-3 position-relative" controlId="name">
-              <Form.Label>Title</Form.Label>
+              <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
-                placeholder="Album Title"
+                placeholder="Your Name"
                 disabled={isLoading}
                 isInvalid={!!(formik.touched.name && formik.errors.name)}
                 value={formik.values.name}
