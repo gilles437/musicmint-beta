@@ -1,25 +1,25 @@
-import { useState, useEffect, useCallback } from "react";
-import { toast } from "react-toastify";
-import dayjs from "dayjs";
-import { beatifyAddress, getActiveAccount } from "@/utils/account";
-import Identicon from "@polkadot/react-identicon";
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
+import { beatifyAddress } from '@/utils/account';
+import Identicon from '@polkadot/react-identicon';
 import {
   Artist,
   useSelector,
   useDispatch,
   fetchArtistListAsync,
-} from "@/lib/redux";
-import { useAdminContract } from "@/hooks/useAdminContract";
-import { useFindAddress } from "@/hooks/useFindAddress";
+} from '@/lib/redux';
+import { useWallets } from '@/contexts/Wallets';
+import { useAdminContract } from '@/hooks/useAdminContract';
+import { useFindAddress } from '@/hooks/useFindAddress';
 
 const ArtistsSection = () => {
   const dispatch = useDispatch();
-  const {
-    superAdmins,
-    artists: artistList,
-    loadingArtists,
-  } = useSelector((state) => state.admin);
-  const [newAdminInput, setNewAdminInput] = useState<string>("");
+  const { walletAddress } = useWallets();
+  const { superAdmins, artists: artistList } = useSelector(
+    (state) => state.admin
+  );
+  const [newAdminInput, setNewAdminInput] = useState<string>('');
   const adminContract = useAdminContract();
   const findAddress = useFindAddress();
 
@@ -31,21 +31,20 @@ const ArtistsSection = () => {
     fetchArtistList();
   }, []);
 
-  const isSuperAdmin = () => {
+  const isSuperAdmin = useMemo(() => {
     // Check if it is super admin.
-    const account = getActiveAccount();
-    return !!superAdmins.some((i) => i.to === account);
-  };
+    return !!superAdmins.some((i) => i.to === walletAddress);
+  }, [superAdmins, walletAddress]);
 
   const addAdmin = async (newContractAddress: string) => {
     console.log('addAdmin', newContractAddress);
     if (!newAdminInput) {
-      toast.warn("Please input address");
+      toast.warn('Please input address');
       return;
     }
 
     if (!newContractAddress) {
-      toast.warn("Please contract address");
+      toast.warn('Please contract address');
       return;
     }
 
@@ -55,30 +54,30 @@ const ArtistsSection = () => {
     );
 
     if (success) {
-      toast.success("Artist has been successfully added");
-      setNewAdminInput("");
+      toast.success('Artist has been successfully added');
+      setNewAdminInput('');
       const timerId = setTimeout(() => fetchArtistList(), 5000);
       return () => clearTimeout(timerId);
     } else {
-      toast.warn("Failed to add artist");
+      toast.warn('Failed to add artist');
     }
   };
 
   const removeAdmin = async (artistAddress: string) => {
     if (!artistAddress) {
-      toast.warn("Please input address");
+      toast.warn('Please input address');
       return;
     }
 
     // Check if it is super admin.
-    if (!isSuperAdmin()) {
-      toast.warn("Current selected account is not SuperAdmin !");
+    if (!isSuperAdmin) {
+      toast.warn('Current selected account is not SuperAdmin !');
       return;
     }
 
     const artist = artistList.find((i) => i.to == artistAddress);
     if (!artist) {
-      toast.warn("Invalid address!");
+      toast.warn('Invalid address!');
       return;
     }
 
@@ -88,12 +87,12 @@ const ArtistsSection = () => {
     );
 
     if (success) {
-      toast.success("Artist has been successfully removed");
-      setNewAdminInput("");
+      toast.success('Artist has been successfully removed');
+      setNewAdminInput('');
       const timerId = setTimeout(() => fetchArtistList(), 5000);
       return () => clearTimeout(timerId);
     } else {
-      toast.warn("Failed to remove artist");
+      toast.warn('Failed to remove artist');
     }
   };
 
@@ -103,22 +102,22 @@ const ArtistsSection = () => {
 
   const deployAdminContract = async () => {
     if (!newAdminInput) {
-      toast.warn("You should input address!");
+      toast.warn('You should input address!');
       return;
     }
 
     // Check if it is super admin.
-    if (!isSuperAdmin()) {
-      toast.warn("Current selected account is not SuperAdmin!");
+    if (!isSuperAdmin) {
+      toast.warn('Current selected account is not SuperAdmin!');
       return;
     }
 
     if (findAddress(newAdminInput)) {
-      toast.warn("Account is already added !");
+      toast.warn('Account is already added !');
       return;
     }
 
-    console.log(`start deploy contract`, newAdminInput)
+    console.log(`start deploy contract`, newAdminInput);
     await adminContract.deployArtistContract(
       newAdminInput,
       (contractAddress: string) => {
@@ -137,12 +136,12 @@ const ArtistsSection = () => {
             placeholder="Enter Address..."
             onChange={handleAddAdminChange}
             value={newAdminInput}
-            style={{ width: "100%", height: "100%" }}
+            style={{ width: '100%', height: '100%' }}
           />
         </div>
         <div
           className="col-sm-6"
-          style={{ alignItems: "flex-end", display: "flex" }}
+          style={{ alignItems: 'flex-end', display: 'flex' }}
         >
           <button
             onClick={(e) => deployAdminContract()}
@@ -200,9 +199,9 @@ const ArtistsSection = () => {
                     <td>
                       {adminAccount.timestamp
                         ? dayjs(adminAccount.timestamp).format(
-                            "MM/DD/YYYY HH:mm"
+                            'MM/DD/YYYY HH:mm'
                           )
-                        : ""}
+                        : ''}
                     </td>
                     <td>
                       <button

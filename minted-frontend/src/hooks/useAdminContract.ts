@@ -7,7 +7,6 @@ import contractAbi from "@/contracts/admin/admin.json"; // Replace by your contr
 import { useApi } from "@/contexts/Polkadot";
 import { ContractFile as ArtistContract } from "@/contracts/album/albums1";
 import { useWallets } from "@/contexts/Wallets";
-import { getActiveAccount } from "@/utils/account";
 
 import { Artist } from "../lib/redux/slices/adminSlice";
 import { useGasLimit } from "./useGasLimit";
@@ -15,7 +14,7 @@ import { useGasLimit } from "./useGasLimit";
 export const useAdminContract = () => {
   const { api } = useApi();
   const gasLimit = useGasLimit(api);
-  const { wallet } = useWallets();
+  const { wallet, walletAddress } = useWallets();
 
   const contract = useMemo(() => {
     if (api) {
@@ -29,14 +28,8 @@ export const useAdminContract = () => {
       console.error("Api is not ready");
       return null;
     }
-    if (!wallet) {
+    if (!wallet || !walletAddress) {
       console.error("Please connect your wallet!");
-      return null;
-    }
-
-    const account = getActiveAccount();
-    if (!account) {
-      console.error("Invalid account!");
       return null;
     }
 
@@ -44,10 +37,10 @@ export const useAdminContract = () => {
       api,
       contract,
       wallet,
-      account,
+      account: walletAddress,
       options: { value: 0, storageDepositLimit: null, gasLimit },
     };
-  }, [api, contract, wallet, gasLimit]);
+  }, [api, contract, wallet, walletAddress, gasLimit]);
 
   const addSuperAdmin = useCallback(
     async (adminAddress: string) => {

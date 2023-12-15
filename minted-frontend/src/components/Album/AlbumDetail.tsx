@@ -30,7 +30,7 @@ const AlbumDetail = ({ album, onBuyAlbum }: Props) => {
           <p>{metadata ? Number(metadata.price) * 0.12 : 0} USD</p>
         </div>
         <div className="mt-3 album-bottom-border">
-          <h2>{metadata?.description}</h2>
+          <h5>{metadata?.description}</h5>
         </div>
         <div className="mt-3 d-grid">
           <LoadingButton

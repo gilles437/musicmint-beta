@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+
 const ConnectContainer = dynamic(
   () => import("@/components/Navbar/ConnectContainer"),
   { ssr: false }

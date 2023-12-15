@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Artist } from '@/lib/redux';
 import features from '@/data/NFTMarketplace/features.json';
 import { useArtistMetadata } from '@/hooks/useArtistMetadata';
+import Link from 'next/link';
 
 type Props = {
   artist: Artist;
@@ -18,7 +19,7 @@ const ArtistAvatar = ({ artist }: Props) => {
 
   return (
     <div className="col-lg-3 col-sm-6">
-      <a href="#" className="feature-card">
+      <Link href={`/profile?address=${artist.to}`} className="feature-card">
         <div className="img icon-65 rounded-circle overflow-hidden img-cover me-3">
           <Image
             src={metadata?.image || imageUrl()}
@@ -33,6 +34,7 @@ const ArtistAvatar = ({ artist }: Props) => {
           <p
             style={{
               width: '132px',
+              height: '36px',
               textOverflow: 'ellipsis',
               overflow: 'hidden',
               fontSize: '12px',
@@ -41,7 +43,7 @@ const ArtistAvatar = ({ artist }: Props) => {
             {metadata?.description || '...'}
           </p>
         </div>
-      </a>
+      </Link>
     </div>
   );
 };

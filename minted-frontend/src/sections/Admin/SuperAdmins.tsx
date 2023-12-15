@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
-import { beatifyAddress, getActiveAccount } from "@/utils/account";
+import { beatifyAddress } from "@/utils/account";
 import Identicon from "@polkadot/react-identicon";
 import {
   useSelector,
@@ -9,6 +9,7 @@ import {
   fetchSuperAdminListAsync,
   SuperAdmin,
 } from "@/lib/redux";
+import { useWallets } from "@/contexts/Wallets";
 import { useFindAddress } from "@/hooks/useFindAddress";
 import { useAdminContract } from "@/hooks/useAdminContract";
 
@@ -19,6 +20,7 @@ const toastFunction = (string: any) => {
 const SuperAdminSection = () => {
   const dispatch = useDispatch();
   const superAdmins = useSelector(selectSuperAdmins);
+  const { walletAddress } = useWallets();
   const [newSuperAdminInput, setNewSuperAdminInput] = useState<string>("");
   const adminContract = useAdminContract();
   const findAddress = useFindAddress();
@@ -31,11 +33,10 @@ const SuperAdminSection = () => {
 
   useEffect(() => {
     fetchSuperAdminList();
-  }, []);
+  }, [fetchSuperAdminList]);
 
   const isOwner = () => {
-    const activeAccount = getActiveAccount();
-    return activeAccount && caller === activeAccount;
+    return walletAddress && caller === walletAddress;
   };
 
   const addSuperAdmin = async () => {

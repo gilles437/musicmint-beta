@@ -1,35 +1,13 @@
-import { useEffect, useState } from "react";
-import { Account } from "@polkadot-onboard/core";
-import Identicon from "@polkadot/react-identicon";
-import Link from "next/link";
-import { beatifyAddress } from "@/utils/account";
+import { useEffect, useState } from 'react';
+import { Account } from '@polkadot-onboard/core';
+import Identicon from '@polkadot/react-identicon';
+import Link from 'next/link';
+import { beatifyAddress } from '@/utils/account';
+import { useWallets } from '@/contexts/Wallets';
 
-interface ChildProps {
-  accountArray: Account[];
-  current: string | null;
-  setAccounts: (accounts: any[]) => void;
-}
-
-const DropDown = (props: ChildProps) => {
-  const [accounts, setAccounts] = useState<Account[]>(props.accountArray);
-  const [currentAccount, setCurrentAccount] = useState<string | null>(null);
-
-  useEffect(() => {
-    setAccounts(props.accountArray);
-    setCurrentAccount(props.current);
-  }, [props.accountArray, props.current]);
-
-  const selectAddress = (address: Account) => {
-    setCurrentAccount(address.address);
-    localStorage.setItem("currentAccount", JSON.stringify(address.address));
-  };
-
-  const walletDisConnect = () => {
-    setAccounts([]);
-    props.setAccounts([]);
-    setCurrentAccount(null);
-    localStorage.setItem("currentAccount", "null");
-  };
+const DropDown = () => {
+  const { accounts, walletAddress, setActiveAccount, disconnectWallet } =
+    useWallets();
 
   return (
     <div>
@@ -41,16 +19,16 @@ const DropDown = (props: ChildProps) => {
             aria-expanded="false"
           >
             <Identicon
-              value={currentAccount}
+              value={walletAddress}
               size={32}
               theme="polkadot"
               className="pe-1"
             />
-            {beatifyAddress(currentAccount)}
+            {beatifyAddress(walletAddress)}
           </div>
           <ul className="dropdown-menu dropdown-menu-end dropdown-menu-lg-end mousePointer wallet-connect">
             {accounts.map((account: Account) => (
-              <li key={account.address} onClick={() => selectAddress(account)}>
+              <li key={account.address} onClick={() => setActiveAccount(account)}>
                 <div className="dropdown-item d-flex">
                   <Identicon
                     value={account.address}
@@ -64,7 +42,7 @@ const DropDown = (props: ChildProps) => {
             ))}
             <li>
               <div className="dropdown-item d-flex">
-                <Link href="/profile" className="d-flex">
+                <Link href="/profile/update" className="d-flex">
                   <img
                     src="/assets/image/icon/my-account.svg"
                     alt="my-account"
@@ -115,7 +93,7 @@ const DropDown = (props: ChildProps) => {
 
             <li>
               <div
-                onClick={() => walletDisConnect()}
+                onClick={() => disconnectWallet()}
                 className="dropdown-item d-flex"
               >
                 <img src="/assets/image/icon/disconnect.svg" alt="disconnect" />
