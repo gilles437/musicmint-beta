@@ -72,7 +72,13 @@ export const useAlbumSong = (contractAddress?: string) => {
             return reject(queryTx.result.asErr);
           }
 
-          const tx = await contract.tx.createSong(options, albumId, maxSupply, priceInWei, metaUrl);
+          const tx = await contract.tx.createSong(
+            options,
+            albumId,
+            maxSupply,
+            priceInWei,
+            metaUrl
+          );
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
@@ -80,7 +86,9 @@ export const useAlbumSong = (contractAddress?: string) => {
               return;
             }
 
-            const event: ContractEventsType = JSON.parse(JSON.stringify(result, null, 2));
+            const event: ContractEventsType = JSON.parse(
+              JSON.stringify(result, null, 2)
+            );
             console.log('*****create.song.event', event);
 
             let songId = -1;
@@ -109,7 +117,12 @@ export const useAlbumSong = (contractAddress?: string) => {
           }
 
           const { signer, options, account } = request;
-          const queryTx = await contract.query.deleteSong(account, options, albumId, songId);
+          const queryTx = await contract.query.deleteSong(
+            account,
+            options,
+            albumId,
+            songId
+          );
 
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
@@ -137,43 +150,53 @@ export const useAlbumSong = (contractAddress?: string) => {
   const mintSong = useCallback(
     async (
       albumId: number,
-      songId: string,
+      songId: number,
       price: string,
-      contractAddress: string,
-      callback: (success: boolean) => void
-    ): Promise<boolean> => {
-      if (!request) {
-        return false;
-      }
-
-      try {
-        const { api, signer, options, account } = request;
-        const mintOptions = { ...options, value: price };
-        console.log('mintOptions', mintOptions)
-
-        const contract = new ContractPromise(api, contractAbi, contractAddress);
-        const queryTx = await contract.query.mintSong(account, mintOptions, albumId, songId);
-
-        if (!queryTx.result?.isOk) {
-          console.error('****queryTx.error', queryTx.result.asErr);
-          return false;
-        }
-
-        const tx = await contract.tx.mintSong(mintOptions, albumId);
-        console.log('*****tx=', tx);
-
-        const unsub = await tx.signAndSend(account, signer, (result) => {
-          console.log('*****tx**result=', result.status.isFinalized);
-          if (result.status.isFinalized) {
-            callback(true);
-            unsub();
+      contractAddress: string
+    ): Promise<number | null> => {
+      return new Promise<number | null>(async (resolve, reject) => {
+        try {
+          if (!request) {
+            return reject('API is not ready');
           }
-        });
-        return true;
-      } catch (err) {
-        console.error(typeof err, err);
-        return false;
-      }
+
+          const { api, signer, options, account } = request;
+          const mintOptions = { ...options, value: price };
+          console.log('mintOptions', mintOptions);
+
+          const contract_ = new ContractPromise(
+            api,
+            contractAbi,
+            contractAddress
+          );
+          const queryTx = await contract_.query.mintSong(
+            account,
+            mintOptions,
+            albumId,
+            songId
+          );
+
+          if (!queryTx.result?.isOk) {
+            console.error('****queryTx.error', queryTx.result.asErr);
+            return reject(queryTx.result.asErr);
+          }
+
+          const tx = await contract_.tx.mintSong(mintOptions, albumId, songId);
+          console.log('*****tx=', tx);
+
+          const unsub = await tx.signAndSend(account, signer, (result) => {
+            // console.log('*****tx**result=', result.toHuman());
+            console.log('*****tx**result=', result.status.isFinalized);
+            if (result.status.isFinalized) {
+              unsub();
+              resolve(songId);
+            }
+          });
+          return true;
+        } catch (err) {
+          reject(err);
+        }
+      });
     },
     [request]
   );

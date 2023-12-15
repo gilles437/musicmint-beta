@@ -45,12 +45,9 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
 
     const accounts = await wallet.getAccounts();
     setAccounts(accounts);
-    console.log('accounts', accounts);
 
     const savedAddress = localStorage?.getItem(CURRENT_ACCOUNT);
-    console.log('connectWallet, savedAddress', savedAddress);
     const savedAccount = accounts.find((a) => a.address === savedAddress);
-    console.log('connectWallet, savedAccount', savedAccount);
     if (savedAccount) {
       setActiveAccount(savedAccount);
     } else {
