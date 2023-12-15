@@ -58,13 +58,13 @@ const AlbumSongs = ({ album }: Props) => {
 
   const handleMintSong = useCallback(
     async (song: Song) => {
-      console.log('handleMintSong', album, song);
+      console.log('handleMintSong', song);
       try {
         const mintedId = await mintSong(
-          album.albumid,
+          song.contract,
+          song.albumid,
           song.songid,
           song.price,
-          album.contract
         );
         if (mintedId) {
           toast.info('You have successfully minted the song');
@@ -80,7 +80,7 @@ const AlbumSongs = ({ album }: Props) => {
       toast.error(`Something went wrong`);
       return false;
     },
-    [album, mintSong]
+    [mintSong]
   );
 
   const actionButtons = (song: Song) => (
