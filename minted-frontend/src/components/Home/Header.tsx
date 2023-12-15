@@ -21,7 +21,7 @@ const Header = () => {
           <img src="/assets/img/icons/star2.png" alt="" className="star2 scale_up_down" />
         </div>
       </div>
-      <div className="imgs-content pt-30">
+      {/*<div className="imgs-content pt-30">
         <div className="container-fluid">
           <div className="row">
             <div className="col-lg-3 col-sm-6 pt-150 col-6">
@@ -65,7 +65,7 @@ const Header = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       {/* {
         typeof window !== "undefined" &&
         (
