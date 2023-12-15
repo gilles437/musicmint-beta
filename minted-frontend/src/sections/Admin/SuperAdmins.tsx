@@ -33,7 +33,7 @@ const SuperAdminSection = () => {
 
   useEffect(() => {
     fetchSuperAdminList();
-  }, []);
+  }, [fetchSuperAdminList]);
 
   const isOwner = () => {
     return walletAddress && caller === walletAddress;
