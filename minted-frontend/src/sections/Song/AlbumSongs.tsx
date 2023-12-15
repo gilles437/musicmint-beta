@@ -60,6 +60,9 @@ const AlbumSongs = ({ album }: Props) => {
     async (song: Song) => {
       console.log('handleMintSong', song);
       try {
+        setIsLoading(true);
+        setSelectedSong(song);
+
         const mintedId = await mintSong(
           song.contract,
           song.albumid,
@@ -75,6 +78,8 @@ const AlbumSongs = ({ album }: Props) => {
           toast.error(`Transaction cancelled`);
           return false;
         }
+      } finally {
+        setIsLoading(false);
       }
 
       toast.error(`Something went wrong`);
