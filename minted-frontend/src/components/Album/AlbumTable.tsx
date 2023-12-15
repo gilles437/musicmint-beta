@@ -16,6 +16,7 @@ const AlbumTable = ({ albums, showOwner, actions }: Props) => {
             <th scope="col">Title</th>
             <th scope="col"></th>
             {!!showOwner && <th scope="col">Owner</th>}
+            <th scope="col">Max Supply</th>
             <th scope="col">Price</th>
             <th scope="col">Created On</th>
             <th scope="col"></th>

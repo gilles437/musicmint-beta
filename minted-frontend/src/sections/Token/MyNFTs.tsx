@@ -82,7 +82,7 @@ const MyNFTs = () => {
   return (
     <>
       <div className="text-center mb-3">
-        <h2>My NFTs</h2>
+        <h2>My Albums</h2>
       </div>
       <div className="mb-5">
         {/* {!!artist && (
@@ -99,60 +99,14 @@ const MyNFTs = () => {
           </Link>
         )} */}
         <div className="col-sm-12">
-          <AlbumTable
-            albums={myAlbums}
-            actions={(album: Album) => (
-              <>
-                {/* <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
-                  <Button variant="link" size="sm">
-                    Edit
-                  </Button>
-                </Link>
-                <LoadingButton
-                  variant="link"
-                  style={{ marginLeft: '12px' }}
-                  loading={!!(isLoading && selectedAlbum === album)}
-                  disabled={!!isLoading}
-                  onClick={() => {
-                    setSelectedAlbum(album);
-                    setShowDeleteConfirm(true);
-                  }}
-                >
-                  Delete
-                </LoadingButton> */}
-              </>
-            )}
-          />
+          <AlbumTable albums={myAlbums} actions={(album: Album) => <></>} />
         </div>
 
         <div className="text-center mt-3 mb-3">
-          <h2>My Song</h2>
+          <h2>My Songs</h2>
         </div>
         <div className="col-sm-12">
-          <SongTable
-            songs={mintedSongs}
-            actions={(album: Album) => (
-              <>
-                {/* <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
-                  <Button variant="link" size="sm">
-                    Edit
-                  </Button>
-                </Link>
-                <LoadingButton
-                  variant="link"
-                  style={{ marginLeft: '12px' }}
-                  loading={!!(isLoading && selectedAlbum === album)}
-                  disabled={!!isLoading}
-                  onClick={() => {
-                    setSelectedAlbum(album);
-                    setShowDeleteConfirm(true);
-                  }}
-                >
-                  Delete
-                </LoadingButton> */}
-              </>
-            )}
-          />
+          <SongTable songs={mintedSongs} actions={(album: Album) => <></>} />
         </div>
       </div>
       <DeleteConfirmModal
