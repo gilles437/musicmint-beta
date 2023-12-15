@@ -149,10 +149,10 @@ export const useAlbumSong = (contractAddress?: string) => {
 
   const mintSong = useCallback(
     async (
+      contractAddress: string,
       albumId: number,
       songId: number,
       price: string,
-      contractAddress: string
     ): Promise<number | null> => {
       return new Promise<number | null>(async (resolve, reject) => {
         try {

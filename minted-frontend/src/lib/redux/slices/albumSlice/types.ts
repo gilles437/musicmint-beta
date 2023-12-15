@@ -27,6 +27,7 @@ export interface Song {
   from: string;
   to: string;
   price: string;
+  contract: string;
   uri: string;
   timestamp: string;
 }
