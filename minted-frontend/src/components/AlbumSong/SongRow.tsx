@@ -22,7 +22,7 @@ const SongRow = ({ song, actions }: Props) => {
       </td>
       <td>
         <audio controls>
-          <source src={metadata?.sound || ''} type="audio/mpeg" />
+          {!!metadata?.sound && <source src={metadata.sound} type="audio/mpeg" />}
           Your browser does not support the audio element.
         </audio>
       </td>

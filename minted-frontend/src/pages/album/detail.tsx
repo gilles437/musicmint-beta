@@ -43,7 +43,7 @@ const AlbumDetailPage: NextPage = () => {
               <>
                 <AlbumDetailSection album={album} />
                 <h1 style={{ marginTop: 20 }}>Songs</h1>
-                <AlbumSongs album={album}  />
+                <AlbumSongs album={album} />
               </>
             )}
           </div>

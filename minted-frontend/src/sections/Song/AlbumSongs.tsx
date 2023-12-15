@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import SongTable from '@/components/AlbumSong/SongTable';
 import LoadingButton from '@/components/LoadingButton';
@@ -12,6 +12,7 @@ import {
 } from '@/lib/redux';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import { useAlbumSong } from '@/hooks/useAlbumSong';
+import { useWallets } from '@/contexts/Wallets';
 
 type Props = {
   album: Album;
@@ -20,7 +21,8 @@ type Props = {
 const AlbumSongs = ({ album }: Props) => {
   const dispatch = useDispatch();
   const songList = useSelector(selectSongs);
-  const { deleteSong } = useAlbumSong(album.contract);
+  const { walletAddress } = useWallets();
+  const { mintSong, deleteSong } = useAlbumSong(album.contract);
   const [selectedSong, setSelectedSong] = useState<Song>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,24 +56,63 @@ const AlbumSongs = ({ album }: Props) => {
     selectedSong && handleRemoveSong(selectedSong);
   };
 
+  const handleMintSong = useCallback(
+    async (song: Song) => {
+      console.log('handleMintSong', album, song);
+      try {
+        const mintedId = await mintSong(
+          album.albumid,
+          song.songid,
+          song.price,
+          album.contract
+        );
+        if (mintedId) {
+          toast.info('You have successfully minted the song');
+          return true;
+        }
+      } catch (err: any) {
+        if (err && err.message === 'Cancelled') {
+          toast.error(`Transaction cancelled`);
+          return false;
+        }
+      }
+
+      toast.error(`Something went wrong`);
+      return false;
+    },
+    [album, mintSong]
+  );
+
+  const actionButtons = (song: Song) => (
+    <>
+      {walletAddress === album.from ? (
+        <LoadingButton
+          className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+          loading={!!(isLoading && selectedSong === song)}
+          disabled={!!isLoading}
+          onClick={() => {
+            setSelectedSong(song);
+            setShowDeleteConfirm(true);
+          }}
+        >
+          Remove
+        </LoadingButton>
+      ) : (
+        <LoadingButton
+          className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+          loading={!!(isLoading && selectedSong === song)}
+          disabled={!!isLoading}
+          onClick={() => handleMintSong(song)}
+        >
+          Buy
+        </LoadingButton>
+      )}
+    </>
+  );
+
   return (
     <>
-      <SongTable
-        songs={songList}
-        actions={(song: Song) => (
-          <LoadingButton
-            className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-            loading={!!(isLoading && selectedSong === song)}
-            disabled={!!isLoading}
-            onClick={() => {
-              setSelectedSong(song);
-              setShowDeleteConfirm(true);
-            }}
-          >
-            Remove
-          </LoadingButton>
-        )}
-      />
+      <SongTable songs={songList} actions={actionButtons} />
       <DeleteConfirmModal
         show={showDeleteConfirm}
         title="Delete Album"

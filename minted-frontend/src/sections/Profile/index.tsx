@@ -14,7 +14,6 @@ type Props = {
 const ArtistProfile = ({ address, readonly }: Props) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const metadata = useArtistMetadata(address);
-  console.log('metadata', metadata)
 
   useEffect(() => {
     setProfile(metadata);
