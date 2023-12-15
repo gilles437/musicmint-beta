@@ -68,7 +68,7 @@ export const useAlbum = (contractAddress?: string) => {
           }
 
           const { signer, options, account } = request;
-          const priceInWei = Number(tokenPrice) * 10 ** chainDecimals;
+          const priceInWei = Math.floor(Number(tokenPrice) * (10 ** chainDecimals));
 
           const queryTx = await contract.query.createAlbum(
             account,
@@ -105,6 +105,7 @@ export const useAlbum = (contractAddress?: string) => {
             resolve(albumId);
           });
         } catch (err) {
+          console.error(err);
           reject(err);
         }
       });
@@ -144,6 +145,7 @@ export const useAlbum = (contractAddress?: string) => {
             }
           });
         } catch (err) {
+          console.error(err);
           reject(err);
         }
       });
@@ -191,6 +193,7 @@ export const useAlbum = (contractAddress?: string) => {
           });
           return true;
         } catch (err) {
+          console.error(err);
           reject(err);
         }
       });
