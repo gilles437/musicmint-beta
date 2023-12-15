@@ -7,12 +7,14 @@ import Routes from '@/constants/routes';
 //=Hooks
 import { useQueryAlbum } from '@/hooks/useQueryAlbum';
 import { useFetchAllAlbums } from '@/hooks/useFetchAllAlbums';
+import { setSongs, useDispatch } from '@/lib/redux';
 //= Sections
 import { EditAlbum } from '@/sections/Album';
 import CreateSong from '@/sections/Song/CreateSong';
 import AlbumSongs from '@/sections/Song/AlbumSongs';
 
 const EditAlbumPage: NextPage = () => {
+  const dispatch = useDispatch();
   const album = useQueryAlbum();
   useFetchAllAlbums();
 
@@ -20,6 +22,12 @@ const EditAlbumPage: NextPage = () => {
     document.body.classList.add('home-style-12');
     return () => document.body.classList.remove('home-style-12');
   }, []);
+
+  useEffect(() => {
+    return () => {
+      dispatch(setSongs([]));
+    }
+  }, [])
 
   return (
     <>
