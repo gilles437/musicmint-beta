@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { Album } from '@/lib/redux';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import { beatifyAddress } from '@/utils/account';
+import { useMemo } from 'react';
 
 type Props = {
   album: Album;
@@ -16,8 +17,15 @@ const AlbumRow = ({ album, showOwner, clickable, actions }: Props) => {
   const router = useRouter();
   const metadata = useAlbumMetadata(album);
 
+  const minted = useMemo(() => {
+    if (router.query?.minted) {
+      return router.query?.minted as string;
+    }
+    return null;
+  }, [router.query?.minted]);
+
   const onClick = () => {
-    router.push(`/album/detail?contract=${album.contract}&albumId=${album.albumid}`);
+    router.push(`/album/detail?contract=${album.contract}&albumId=${album.albumid}&minted=${minted}`);
   };
 
   return (

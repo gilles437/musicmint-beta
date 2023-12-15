@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import SongTable from '@/components/AlbumSong/SongTable';
 import LoadingButton from '@/components/LoadingButton';
@@ -13,6 +13,7 @@ import {
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import { useAlbumSong } from '@/hooks/useAlbumSong';
 import { useWallets } from '@/contexts/Wallets';
+import { useRouter } from 'next/router';
 
 type Props = {
   album: Album;
@@ -26,6 +27,14 @@ const AlbumSongs = ({ album }: Props) => {
   const [selectedSong, setSelectedSong] = useState<Song>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { query } = useRouter();
+  const minted = useMemo(() => {
+    if (query?.minted) {
+      return query?.minted as string;
+    }
+    return null;
+  }, [query?.minted]);
 
   useEffect(() => {
     dispatch(fetchAlbumSongListAsync(album.albumid));
@@ -115,14 +124,18 @@ const AlbumSongs = ({ album }: Props) => {
   );*/
 
   const actionButtons = (song: Song) => (
-    <LoadingButton
-      className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-      loading={!!(isLoading && selectedSong === song)}
-      disabled={!!isLoading}
-      onClick={() => handleMintSong(song)}
-    >
-      Buy
-    </LoadingButton>
+    <>
+      {!minted && (
+        <LoadingButton
+          className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+          loading={!!(isLoading && selectedSong === song)}
+          disabled={!!isLoading}
+          onClick={() => handleMintSong(song)}
+        >
+          Buy
+        </LoadingButton>
+      )}
+    </>
   );
 
   return (
