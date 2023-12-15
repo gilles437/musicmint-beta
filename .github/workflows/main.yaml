@@ -23,5 +23,6 @@ jobs:
             cd minted-frontend
             pm2 stop minted
             rm -rf .next out
+            yarn install
             yarn build
             pm2 restart minted
