@@ -16,6 +16,7 @@ const PolkadotProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     (async () => {
       const _api = await ApiPromise.create({ provider: wsProvider });    
+      console.log(`API Created`, _api);
       setApi(_api);
 
       const { chainSS58 } = _api.registry;

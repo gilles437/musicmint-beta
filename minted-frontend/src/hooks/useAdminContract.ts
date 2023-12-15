@@ -5,7 +5,7 @@ import { useCallback, useMemo } from "react";
 import { ALLFEAT_CONTRACT } from "@/constants";
 import contractAbi from "@/contracts/admin/admin.json"; // Replace by your contract ABI
 import { useApi } from "@/contexts/Polkadot";
-import { ContractFile as ArtistContract } from "@/contracts/album/albums1";
+import ArtistContract from '@/contracts/album/albums_wasm.json';
 import { useWallets } from "@/contexts/Wallets";
 
 import { Artist } from "../lib/redux/slices/adminSlice";
