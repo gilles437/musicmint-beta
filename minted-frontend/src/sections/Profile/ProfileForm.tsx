@@ -26,11 +26,12 @@ export type ProfileInput = {
 };
 
 type Props = {
-  profile?: Profile;
+  profile?: Profile | null;
+  readonly: boolean;
   onSubmit: (input: ProfileInput) => Promise<boolean>;
 };
 
-const ProfileForm = ({ profile, onSubmit }: Props) => {
+const ProfileForm = ({ profile, readonly, onSubmit }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const formik = useFormik({
@@ -67,7 +68,7 @@ const ProfileForm = ({ profile, onSubmit }: Props) => {
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
       <div className="text-center mb-3">
-        <h2>Update Your Profile</h2>
+        <h2>{ readonly ? `Artist Profile` : `Update Your Profile`}</h2>
       </div>
       <div className="mt-3">
         <Row>
@@ -192,15 +193,17 @@ const ProfileForm = ({ profile, onSubmit }: Props) => {
               )}
             </Form.Group>
 
-            <div className="text-center mt-5">
-              <LoadingButton
-                loading={isLoading}
-                type="submit"
-                className="color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-              >
-                <span>Update Profile</span>
-              </LoadingButton>
-            </div>
+            {!readonly && (
+              <div className="text-center mt-5">
+                <LoadingButton
+                  loading={isLoading}
+                  type="submit"
+                  className="color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                >
+                  <span>Update Profile</span>
+                </LoadingButton>
+              </div>
+            )}
           </Col>
           {/* <Col xs="6" sm="6">
             {!!profile && (

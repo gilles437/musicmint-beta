@@ -1,52 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import ProfileForm, { Profile, ProfileInput } from './ProfileForm';
-import { addArtist, findArtist } from '@/firebase/config';
+import { addArtist } from '@/firebase/config';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { getActiveAccount } from '@/utils/account';
+import { useArtistMetadata } from '@/hooks/useArtistMetadata';
 
-const CreateProfile = () => {
-  const [profile, setProfile] = useState<Profile | undefined>(undefined);
+type Props = {
+  address: string;
+  readonly: boolean;
+};
+
+const ArtistProfile = ({ address, readonly }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const metadata = useArtistMetadata(address);
 
   useEffect(() => {
-    const fetchProfiles = async () => {
-      const account = getActiveAccount();
-      const fbdoc = await findArtist(account);
-      if (fbdoc) {
-        console.log(`firebase.document`, JSON.stringify(fbdoc));
-        const axiosConfig = {
-          method: 'get',
-          url: fbdoc.url,
-          headers: {
-            accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        };
-        try {
-          const res = await axios(axiosConfig);
-          if (res) {
-            const _profile: Profile = res.data;
-            _profile && setProfile(_profile);
-          }
-        } catch (error) {
-          console.error(error);
-          return null;
-        }
-      }
-    };
-
-    setIsLoading(true);
-    fetchProfiles()
-      .then((result: any) => {})
-      .catch(console.error)
-      .finally(() => setIsLoading(false));
-  }, []);
+    metadata && setProfile(metadata);
+  }, [metadata]);
 
   const handleUpdateProfile = async (input: ProfileInput) => {
-    console.log('handleUpdateProfile', input);    
+    console.log('handleUpdateProfile', input);
     try {
       const imageCid = await uploadFile(input.image!);
       if (!imageCid) {
@@ -85,7 +61,7 @@ const CreateProfile = () => {
     } catch (err: any) {
       console.error(err);
     }
-    
+
     toast.error(`Something wrong to create song`);
     return false;
   };
@@ -97,10 +73,10 @@ const CreateProfile = () => {
           <h2>Your Profile</h2>
         </div> */}
 
-        <ProfileForm profile={profile} onSubmit={handleUpdateProfile} />
+        <ProfileForm profile={profile} onSubmit={handleUpdateProfile} readonly={readonly} />
       </div>
     </section>
   );
 };
 
-export default CreateProfile;
+export default ArtistProfile;

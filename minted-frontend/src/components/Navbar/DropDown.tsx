@@ -64,7 +64,7 @@ const DropDown = (props: ChildProps) => {
             ))}
             <li>
               <div className="dropdown-item d-flex">
-                <Link href="/profile" className="d-flex">
+                <Link href="/profile/update" className="d-flex">
                   <img
                     src="/assets/image/icon/my-account.svg"
                     alt="my-account"
