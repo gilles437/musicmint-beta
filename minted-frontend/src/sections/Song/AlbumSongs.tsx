@@ -63,12 +63,7 @@ const AlbumSongs = ({ album }: Props) => {
         setIsLoading(true);
         setSelectedSong(song);
 
-        const mintedId = await mintSong(
-          song.contract,
-          song.albumid,
-          song.songid,
-          song.price,
-        );
+        const mintedId = await mintSong(song.contract, song.albumid, song.songid, song.price);
         if (mintedId) {
           toast.info('You have successfully minted the song');
           return true;
@@ -78,7 +73,7 @@ const AlbumSongs = ({ album }: Props) => {
           toast.error(`Transaction cancelled`);
           return false;
         }
-        if (err && typeof(err) === 'string') {
+        if (err && typeof err === 'string') {
           toast.error(err);
           return false;
         }
@@ -92,7 +87,7 @@ const AlbumSongs = ({ album }: Props) => {
     [mintSong]
   );
 
-  const actionButtons = (song: Song) => (
+  /*const actionButtons = (song: Song) => (
     <>
       {walletAddress === album.from ? (
         <LoadingButton
@@ -117,6 +112,17 @@ const AlbumSongs = ({ album }: Props) => {
         </LoadingButton>
       )}
     </>
+  );*/
+
+  const actionButtons = (song: Song) => (
+    <LoadingButton
+      className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+      loading={!!(isLoading && selectedSong === song)}
+      disabled={!!isLoading}
+      onClick={() => handleMintSong(song)}
+    >
+      Buy
+    </LoadingButton>
   );
 
   return (

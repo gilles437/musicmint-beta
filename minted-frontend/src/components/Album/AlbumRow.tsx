@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { Album } from '@/lib/redux';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import { beatifyAddress } from '@/utils/account';
@@ -11,10 +12,15 @@ type Props = {
 };
 
 const AlbumRow = ({ album, showOwner, actions }: Props) => {
+  const router = useRouter();
   const metadata = useAlbumMetadata(album);
 
+  const onClick = () => {
+    router.push(`/album/detail?contract=${album.contract}&albumId=${album.albumid}`);
+  };
+
   return (
-    <tr>
+    <tr style={{ cursor: 'pointer' }} onClick={onClick}>
       <td scope="row">{metadata?.title || ''}</td>
       <td>
         <Image
@@ -26,6 +32,7 @@ const AlbumRow = ({ album, showOwner, actions }: Props) => {
         />
       </td>
       {!!showOwner && <td>{beatifyAddress(album.from)}</td>}
+      <td>{album.maxsupply || ''}</td>
       <td>{metadata?.price || ''}</td>
       <td>{dayjs(album.timestamp).format('MM/DD/YYYY HH:mm')}</td>
       <td>{actions ? actions(album) : ''}</td>
