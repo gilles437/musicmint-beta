@@ -48,7 +48,9 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
     console.log('accounts', accounts);
 
     const savedAddress = localStorage?.getItem(CURRENT_ACCOUNT);
-    const savedAccount = accounts.find(a => a.address === savedAddress)
+    console.log('connectWallet, savedAddress', savedAddress);
+    const savedAccount = accounts.find((a) => a.address === savedAddress);
+    console.log('connectWallet, savedAccount', savedAccount);
     if (savedAccount) {
       setActiveAccount(savedAccount);
     } else {
@@ -83,6 +85,13 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
     wallets && init(wallets);
   }, [wallets, connect]);
 
+  const changeAccount = useCallback((account: Account | null) => {
+    setActiveAccount(account);
+    account
+      ? localStorage?.setItem(CURRENT_ACCOUNT, account.address)
+      : localStorage?.removeItem(CURRENT_ACCOUNT);
+  }, []);
+
   const values = useMemo(() => {
     const walletAddress = activeAccount
       ? formatAccount(activeAccount.address)
@@ -93,7 +102,7 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
       accounts,
       walletAddress,
       activeAccount,
-      setActiveAccount,
+      setActiveAccount: changeAccount,
       connectWallet,
       disconnectWallet,
     };
@@ -101,7 +110,7 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
     wallet,
     accounts,
     activeAccount,
-    setActiveAccount,
+    changeAccount,
     connectWallet,
     disconnectWallet,
   ]);
