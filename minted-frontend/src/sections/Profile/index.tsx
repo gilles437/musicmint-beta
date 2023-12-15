@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import ProfileForm, { Profile, ProfileInput } from './ProfileForm';
 import { addArtist } from '@/firebase/config';
-import { useWallets } from '@/contexts/Wallets';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { useArtistMetadata } from '@/hooks/useArtistMetadata';
@@ -13,18 +12,17 @@ type Props = {
 };
 
 const ArtistProfile = ({ address, readonly }: Props) => {
-  const { walletAddress } = useWallets();
-  const [isLoading, setIsLoading] = useState(false);
-  const [profile, setProfile] = useState<Profile | undefined>(undefined);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const metadata = useArtistMetadata(address);
+  console.log('metadata', metadata)
 
   useEffect(() => {
-    metadata && setProfile(metadata);
+    setProfile(metadata);
   }, [metadata]);
 
   const handleUpdateProfile = async (input: ProfileInput) => {
     console.log('handleUpdateProfile', input);
-    if (!walletAddress) {
+    if (!address) {
       toast.error('Please connect your wallet!');
       return false;
     }
@@ -53,7 +51,7 @@ const ArtistProfile = ({ address, readonly }: Props) => {
       const metaUrl = createIpfsUrl(metadataId);
       toast.info(`Profile updated on ${metaUrl}`);
 
-      const account = walletAddress;
+      const account = address;
       const payload = {
         name: input.name,
         url: metaUrl,
