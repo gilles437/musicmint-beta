@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react';
 import contractAbi from '@/contracts/album/albums.json';
 import { useApi } from '@/contexts/Polkadot';
 import { useWallets } from '@/contexts/Wallets';
-import { getActiveAccount } from '@/utils/account';
 
 import { useGasLimit } from './useGasLimit';
 import { useChainDecimals } from './useChainDecimals';
@@ -30,7 +29,7 @@ export const useAlbum = (contractAddress?: string) => {
   const { api } = useApi();
   const gasLimit = useGasLimit(api);
   const chainDecimals = useChainDecimals(api);
-  const { wallet } = useWallets();
+  const { wallet, walletAddress } = useWallets();
 
   const contract = useMemo(() => {
     if (api && contractAddress) {
@@ -44,14 +43,8 @@ export const useAlbum = (contractAddress?: string) => {
       console.error('API is not ready');
       return null;
     }
-    if (!wallet) {
+    if (!wallet || !walletAddress) {
       console.error('Please connect your wallet!');
-      return null;
-    }
-
-    const account = getActiveAccount();
-    if (!account) {
-      console.error('Invalid account!');
       return null;
     }
 
@@ -59,11 +52,11 @@ export const useAlbum = (contractAddress?: string) => {
     return {
       api,
       wallet,
-      account,
+      account: walletAddress,
       options: { value: 0, storageDepositLimit: null, gasLimit },
       signer: { signer: wallet.signer },
     };
-  }, [api, contract, wallet, gasLimit]);
+  }, [api, contract, wallet, walletAddress, gasLimit]);
 
   const createAlbum = useCallback(
     async (maxSupply: number, tokenPrice: number, metaUrl: string): Promise<number | null> => {

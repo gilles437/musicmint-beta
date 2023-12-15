@@ -1,47 +1,42 @@
-import { useEffect, useCallback, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { toast } from 'react-toastify';
-import Button from 'react-bootstrap/Button';
-import Link from 'next/link';
 import {
   useSelector,
   useDispatch,
   selectMintedAlbums,
   fetchMintedAlbumListAsync,
   fetchAllAlbumsAsync,
-  fetchArtistListAsync,
   Album,
   selectAlbums,
 } from '@/lib/redux';
 import AlbumTable from '@/components/Album/AlbumTable';
 import { useAlbum } from '@/hooks/useAlbum';
-import { useFindArtist } from '@/hooks/useFindArtist';
-import { getActiveAccount } from '@/utils/account';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
-import LoadingButton from '@/components/LoadingButton';
+import { useWallets } from '@/contexts/Wallets';
 
 const MyNFTs = () => {
   const dispatch = useDispatch();
   const allAlbums = useSelector(selectAlbums);
   const mintedAlbums = useSelector(selectMintedAlbums);
-  // const artist = useFindArtist();
   const { deleteAlbum } = useAlbum();
+  const { walletAddress } = useWallets();
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAllAlbumsAsync());
-    // dispatch(fetchArtistListAsync());
-
-    const account = getActiveAccount();
-    dispatch(fetchMintedAlbumListAsync(account));
   }, [dispatch]);
+
+  useEffect(() => {
+    walletAddress && dispatch(fetchMintedAlbumListAsync(walletAddress));
+  }, [dispatch, walletAddress, fetchMintedAlbumListAsync]);
 
   const myAlbums = useMemo(() => {
     if (allAlbums?.length && mintedAlbums?.length) {
       const result = [];
       for (const minted of mintedAlbums) {
-        const item = allAlbums.find(i => i.albumid === minted.albumid);
+        const item = allAlbums.find((i) => i.albumid === minted.albumid);
         if (item) {
           result.push({ ...item, uri: item.uri });
         }

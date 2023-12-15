@@ -65,12 +65,4 @@ export function beatifyAddress(address: string | null) {
   return address ? `${address.slice(0, 5)}...${address.slice(-5)}` : "";
 }
 
-export const getActiveAccount = () => {
-  if (localStorage) {
-    const account = localStorage.getItem("currentAccount");
-    return account ? JSON.parse(account) : "";
-  }
-  return "";
-}
-
 export default toDefaultAddress;

@@ -10,10 +10,10 @@ import {
   fetchArtistListAsync,
   Album,
 } from '@/lib/redux';
+import { useWallets } from '@/contexts/Wallets';
 import AlbumTable from '@/components/Album/AlbumTable';
 import { useAlbum } from '@/hooks/useAlbum';
 import { useFindArtist } from '@/hooks/useFindArtist';
-import { getActiveAccount } from '@/utils/account';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import LoadingButton from '@/components/LoadingButton';
 
@@ -21,6 +21,7 @@ const Album = () => {
   const dispatch = useDispatch();
   const albums = useSelector(selectAlbums);
   const artist = useFindArtist();
+  const { walletAddress } = useWallets();
   const { deleteAlbum } = useAlbum();
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -35,10 +36,11 @@ const Album = () => {
 
   useEffect(() => {
     dispatch(fetchArtistListAsync());
+  }, [dispatch]);
 
-    const account = getActiveAccount();
-    fetchAlbumList(account);
-  }, [dispatch, fetchAlbumList]);
+  useEffect(() => {
+    walletAddress && fetchAlbumList(walletAddress);
+  }, [dispatch, walletAddress, fetchAlbumList]);
 
   const handleDeleteAlbum = async (album: Album) => {
     try {
@@ -90,7 +92,9 @@ const Album = () => {
             albums={albums}
             actions={(album: Album) => (
               <>
-                <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
+                <Link
+                  href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}
+                >
                   <Button
                     variant="link"
                     className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
