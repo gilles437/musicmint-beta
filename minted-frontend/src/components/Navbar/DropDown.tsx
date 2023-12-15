@@ -85,7 +85,7 @@ const DropDown = () => {
             <li>
               <div className="dropdown-item d-flex">
                 <img src="/assets/image/icon/my-nft.svg" alt="my-nft" />
-                <Link href="/nfts/owned">
+                <Link href="/nfts/owned?minted=1">
                   <p className="ps-1">My NFTs</p>
                 </Link>
               </div>

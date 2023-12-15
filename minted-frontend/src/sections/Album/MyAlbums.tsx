@@ -2,6 +2,7 @@ import { useEffect, useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
   useSelector,
   useDispatch,
@@ -21,6 +22,7 @@ const Album = () => {
   const dispatch = useDispatch();
   const albums = useSelector(selectAlbums);
   const artist = useFindArtist();
+  const router = useRouter();
   const { walletAddress } = useWallets();
   const { deleteAlbum } = useAlbum();
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
@@ -90,24 +92,28 @@ const Album = () => {
         <div className="col-sm-12">
           <AlbumTable
             albums={albums}
+            clickable={false}
             actions={(album: Album) => (
               <>
-                <Link
-                  href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}
+                <Button
+                  variant="link"
+                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                  onClick={e => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    router.push(`/album/edit?contract=${album.contract}&albumId=${album.albumid}`)
+                  }}
                 >
-                  <Button
-                    variant="link"
-                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                  >
-                    Edit
-                  </Button>
-                </Link>
+                  Edit
+                </Button>
                 <LoadingButton
                   loading={!!(isLoading && album == selectedAlbum)}
                   disabled={isLoading}
                   className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
                   style={{ marginLeft: '12px' }}
-                  onClick={() => {
+                  onClick={e => {
+                    e.stopPropagation();
+                    e.preventDefault();
                     setSelectedAlbum(album);
                     setShowDeleteConfirm(true);
                   }}

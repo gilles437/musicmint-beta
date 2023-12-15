@@ -4,10 +4,11 @@ import AlbumRow from './AlbumRow';
 type Props = {
   albums: Album[];
   showOwner?: boolean;
+  clickable?: boolean;
   actions?: (album: Album) => React.ReactElement;
 };
 
-const AlbumTable = ({ albums, showOwner, actions }: Props) => {
+const AlbumTable = ({ albums, showOwner, clickable, actions }: Props) => {
   return (
     <div className="mt-5 table-responsive">
       <table className="table table-hover table-success table-striped">
@@ -27,6 +28,7 @@ const AlbumTable = ({ albums, showOwner, actions }: Props) => {
             <AlbumRow
               key={index}
               album={album}
+              clickable={clickable}
               showOwner={showOwner}
               actions={actions}
             />

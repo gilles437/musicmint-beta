@@ -99,7 +99,7 @@ const MyNFTs = () => {
           </Link>
         )} */}
         <div className="col-sm-12">
-          <AlbumTable albums={myAlbums} actions={(album: Album) => <></>} />
+          <AlbumTable albums={myAlbums} clickable actions={(album: Album) => <></>} />
         </div>
 
         <div className="text-center mt-3 mb-3">

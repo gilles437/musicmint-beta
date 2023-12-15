@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Album, AlbumMetadata } from '@/lib/redux';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import LoadingButton from '../LoadingButton';
+import { useRouter } from 'next/router';
 
 type Props = {
   album: Album;
@@ -11,6 +12,14 @@ type Props = {
 const AlbumDetail = ({ album, onBuyAlbum }: Props) => {
   const metadata = useAlbumMetadata(album);
   const [loading, setLoading] = useState(false);
+
+  const { query } = useRouter();
+  const minted = useMemo(() => {
+    if (query?.minted) {
+      return query?.minted as string;
+    }
+    return null;
+  }, [query?.minted]);
 
   const handleBuyAlbum = async () => {
     setLoading(true);
@@ -33,13 +42,15 @@ const AlbumDetail = ({ album, onBuyAlbum }: Props) => {
           <h5>{metadata?.description}</h5>
         </div>
         <div className="mt-3 d-grid">
-          <LoadingButton
-            loading={loading}
-            className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-            onClick={handleBuyAlbum}
-          >
-            Buy Album
-          </LoadingButton>
+          {!minted && (
+            <LoadingButton
+              loading={loading}
+              className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+              onClick={handleBuyAlbum}
+            >
+              Buy Album
+            </LoadingButton>
+          )}
         </div>
       </div>
       <div className="col-md-6 col-sm-12">

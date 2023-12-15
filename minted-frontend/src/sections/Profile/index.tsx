@@ -5,6 +5,7 @@ import { addArtist } from '@/firebase/config';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { useArtistMetadata } from '@/hooks/useArtistMetadata';
+import Button from 'react-bootstrap/esm/Button';
 
 type Props = {
   address: string;
@@ -76,11 +77,18 @@ const ArtistProfile = ({ address, readonly }: Props) => {
           <h2>Your Profile</h2>
         </div> */}
 
-        <ProfileForm
-          profile={profile}
-          onSubmit={handleUpdateProfile}
-          readonly={readonly}
-        />
+        {!readonly && (
+          <div className="text-center mb-3">
+            <Button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+              Withdraw
+            </Button>
+            <span style={{ paddingLeft: 20 }}>
+              Balance 0
+            </span>
+          </div>
+        )}
+
+        <ProfileForm profile={profile} onSubmit={handleUpdateProfile} readonly={readonly} />
       </div>
     </section>
   );
