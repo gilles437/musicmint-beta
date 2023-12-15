@@ -78,6 +78,10 @@ const AlbumSongs = ({ album }: Props) => {
           toast.error(`Transaction cancelled`);
           return false;
         }
+        if (err && typeof(err) === 'string') {
+          toast.error(err);
+          return false;
+        }
       } finally {
         setIsLoading(false);
       }

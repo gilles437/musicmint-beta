@@ -1,4 +1,5 @@
 import { ContractPromise } from '@polkadot/api-contract';
+import { BN } from "@polkadot/util";
 import { useCallback, useMemo } from 'react';
 
 import contractAbi from '@/contracts/album/albums.json';
@@ -72,13 +73,7 @@ export const useAlbumSong = (contractAddress?: string) => {
             return reject(queryTx.result.asErr);
           }
 
-          const tx = await contract.tx.createSong(
-            options,
-            albumId,
-            maxSupply,
-            priceInWei,
-            metaUrl
-          );
+          const tx = await contract.tx.createSong(options, albumId, maxSupply, priceInWei, metaUrl);
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
@@ -86,9 +81,7 @@ export const useAlbumSong = (contractAddress?: string) => {
               return;
             }
 
-            const event: ContractEventsType = JSON.parse(
-              JSON.stringify(result, null, 2)
-            );
+            const event: ContractEventsType = JSON.parse(JSON.stringify(result, null, 2));
             console.log('*****create.song.event', event);
 
             let songId = -1;
@@ -117,12 +110,7 @@ export const useAlbumSong = (contractAddress?: string) => {
           }
 
           const { signer, options, account } = request;
-          const queryTx = await contract.query.deleteSong(
-            account,
-            options,
-            albumId,
-            songId
-          );
+          const queryTx = await contract.query.deleteSong(account, options, albumId, songId);
 
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
@@ -152,7 +140,7 @@ export const useAlbumSong = (contractAddress?: string) => {
       contractAddress: string,
       albumId: number,
       songId: number,
-      price: string,
+      price: string
     ): Promise<number | null> => {
       return new Promise<number | null>(async (resolve, reject) => {
         try {
@@ -164,17 +152,15 @@ export const useAlbumSong = (contractAddress?: string) => {
           const mintOptions = { ...options, value: price };
           console.log('mintOptions', mintOptions);
 
-          const contract_ = new ContractPromise(
-            api,
-            contractAbi,
-            contractAddress
-          );
-          const queryTx = await contract_.query.mintSong(
-            account,
-            mintOptions,
-            albumId,
-            songId
-          );
+          const res = await api.query.system.account(account);
+          const { data: { free: balance } } = res.toJSON() as any;
+
+          if (new BN(balance).sub(new BN(price)).isNeg()) {
+            return reject(`You don't have enough balance in your wallet!`);
+          }
+
+          const contract_ = new ContractPromise(api, contractAbi, contractAddress);
+          const queryTx = await contract_.query.mintSong(account, mintOptions, albumId, songId);
 
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);

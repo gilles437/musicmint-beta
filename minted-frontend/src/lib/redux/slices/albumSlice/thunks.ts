@@ -7,6 +7,7 @@ import {
   fetchAlbumSongList,
   fetchAlbumById,
   fetchSongById,
+  fetchMintedSongList,
 } from './fetchAlbumList';
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -14,9 +15,12 @@ import {
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const fetchAllAlbumsAsync = createAppAsyncThunk('album/fetchAllAlbumsAsync', async () => {
-  return await fetchAllAlbumList();
-});
+export const fetchAllAlbumsAsync = createAppAsyncThunk(
+  'album/fetchAllAlbumsAsync', 
+  async () => {
+    return await fetchAllAlbumList();
+  }
+);
 
 export const fetchOwnedAlbumListAsync = createAppAsyncThunk(
   'album/fetchOwnedAlbumListAsync',
@@ -29,6 +33,13 @@ export const fetchMintedAlbumListAsync = createAppAsyncThunk(
   'album/fetchMintedAlbumListAsync',
   async (owner: string) => {
     return await fetchMintedAlbumList(owner);
+  }
+);
+
+export const fetchMintedSongListAsync = createAppAsyncThunk(
+  'album/fetchMintedSongListAsync',
+  async (owner: string) => {
+    return await fetchMintedSongList(owner);
   }
 );
 

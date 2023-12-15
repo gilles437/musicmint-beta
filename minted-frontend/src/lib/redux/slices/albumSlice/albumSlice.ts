@@ -9,6 +9,7 @@ import {
   fetchAlbumSongListAsync,
   fetchSongByIdAsync,
   fetchMintedAlbumListAsync,
+  fetchMintedSongListAsync,
 } from './thunks';
 import { Album, AlbumMetadata, Song, SongMetadata } from './types';
 
@@ -17,20 +18,20 @@ export interface AlbumState {
   status: 'idle' | 'loading' | 'failed';
   loading: boolean;
   albums: Album[];
-  mintedAlbums: Album[];
   albumMetadata: { [key: string]: AlbumMetadata };
   songs: Song[];
   songMetadata: { [key: string]: SongMetadata };
+  mintedAlbums: Album[];
 }
 
 const initialState: AlbumState = {
   status: 'idle',
   loading: false,
   albums: [],
-  mintedAlbums: [],
   albumMetadata: {},
   songs: [],
   songMetadata: {},
+  mintedAlbums: [],
 };
 
 export const albumSlice = createSlice({
@@ -47,7 +48,10 @@ export const albumSlice = createSlice({
     setAlbums: (state, action: PayloadAction<Album[]>) => {
       state.albums = action.payload;
     },
-    setAlbumMetadata: (state, action: PayloadAction<{ id: string; metadata: AlbumMetadata }>) => {
+    setAlbumMetadata: (
+      state,
+      action: PayloadAction<{ id: string; metadata: AlbumMetadata }>
+    ) => {
       if (action.payload.id) {
         state.albumMetadata[action.payload.id] = action.payload.metadata;
       }
@@ -55,7 +59,10 @@ export const albumSlice = createSlice({
     setSongs: (state, action: PayloadAction<Song[]>) => {
       state.songs = action.payload;
     },
-    setSongMetadata: (state, action: PayloadAction<{ id: string; metadata: SongMetadata }>) => {
+    setSongMetadata: (
+      state,
+      action: PayloadAction<{ id: string; metadata: SongMetadata }>
+    ) => {
       if (action.payload.id) {
         state.songMetadata[action.payload.id] = action.payload.metadata;
       }
@@ -70,14 +77,14 @@ export const albumSlice = createSlice({
       })
       .addCase(fetchOwnedAlbumListAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.albums = action.payload;
+        state.albums = action.payload || [];
       })
       .addCase(fetchAllAlbumsAsync.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchAllAlbumsAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.albums = action.payload;
+        state.albums = action.payload || [];
       })
       .addCase(fetchAlbumByIdAsync.pending, (state) => {
         state.status = 'loading';
@@ -95,12 +102,19 @@ export const albumSlice = createSlice({
         state.status = 'idle';
         state.mintedAlbums = action.payload;
       })
+      .addCase(fetchMintedSongListAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchMintedSongListAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.songs = action.payload || [];
+      })
       .addCase(fetchAlbumSongListAsync.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(fetchAlbumSongListAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.songs = action.payload;
+        state.songs = action.payload || [];
       })
       .addCase(fetchSongByIdAsync.pending, (state) => {
         state.status = 'loading';
@@ -108,7 +122,18 @@ export const albumSlice = createSlice({
       .addCase(fetchSongByIdAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         if (action.payload) {
-          state.songs.push(action.payload);
+          const song = action.payload;
+          const index = state.songs.findIndex(
+            (s) =>
+              s.contract === song.contract &&
+              s.albumid === song.albumid &&
+              s.songid === song.songid
+          );
+          if (index >= 0) {
+            state.songs.splice(index, 1, song);
+          } else {
+            state.songs.push(song);
+          }
         }
       });
   },

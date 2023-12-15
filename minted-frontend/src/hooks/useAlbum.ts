@@ -1,4 +1,5 @@
 import { ContractPromise } from '@polkadot/api-contract';
+import { BN } from "@polkadot/util";
 import { useCallback, useMemo } from 'react';
 
 import contractAbi from '@/contracts/album/albums.json';
@@ -161,6 +162,13 @@ export const useAlbum = (contractAddress?: string) => {
           const { api, signer, options, account } = request;
           const mintOptions = { ...options, value: price };
           console.log('mintOptions', mintOptions)
+
+          const res = await api.query.system.account(account);
+          const { data: { free: balance } } = res.toJSON() as any;
+
+          if (new BN(balance).sub(new BN(price)).isNeg()) {
+            return reject(`You don't have enough balance in your wallet!`);
+          }
 
           const contract_ = new ContractPromise(api, contractAbi, contractAddress);
           const queryTx = await contract_.query.mintAlbum(account, mintOptions, albumId);

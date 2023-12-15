@@ -47,7 +47,7 @@ const SongForm = ({ onSubmit }: Props) => {
             <Form.Control
               type="text"
               name="title"
-              placeholder="Album Title"
+              placeholder="Song Title"
               disabled={isLoading}
               isInvalid={!!(formik.touched.title && formik.errors.title)}
               value={formik.values.title}
@@ -66,7 +66,7 @@ const SongForm = ({ onSubmit }: Props) => {
               as="input"
               type="number"
               min={1}
-              placeholder="Album Price"
+              placeholder="Song Price"
               disabled={isLoading}
               isInvalid={!!(formik.touched.price && formik.errors.price)}
               value={formik.values.price}
