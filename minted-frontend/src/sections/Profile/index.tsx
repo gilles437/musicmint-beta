@@ -83,7 +83,7 @@ const ArtistProfile = ({ address, readonly }: Props) => {
               Withdraw
             </Button>
             <span style={{ paddingLeft: 20 }}>
-              Balance 0
+              Balance: 0
             </span>
           </div>
         )}

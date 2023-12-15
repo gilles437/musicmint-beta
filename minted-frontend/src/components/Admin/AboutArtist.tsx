@@ -1,49 +1,84 @@
 import Image from 'next/image';
-import { Artist } from '@/lib/redux';
-import features from '@/data/NFTMarketplace/features.json';
 import { useArtistMetadata } from '@/hooks/useArtistMetadata';
 import Link from 'next/link';
 
 type Props = {
-  artist: Artist;
+  address: string;
 };
 
-// TODO - you have to change it to artist profile image.
-const imageUrl = () => {
-  const index = Math.floor(Math.random() * 100) % features.length;
-  return features[index].image;
-};
-
-const AboutArtist = ({ artist }: Props) => {
-  const metadata = useArtistMetadata(artist.to);
+const AboutArtist = ({ address }: Props) => {
+  const metadata = useArtistMetadata(address);
 
   return (
-    <div className="col-lg-3 col-sm-6">
-      <Link href={`/profile?address=${artist.to}`} className="feature-card">
-        <div className="img icon-65 rounded-circle overflow-hidden img-cover me-3">
-          <Image
-            src={metadata?.image || imageUrl()}
-            alt="Album"
-            width={60}
-            height={60}
-            style={{ borderRadius: '16px' }}
-          />
+    <div className="row my-5">
+      <div className="col-md-3 col-sm-12">
+        <div>
+          {!!metadata?.image && (
+            <img className="w-100 rounded-circle" src={metadata?.image} alt="" />
+          )}
         </div>
-        <div className="info">
-          <h5> {metadata?.name || 'Artist'}  </h5>
-          <p
-            style={{
-              width: '132px',
-              height: '36px',
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              fontSize: '12px',
-            }}
-          >
-            {metadata?.description || '...'}
-          </p>
+      </div>
+      <div className="col-md-9 col-sm-12">
+        <div className="d-flex justify-content-between">
+          <div>
+            <h2>{metadata?.name || ''}</h2>
+          </div>
+          <div>
+            {!!metadata?.twitter && (
+              <Link
+                className="pe-3"
+                href={`https://twitter.com/${metadata?.twitter}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  alt="twitter"
+                  src="/assets/image/icon/twitter-logo.svg"
+                  style={{ width: '32px', height: '32px' }}
+                ></img>
+              </Link>
+            )}
+            {!!metadata?.instagram && (
+              <Link
+                className="pe-3"
+                href={`https://instagram.com/${metadata?.instagram}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  alt="twitter"
+                  src="/assets/image/icon/insta-1.svg"
+                  style={{ width: '32px', height: '32px' }}
+                ></img>
+              </Link>
+            )}
+            {!!metadata?.youtube && (
+              <Link
+                className="pe-3"
+                href={`https://youtube.com/${metadata?.youtube}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img
+                  alt="twitter"
+                  src="/assets/image/icon/youtube.svg"
+                  style={{ width: '32px', height: '32px' }}
+                ></img>
+              </Link>
+            )}
+          </div>
         </div>
-      </Link>
+        <div className="mt-3">
+          <p>{metadata?.description || ''}</p>
+        </div>
+        <div className="mt-3">
+          <Link href={`/profile?address=${address}`}>
+            <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+              Go to Profile
+            </button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };
