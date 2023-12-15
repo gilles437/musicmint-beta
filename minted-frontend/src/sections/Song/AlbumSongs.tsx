@@ -7,12 +7,12 @@ import {
   Song,
   fetchAlbumSongListAsync,
   selectSongs,
+  setSongs,
   useDispatch,
   useSelector,
 } from '@/lib/redux';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import { useAlbumSong } from '@/hooks/useAlbumSong';
-import { useWallets } from '@/contexts/Wallets';
 import { useRouter } from 'next/router';
 
 type Props = {
@@ -22,7 +22,6 @@ type Props = {
 const AlbumSongs = ({ album }: Props) => {
   const dispatch = useDispatch();
   const songList = useSelector(selectSongs);
-  const { walletAddress } = useWallets();
   const { mintSong, deleteSong } = useAlbumSong(album.contract);
   const [selectedSong, setSelectedSong] = useState<Song>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -38,6 +37,10 @@ const AlbumSongs = ({ album }: Props) => {
 
   useEffect(() => {
     dispatch(fetchAlbumSongListAsync(album.albumid));
+
+    return () => {
+      dispatch(setSongs([]));
+    }
   }, [dispatch, album]);
 
   const handleRemoveSong = async (song: Song) => {

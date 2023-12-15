@@ -10,6 +10,7 @@ import { useQueryAlbum } from '@/hooks/useQueryAlbum';
 import AlbumDetailSection from '@/sections/Album/AlbumDetail';
 import AlbumSongs from '@/sections/Song/AlbumSongs';
 import { useFetchAllAlbums } from '@/hooks/useFetchAllAlbums';
+import AboutArtist from '@/components/Admin/AboutArtist';
 
 const AlbumDetailPage: NextPage = () => {
   const album = useQueryAlbum();
@@ -42,8 +43,12 @@ const AlbumDetailPage: NextPage = () => {
             {!!album && (
               <>
                 <AlbumDetailSection album={album} />
+                
                 <h1 style={{ marginTop: 20 }}>Songs</h1>
                 <AlbumSongs album={album} />
+
+                <h1 style={{ marginTop: 20 }}>About Artist</h1>
+                <AboutArtist address={album.from} />
               </>
             )}
           </div>
