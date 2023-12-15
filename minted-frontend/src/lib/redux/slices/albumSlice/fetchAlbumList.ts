@@ -8,6 +8,7 @@ import {
   QUERY_GET_ALBUM_SONGS,
   QUERY_GET_ALBUM_BY_ID,
   QUERY_GET_SONG_BY_ID,
+  QUERY_GET_MINTED_SONG,
 } from '@/lib/subgraph/erc721Queries';
 import { Album, Song } from './types';
 
@@ -40,7 +41,14 @@ export const fetchMintedAlbumList = async (owner: string): Promise<Album[]> => {
     ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
     QUERY_GET_MINTED_ALBUMS(owner)
   );
-  console.log('result.mintItems', result.mintItems)
+  return result.mintItems;
+};
+
+export const fetchMintedSongList = async (owner: string): Promise<Song[]> => {
+  const result: MintFetchType<Song> = await request(
+    ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
+    QUERY_GET_MINTED_SONG(owner)
+  );
   return result.mintItems;
 };
 

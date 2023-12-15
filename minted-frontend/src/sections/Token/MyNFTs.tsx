@@ -5,11 +5,14 @@ import {
   useDispatch,
   selectMintedAlbums,
   fetchMintedAlbumListAsync,
+  fetchMintedSongListAsync,
   fetchAllAlbumsAsync,
   Album,
   selectAlbums,
+  selectSongs,
 } from '@/lib/redux';
 import AlbumTable from '@/components/Album/AlbumTable';
+import SongTable from '@/components/AlbumSong/SongTable';
 import { useAlbum } from '@/hooks/useAlbum';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import { useWallets } from '@/contexts/Wallets';
@@ -18,6 +21,7 @@ const MyNFTs = () => {
   const dispatch = useDispatch();
   const allAlbums = useSelector(selectAlbums);
   const mintedAlbums = useSelector(selectMintedAlbums);
+  const mintedSongs = useSelector(selectSongs);
   const { deleteAlbum } = useAlbum();
   const { walletAddress } = useWallets();
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
@@ -29,14 +33,19 @@ const MyNFTs = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    walletAddress && dispatch(fetchMintedAlbumListAsync(walletAddress));
-  }, [dispatch, walletAddress, fetchMintedAlbumListAsync]);
+    if (walletAddress) {
+      dispatch(fetchMintedAlbumListAsync(walletAddress));
+      dispatch(fetchMintedSongListAsync(walletAddress));
+    }
+  }, [dispatch, walletAddress]);
 
   const myAlbums = useMemo(() => {
     if (allAlbums?.length && mintedAlbums?.length) {
       const result = [];
       for (const minted of mintedAlbums) {
-        const item = allAlbums.find((i) => i.albumid === minted.albumid);
+        const item = allAlbums.find(
+          (i) => i.albumid === minted.albumid && i.contract === minted.contract
+        );
         if (item) {
           result.push({ ...item, uri: item.uri });
         }
@@ -92,6 +101,36 @@ const MyNFTs = () => {
         <div className="col-sm-12">
           <AlbumTable
             albums={myAlbums}
+            actions={(album: Album) => (
+              <>
+                {/* <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>
+                  <Button variant="link" size="sm">
+                    Edit
+                  </Button>
+                </Link>
+                <LoadingButton
+                  variant="link"
+                  style={{ marginLeft: '12px' }}
+                  loading={!!(isLoading && selectedAlbum === album)}
+                  disabled={!!isLoading}
+                  onClick={() => {
+                    setSelectedAlbum(album);
+                    setShowDeleteConfirm(true);
+                  }}
+                >
+                  Delete
+                </LoadingButton> */}
+              </>
+            )}
+          />
+        </div>
+
+        <div className="text-center mt-3 mb-3">
+          <h2>My Song</h2>
+        </div>
+        <div className="col-sm-12">
+          <SongTable
+            songs={mintedSongs}
             actions={(album: Album) => (
               <>
                 {/* <Link href={`/album/edit?contract=${album.contract}&albumId=${album.albumid}`}>

@@ -3,6 +3,7 @@ import axios from 'axios';
 import {
   Song,
   SongMetadata,
+  fetchSongByIdAsync,
   selectSongMetadata,
   setSongMetadata,
   useDispatch,
@@ -40,6 +41,18 @@ export const useSongMetadata = (song?: Song | null) => {
     }
     return null;
   }, [metadataDict, song]);
+
+  useEffect(() => {
+    if (song && !song.uri) {
+      dispatch(
+        fetchSongByIdAsync({
+          contract: song.contract,
+          albumId: song.albumid,
+          songId: song.songid,
+        })
+      );
+    }
+  }, [song]);
 
   useEffect(() => {
     if (song && song.uri && !metadata) {
