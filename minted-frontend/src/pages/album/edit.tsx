@@ -44,7 +44,7 @@ const EditAlbumPage: NextPage = () => {
                 className="d-flex"
                 style={{ justifyContent: 'flex-end' }}
               >
-                <h4>Back to My Album</h4>
+                <h4>Back To My Albums</h4>
               </Link>
             </div>
 
