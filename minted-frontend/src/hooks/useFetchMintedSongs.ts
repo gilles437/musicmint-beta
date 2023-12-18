@@ -1,5 +1,11 @@
 import { useEffect } from 'react';
-import { fetchMintedSongListAsync, selectSongs, useDispatch, useSelector } from '@/lib/redux';
+import {
+  fetchMintedSongListAsync,
+  selectSongs,
+  setSongs,
+  useDispatch,
+  useSelector,
+} from '@/lib/redux';
 
 export const useFetchMintedSongs = (owner: string | null) => {
   const dispatch = useDispatch();
@@ -8,6 +14,10 @@ export const useFetchMintedSongs = (owner: string | null) => {
 
   useEffect(() => {
     owner && dispatch(fetchMintedSongListAsync(owner));
+
+    return () => {
+      dispatch(setSongs([]));
+    };
   }, [dispatch, owner]);
 
   return {

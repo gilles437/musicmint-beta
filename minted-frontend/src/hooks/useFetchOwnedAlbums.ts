@@ -1,5 +1,11 @@
 import { useEffect } from 'react';
-import { fetchOwnedAlbumListAsync, selectAlbums, useDispatch, useSelector } from '@/lib/redux';
+import {
+  fetchOwnedAlbumListAsync,
+  selectAlbums,
+  setAlbums,
+  useDispatch,
+  useSelector,
+} from '@/lib/redux';
 
 export const useFetchOwnedAlbums = (owner?: string | null) => {
   const dispatch = useDispatch();
@@ -8,6 +14,10 @@ export const useFetchOwnedAlbums = (owner?: string | null) => {
 
   useEffect(() => {
     owner && dispatch(fetchOwnedAlbumListAsync(owner));
+
+    return () => {
+      dispatch(setAlbums([]));
+    };
   }, [dispatch, owner]);
 
   return {
