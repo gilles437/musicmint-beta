@@ -1,8 +1,7 @@
 import React from 'react';
-import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
-import { useSelector } from 'react-redux';
-import { Album, selectAlbums } from '@/lib/redux';
 import Link from 'next/link';
+import { Album } from '@/lib/redux';
+import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import Loader from '@/components/Loader';
 
@@ -11,8 +10,7 @@ type Props = {
 };
 
 const AlbumReleases = ({ address }: Props) => {
-  const isLoading = useFetchOwnedAlbums(address);
-  const albums = useSelector(selectAlbums);
+  const { data: albums, loading: isLoading } = useFetchOwnedAlbums(address);
 
   if (isLoading) {
     return <Loader />;

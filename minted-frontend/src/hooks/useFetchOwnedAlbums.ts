@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
-import { fetchOwnedAlbumListAsync, useDispatch, useSelector } from '@/lib/redux';
+import { fetchOwnedAlbumListAsync, selectAlbums, useDispatch, useSelector } from '@/lib/redux';
 
-export const useFetchOwnedAlbums = (owner: string) => {
+export const useFetchOwnedAlbums = (owner?: string | null) => {
   const dispatch = useDispatch();
-  const { loadingAlbums } = useSelector(state => state.album);
+  const { loadingAlbums } = useSelector((state) => state.album);
+  const albums = useSelector(selectAlbums);
 
   useEffect(() => {
     owner && dispatch(fetchOwnedAlbumListAsync(owner));
   }, [dispatch, owner]);
 
-  return loadingAlbums;
+  return {
+    loading: loadingAlbums,
+    data: albums,
+  };
 };

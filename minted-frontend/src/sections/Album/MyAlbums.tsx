@@ -1,53 +1,35 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import {
-  useSelector,
-  useDispatch,
-  selectAlbums,
-  fetchOwnedAlbumListAsync,
-  fetchArtistListAsync,
-  Album,
-} from '@/lib/redux';
+import { useDispatch, Album } from '@/lib/redux';
 import { useWallets } from '@/contexts/Wallets';
+
 import AlbumTable from '@/components/Album/AlbumTable';
-import { useAlbum } from '@/hooks/useAlbum';
-import { useFindArtist } from '@/hooks/useFindArtist';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import LoadingButton from '@/components/LoadingButton';
 
-const Album = () => {
-  const dispatch = useDispatch();
-  const albums = useSelector(selectAlbums);
-  const artist = useFindArtist();
+import { useAlbum } from '@/hooks/useAlbum';
+import { useFindArtist } from '@/hooks/useFindArtist';
+import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
+import Loader from '@/components/Loader';
+
+const MyAlbums = () => {
   const router = useRouter();
+
+  const artist = useFindArtist();
   const { walletAddress } = useWallets();
+  const { data: albums, loading: isLoadingAlbums } = useFetchOwnedAlbums(walletAddress);
   const { deleteAlbum } = useAlbum();
+
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
-  const fetchAlbumList = useCallback(
-    (owner: string) => {
-      dispatch(fetchOwnedAlbumListAsync(owner));
-    },
-    [dispatch]
-  );
-
-  useEffect(() => {
-    dispatch(fetchArtistListAsync());
-  }, [dispatch]);
-
-  useEffect(() => {
-    walletAddress && fetchAlbumList(walletAddress);
-  }, [dispatch, walletAddress, fetchAlbumList]);
-
   const handleDeleteAlbum = async (album: Album) => {
     try {
       setLoading(true);
-      console.log('delete albumId', album.albumid);
       const deletedAlbumId = await deleteAlbum(album.albumid, album.contract);
       console.log('deletedAlbumId', deletedAlbumId);
 
@@ -90,39 +72,45 @@ const Album = () => {
           </Link>
         )}
         <div className="col-sm-12">
-          <AlbumTable
-            albums={albums}
-            clickable={false}
-            actions={(album: Album) => (
-              <>
-                <Button
-                  variant="link"
-                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                  onClick={e => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    router.push(`/album/edit?contract=${album.contract}&albumId=${album.albumid}`)
-                  }}
-                >
-                  Edit
-                </Button>
-                <LoadingButton
-                  loading={!!(isLoading && album == selectedAlbum)}
-                  disabled={isLoading}
-                  className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
-                  style={{ marginLeft: '12px' }}
-                  onClick={e => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    setSelectedAlbum(album);
-                    setShowDeleteConfirm(true);
-                  }}
-                >
-                  Delete
-                </LoadingButton>
-              </>
-            )}
-          />
+          {isLoadingAlbums ? (
+            <Loader />
+          ) : (
+            <AlbumTable
+              albums={albums}
+              clickable={false}
+              actions={(album: Album) => (
+                <>
+                  <Button
+                    variant="link"
+                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      router.push(
+                        `/album/edit?contract=${album.contract}&albumId=${album.albumid}`
+                      );
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <LoadingButton
+                    loading={!!(isLoading && album == selectedAlbum)}
+                    disabled={isLoading}
+                    className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+                    style={{ marginLeft: '12px' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setSelectedAlbum(album);
+                      setShowDeleteConfirm(true);
+                    }}
+                  >
+                    Delete
+                  </LoadingButton>
+                </>
+              )}
+            />
+          )}
         </div>
       </div>
       <DeleteConfirmModal
@@ -136,4 +124,4 @@ const Album = () => {
   );
 };
 
-export default Album;
+export default MyAlbums;
