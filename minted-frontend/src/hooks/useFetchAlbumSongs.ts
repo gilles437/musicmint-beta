@@ -14,7 +14,10 @@ export const useFetchAlbumSongs = (album?: Album | null) => {
   const songs = useSelector(selectSongs);
 
   useEffect(() => {
-    album && dispatch(fetchAlbumSongListAsync(album.albumid));
+    if (album) {
+      const payload = { contract: album.contract, albumId: album.albumid };
+      dispatch(fetchAlbumSongListAsync(payload));
+    }
 
     return () => {
       dispatch(setSongs([]));

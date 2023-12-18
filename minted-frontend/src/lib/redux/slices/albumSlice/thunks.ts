@@ -52,8 +52,8 @@ export const fetchAlbumByIdAsync = createAppAsyncThunk(
 
 export const fetchAlbumSongListAsync = createAppAsyncThunk(
   'album/fetchAlbumSongListAsync',
-  async (albumId: number) => {
-    return await fetchAlbumSongList(albumId);
+  async ({ contract, albumId }: { contract: string; albumId: number }) => {
+    return await fetchAlbumSongList(contract, albumId);
   }
 );
 

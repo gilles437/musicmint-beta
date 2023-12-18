@@ -52,7 +52,7 @@ export const QUERY_GET_ALL_ALBUMS = () => gql`
   }
 `;
 
-export const QUERY_GET_ALBUMS = (from: string) => gql`
+export const QUERY_GET_OWNED_ALBUMS = (from: string) => gql`
   query getCollections {
     collections(where: {from_eq: "${from}", songid_eq: 0}) {
       albumid
@@ -125,9 +125,9 @@ export const QUERY_GET_ALBUM_BY_ID = (contract: string, albumId: number) => gql`
   }
 `;
 
-export const QUERY_GET_ALBUM_SONGS = (albumId: number) => gql`
+export const QUERY_GET_ALBUM_SONGS = (contract: string, albumId: number) => gql`
   query getCollections {
-    collections(where: {songid_gt: 0, albumid_eq: ${albumId}}) {
+    collections(where: {contract_eq: "${contract}", albumid_eq: ${albumId}, songid_gt: 0}) {
       albumid
       block
       contract

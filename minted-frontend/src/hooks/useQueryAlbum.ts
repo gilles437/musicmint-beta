@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { fetchAlbumByIdAsync, selectAlbums, useDispatch, useSelector } from '@/lib/redux';
+import { isNotNullOrUndefined } from '@/utils/utils';
 
 export const useQueryAlbum = () => {
   const { query } = useRouter();
@@ -23,7 +24,7 @@ export const useQueryAlbum = () => {
   }, [query?.contract, query?.albumId]);
 
   return useMemo(() => {
-    if (contract && albumId) {
+    if (contract && isNotNullOrUndefined(albumId)) {
       return (albums || []).find(
         (i) => i.contract === contract && Number(i.albumid) === Number(albumId)
       );

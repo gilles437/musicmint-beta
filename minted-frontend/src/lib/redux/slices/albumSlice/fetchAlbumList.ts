@@ -2,7 +2,7 @@ import { request } from 'graphql-request';
 
 import { DEFAULT_CHAIN, ALBUM_SUBGRAPH_URLS } from '@/constants';
 import {
-  QUERY_GET_ALBUMS,
+  QUERY_GET_OWNED_ALBUMS,
   QUERY_GET_MINTED_ALBUMS,
   QUERY_GET_ALL_ALBUMS,
   QUERY_GET_ALBUM_SONGS,
@@ -31,7 +31,7 @@ export const fetchAllAlbumList = async (): Promise<Album[]> => {
 export const fetchOwnedAlbumList = async (owner: string): Promise<Album[]> => {
   const result: FetchType<Album> = await request(
     ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
-    QUERY_GET_ALBUMS(owner)
+    QUERY_GET_OWNED_ALBUMS(owner)
   );
   return result.collections;
 };
@@ -63,10 +63,10 @@ export const fetchAlbumById = async (contract: string, albumId: number): Promise
   return null;
 };
 
-export const fetchAlbumSongList = async (albumId: number): Promise<Song[]> => {
+export const fetchAlbumSongList = async (contract: string, albumId: number): Promise<Song[]> => {
   const result: FetchType<Song> = await request(
     ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
-    QUERY_GET_ALBUM_SONGS(albumId)
+    QUERY_GET_ALBUM_SONGS(contract, albumId)
   );
   return result.collections;
 };
