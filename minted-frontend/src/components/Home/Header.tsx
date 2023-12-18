@@ -15,8 +15,8 @@ const Header = () => {
       <div className="container">
         <div className="info">
           <h2> Discover </h2>
-          <h2 className="line-title">  <span className="line-text">  & Get Super </span> <small> The Worlds Largest Digital Marketplace <br /> For Crypto Collectibles And Non-Fungible <br /> Tokens for worldwide. </small> </h2>
-          <h2> Digital Assets </h2>
+          <h2 className="line-title">  <span className="line-text">  & Get Super </span> <small> The Worlds Largest Musical Marketplace <br /> For Crypto Collectibles And Non-Fungible <br /> Tokens for worldwide. </small> </h2>
+          <h2> Musical Assets </h2>
           <img src="/assets/img/icons/star2.png" alt="" className="star1 scale_up_down" />
           <img src="/assets/img/icons/star2.png" alt="" className="star2 scale_up_down" />
         </div>

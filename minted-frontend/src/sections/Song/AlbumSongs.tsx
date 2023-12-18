@@ -10,9 +10,10 @@ import { useFetchAlbumSongs } from '@/hooks/useFetchAlbumSongs';
 
 type Props = {
   album: Album;
+  editable?: boolean;
 };
 
-const AlbumSongs = ({ album }: Props) => {
+const AlbumSongs = ({ album, editable }: Props) => {
   const { data: songList } = useFetchAlbumSongs(album);
   const { mintSong, deleteSong } = useAlbumSong(album.contract);
 
@@ -111,20 +112,38 @@ const AlbumSongs = ({ album }: Props) => {
     </>
   );*/
 
-  const actionButtons = (song: Song) => (
-    <>
-      {!minted && (
+  const actionButtons = (song: Song) => {
+    if (editable) {
+      return (
         <LoadingButton
           className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
           loading={!!(isLoading && selectedSong === song)}
           disabled={!!isLoading}
-          onClick={() => handleMintSong(song)}
+          onClick={() => {
+            setSelectedSong(song);
+            setShowDeleteConfirm(true);
+          }}
         >
-          Buy
+          Remove
         </LoadingButton>
-      )}
-    </>
-  );
+      );
+    }
+
+    return (
+      <>
+        {!minted && (
+          <LoadingButton
+            className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+            loading={!!(isLoading && selectedSong === song)}
+            disabled={!!isLoading}
+            onClick={() => handleMintSong(song)}
+          >
+            Buy
+          </LoadingButton>
+        )}
+      </>
+    );
+  };
 
   return (
     <>
