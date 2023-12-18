@@ -1,14 +1,9 @@
-import type { NextPage } from 'next';
-import Head from 'next/head';
-import React, { useEffect, useMemo } from 'react';
-
-import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
+import React from 'react';
 
 type Props = {
   aboutTab: React.ReactElement;
   releaseTab: React.ReactElement;
-}
+};
 
 const ProfileTab = ({ aboutTab, releaseTab }: Props) => {
   return (

@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useWallets } from '@/contexts/Wallets';
 
-const Profile = dynamic(() => import('@/sections/Profile/AboutArtist'), {
+const UpdateProfile = dynamic(() => import('@/sections/Profile/UpdateProfile'), {
   ssr: false,
 });
 
@@ -27,7 +27,7 @@ const ProfileUpdatePage: NextPage = () => {
         <section className="projects section-padding style-12">
           <div className="container">
             {!!walletAddress && (
-              <Profile address={walletAddress} readonly={false} />
+              <UpdateProfile address={walletAddress} />
             )}
           </div>
         </section>

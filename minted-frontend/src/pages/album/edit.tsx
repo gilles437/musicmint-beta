@@ -13,6 +13,7 @@ import AlbumSongs from '@/sections/Song/AlbumSongs';
 
 const EditAlbumPage: NextPage = () => {
   const album = useQueryAlbum();
+  console.log('album~~~~', album)
 
   useEffect(() => {
     document.body.classList.add('home-style-12');
