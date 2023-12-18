@@ -1,6 +1,8 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import React, { useEffect, useMemo } from 'react';
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -36,10 +38,14 @@ const ProfilePage: NextPage = () => {
         <section className="projects section-padding style-12">
           <div className="container">
             {!!address && (
-              <ProfileTab
-                aboutTab={<AboutArtist address={address} readonly={true} />}
-                releaseTab={<AlbumReleases address={address} />}
-              />
+              <Tabs defaultActiveKey="about" id="profile-tab" className="mb-3">
+                <Tab eventKey="about" title={<h1>About</h1>}>
+                  <AboutArtist address={address} />
+                </Tab>
+                <Tab eventKey="release" title={<h1>Releases</h1>}>
+                  <AlbumReleases address={address} />
+                </Tab>
+              </Tabs>
             )}
           </div>
         </section>
