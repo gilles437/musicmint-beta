@@ -1,53 +1,21 @@
 import { useState } from 'react';
-import { toast } from 'react-toastify';
 import { Album } from '@/lib/redux';
 import LoadingButton from '@/components/LoadingButton';
 import AlbumCard from '@/components/Album/AlbumCard';
-import { useAlbum } from '@/hooks/useAlbum';
 import { useFetchAllAlbums } from '@/hooks/useFetchAllAlbums';
 import Loader from '@/components/Loader';
 
 const AllAlbums = () => {
   const { loading: loadingAlbums, data: albums } = useFetchAllAlbums();
-  const { mintAlbum } = useAlbum();
-  const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleBuyAlbum = async (album: Album) => {
-    console.log('handleBuyAlbum', album);
-    try {
-      setIsLoading(true);
-      setSelectedAlbum(album);
-
-      const mintedId = await mintAlbum(album.albumid, album.price, album.contract);
-      if (mintedId) {
-        return toast.info('You have successfully minted the album');
-      }
-    } catch (err: any) {
-      if (err && err.message === 'Cancelled') {
-        toast.error(`Transaction cancelled`);
-        return false;
-      }
-      if (err && typeof err === 'string') {
-        toast.error(err);
-        return false;
-      }
-    } finally {
-      setIsLoading(false);
-    }
-
-    toast.error(`Something went wrong`);
-    return false;
-  };
 
   const listenButton = (album: Album) => (
     <LoadingButton
-      loading={!!(isLoading && album == selectedAlbum)}
+      loading={false}
       disabled={isLoading}
       size="sm"
       className="btn rounded-3 color-000 border-1 border brd-light bg-yellowGreen"
       style={{ padding: '6px 16px' }}
-      onClick={() => handleBuyAlbum(album)}
     >
       Listen
     </LoadingButton>
