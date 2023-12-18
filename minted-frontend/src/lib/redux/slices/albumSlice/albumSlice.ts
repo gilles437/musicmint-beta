@@ -17,21 +17,23 @@ import { Album, AlbumMetadata, Song, SongMetadata } from './types';
 export interface AlbumState {
   status: 'idle' | 'loading' | 'failed';
   loading: boolean;
+  loadingAlbums: boolean;
+  loadingSongs: boolean;
   albums: Album[];
   albumMetadata: { [key: string]: AlbumMetadata };
   songs: Song[];
   songMetadata: { [key: string]: SongMetadata };
-  mintedAlbums: Album[];
 }
 
 const initialState: AlbumState = {
   status: 'idle',
   loading: false,
+  loadingAlbums: false,
+  loadingSongs: false,
   albums: [],
   albumMetadata: {},
   songs: [],
   songMetadata: {},
-  mintedAlbums: [],
 };
 
 export const albumSlice = createSlice({
@@ -48,10 +50,7 @@ export const albumSlice = createSlice({
     setAlbums: (state, action: PayloadAction<Album[]>) => {
       state.albums = action.payload;
     },
-    setAlbumMetadata: (
-      state,
-      action: PayloadAction<{ id: string; metadata: AlbumMetadata }>
-    ) => {
+    setAlbumMetadata: (state, action: PayloadAction<{ id: string; metadata: AlbumMetadata }>) => {
       if (action.payload.id) {
         state.albumMetadata[action.payload.id] = action.payload.metadata;
       }
@@ -59,10 +58,7 @@ export const albumSlice = createSlice({
     setSongs: (state, action: PayloadAction<Song[]>) => {
       state.songs = action.payload;
     },
-    setSongMetadata: (
-      state,
-      action: PayloadAction<{ id: string; metadata: SongMetadata }>
-    ) => {
+    setSongMetadata: (state, action: PayloadAction<{ id: string; metadata: SongMetadata }>) => {
       if (action.payload.id) {
         state.songMetadata[action.payload.id] = action.payload.metadata;
       }
@@ -73,17 +69,20 @@ export const albumSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchOwnedAlbumListAsync.pending, (state) => {
-        state.status = 'loading';
+        state.loadingAlbums = true;
+      })
+      .addCase(fetchOwnedAlbumListAsync.rejected, (state) => {
+        state.loadingAlbums = false;
       })
       .addCase(fetchOwnedAlbumListAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.loadingAlbums = false;
         state.albums = action.payload || [];
       })
       .addCase(fetchAllAlbumsAsync.pending, (state) => {
-        state.status = 'loading';
+        state.loadingAlbums = true;
       })
       .addCase(fetchAllAlbumsAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.loadingAlbums = false;
         state.albums = action.payload || [];
       })
       .addCase(fetchAlbumByIdAsync.pending, (state) => {
@@ -92,21 +91,29 @@ export const albumSlice = createSlice({
       .addCase(fetchAlbumByIdAsync.fulfilled, (state, action) => {
         state.status = 'idle';
         if (action.payload) {
-          state.albums.push(action.payload);
+          const album = action.payload;
+          const index = state.albums.findIndex(
+            (s) => s.contract === album.contract && s.albumid === album.albumid
+          );
+          if (index >= 0) {
+            state.albums.splice(index, 1, album);
+          } else {
+            state.albums.push(album);
+          }
         }
       })
       .addCase(fetchMintedAlbumListAsync.pending, (state) => {
-        state.status = 'loading';
+        state.loadingAlbums = true;
       })
       .addCase(fetchMintedAlbumListAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.mintedAlbums = action.payload;
+        state.loadingAlbums = false;
+        state.albums = action.payload;
       })
       .addCase(fetchMintedSongListAsync.pending, (state) => {
-        state.status = 'loading';
+        state.loadingSongs = true;
       })
       .addCase(fetchMintedSongListAsync.fulfilled, (state, action) => {
-        state.status = 'idle';
+        state.loadingSongs = false;
         state.songs = action.payload || [];
       })
       .addCase(fetchAlbumSongListAsync.pending, (state) => {
@@ -125,9 +132,7 @@ export const albumSlice = createSlice({
           const song = action.payload;
           const index = state.songs.findIndex(
             (s) =>
-              s.contract === song.contract &&
-              s.albumid === song.albumid &&
-              s.songid === song.songid
+              s.contract === song.contract && s.albumid === song.albumid && s.songid === song.songid
           );
           if (index >= 0) {
             state.songs.splice(index, 1, song);

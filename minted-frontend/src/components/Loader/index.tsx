@@ -6,12 +6,12 @@ const override: CSSProperties = {
   margin: '0 auto',
 };
 
-const Loader = () => {
+const Loader = ({ size = 160 }: { size: number }) => {
   return (
     <CircleLoader
       color="#36d7b7"
       loading={true}
-      size={350}
+      size={size}
       cssOverride={override}
     />
   );
