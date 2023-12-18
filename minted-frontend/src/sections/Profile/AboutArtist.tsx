@@ -12,7 +12,7 @@ type Props = {
   readonly: boolean;
 };
 
-const ArtistProfile = ({ address, readonly }: Props) => {
+const AboutArtist = ({ address, readonly }: Props) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const metadata = useArtistMetadata(address);
 
@@ -71,27 +71,25 @@ const ArtistProfile = ({ address, readonly }: Props) => {
   };
 
   return (
-    <section className="projects section-padding style-12">
-      <div className="container">
-        {/* <div className="text-center mb-3">
-          <h2>Your Profile</h2>
-        </div> */}
+    <>
+      {/* <div className="text-center mb-3">
+        <h2>Your Profile</h2>
+      </div> */}
 
-        {!readonly && (
-          <div className="text-center mb-3">
-            <Button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
-              Withdraw
-            </Button>
-            <span style={{ paddingLeft: 20 }}>
-              Balance: 0
-            </span>
-          </div>
-        )}
+      {!readonly && (
+        <div className="text-center mb-3">
+          <Button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+            Withdraw
+          </Button>
+          <span style={{ paddingLeft: 20 }}>
+            Balance: 0
+          </span>
+        </div>
+      )}
 
-        <ProfileForm profile={profile} onSubmit={handleUpdateProfile} readonly={readonly} />
-      </div>
-    </section>
+      <ProfileForm profile={profile} onSubmit={handleUpdateProfile} readonly={readonly} />
+    </>
   );
 };
 
-export default ArtistProfile;
+export default AboutArtist;
