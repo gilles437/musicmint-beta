@@ -1,24 +1,20 @@
 import React, { useCallback } from 'react';
-import { toast } from 'react-toastify';
 
-import { Album, AlbumMetadata } from '@/lib/redux';
+import { Album } from '@/lib/redux';
 import { useAlbum } from '@/hooks/useAlbum';
-import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
-import { createIpfsUrl } from '@/utils/ipfs';
-import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import EditAlbumForm, { CreateAlbumInput } from './AlbumForm';
 
 type Props = {
   album: Album;
-}
+};
 
 const EditAlbum = ({ album }: Props) => {
-  const albumMetadata = useAlbumMetadata(album);
   const { createAlbum } = useAlbum(album?.contract);
 
-  const handleUpdateAlbum = useCallback(async (input: CreateAlbumInput) => {
-    console.log('handleUpdateAlbum', input);
-    /*try {
+  const handleUpdateAlbum = useCallback(
+    async (input: CreateAlbumInput) => {
+      console.log('handleUpdateAlbum', input);
+      /*try {
       let imageCid = null;
       if (input.image) {
         imageCid = await uploadFile(input.image);
@@ -62,16 +58,14 @@ const EditAlbum = ({ album }: Props) => {
     } catch (error) {
       console.log(error);
     }*/
-    return false;
-  }, [/*createAlbum*/]);
-
-  return (
-    <EditAlbumForm
-      album={album}
-      metadata={albumMetadata}
-      onSubmit={handleUpdateAlbum}
-    />
+      return false;
+    },
+    [
+      /*createAlbum*/
+    ]
   );
+
+  return <EditAlbumForm album={album} onSubmit={handleUpdateAlbum} />;
 };
 
 export default EditAlbum;

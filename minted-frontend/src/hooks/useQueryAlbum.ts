@@ -1,19 +1,33 @@
-import { useMemo } from 'react';
-import { selectAlbums, useSelector } from '@/lib/redux';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
+import { fetchAlbumByIdAsync, selectAlbums, useDispatch, useSelector } from '@/lib/redux';
 
 export const useQueryAlbum = () => {
   const { query } = useRouter();
-  const albumList = useSelector(selectAlbums);
+  const dispatch = useDispatch();
+  const albums = useSelector(selectAlbums);
+
+  const [contract, setContract] = useState<string>();
+  const [albumId, setAlbumId] = useState<number>();
+
+  useEffect(() => {
+    if (query?.contract && query?.albumId) {
+      const _contract = query.contract as string;
+      setContract(_contract);
+
+      const _albumId = Number(query.albumId as string);
+      setAlbumId(_albumId);
+
+      dispatch(fetchAlbumByIdAsync({ contract: _contract, albumId: _albumId }));
+    }
+  }, [query?.contract, query?.albumId]);
 
   return useMemo(() => {
-    if (query?.contract && query?.albumId) {
-      const contract = query.contract as string;
-      const albumId = query.albumId as string;
-      return (albumList || []).find(
+    if (contract && albumId) {
+      return (albums || []).find(
         (i) => i.contract === contract && Number(i.albumid) === Number(albumId)
       );
     }
     return undefined;
-  }, [albumList, query?.contract, query?.albumId]);
+  }, [albums, contract, albumId]);
 };
