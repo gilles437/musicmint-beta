@@ -1,28 +1,21 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import SongTable from '@/components/AlbumSong/SongTable';
 import LoadingButton from '@/components/LoadingButton';
-import {
-  Album,
-  Song,
-  fetchAlbumSongListAsync,
-  selectSongs,
-  setSongs,
-  useDispatch,
-  useSelector,
-} from '@/lib/redux';
+import { Album, Song } from '@/lib/redux';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import { useAlbumSong } from '@/hooks/useAlbumSong';
 import { useRouter } from 'next/router';
+import { useFetchAlbumSongs } from '@/hooks/useFetchAlbumSongs';
 
 type Props = {
   album: Album;
 };
 
 const AlbumSongs = ({ album }: Props) => {
-  const dispatch = useDispatch();
-  const songList = useSelector(selectSongs);
+  const { data: songList } = useFetchAlbumSongs(album);
   const { mintSong, deleteSong } = useAlbumSong(album.contract);
+
   const [selectedSong, setSelectedSong] = useState<Song>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,14 +27,6 @@ const AlbumSongs = ({ album }: Props) => {
     }
     return null;
   }, [query?.minted]);
-
-  useEffect(() => {
-    dispatch(fetchAlbumSongListAsync(album.albumid));
-
-    return () => {
-      dispatch(setSongs([]));
-    }
-  }, [dispatch, album]);
 
   const handleRemoveSong = async (song: Song) => {
     try {
