@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useSelector, selectAlbums, Album } from '@/lib/redux';
-import { useAlbum } from '@/hooks/useAlbum';
+import { Album } from '@/lib/redux';
 import LoadingButton from '@/components/LoadingButton';
 import AlbumCard from '@/components/Album/AlbumCard';
+import { useAlbum } from '@/hooks/useAlbum';
+import { useFetchAllAlbums } from '@/hooks/useFetchAllAlbums';
+import Loader from '@/components/Loader';
 
 const AllAlbums = () => {
-  const albums = useSelector(selectAlbums);
+  const { loading: loadingAlbums, data: albums } = useFetchAllAlbums();
   const { mintAlbum } = useAlbum();
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +28,7 @@ const AllAlbums = () => {
         toast.error(`Transaction cancelled`);
         return false;
       }
-      if (err && typeof(err) === 'string') {
+      if (err && typeof err === 'string') {
         toast.error(err);
         return false;
       }
@@ -58,13 +60,17 @@ const AllAlbums = () => {
           <h2>All Albums</h2>
         </div>
         <div className="mb-5">
-          <div className="row">
-            {(albums || []).map((album, index) => (
-              <div key={index} className="col-3">
-                <AlbumCard album={album} actionButton={listenButton} />
-              </div>
-            ))}
-          </div>
+          {loadingAlbums ? (
+            <Loader />
+          ) : (
+            <div className="row">
+              {(albums || []).map((album, index) => (
+                <div key={index} className="col-3">
+                  <AlbumCard album={album} actionButton={listenButton} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

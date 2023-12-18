@@ -1,59 +1,26 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
-import {
-  useSelector,
-  useDispatch,
-  selectMintedAlbums,
-  fetchMintedAlbumListAsync,
-  fetchMintedSongListAsync,
-  fetchAllAlbumsAsync,
-  Album,
-  selectAlbums,
-  selectSongs,
-} from '@/lib/redux';
-import AlbumTable from '@/components/Album/AlbumTable';
-import SongTable from '@/components/AlbumSong/SongTable';
-import { useAlbum } from '@/hooks/useAlbum';
-import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
+
+import { Album } from '@/lib/redux';
 import { useWallets } from '@/contexts/Wallets';
 
+import AlbumTable from '@/components/Album/AlbumTable';
+import SongTable from '@/components/AlbumSong/SongTable';
+import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
+
+import { useAlbum } from '@/hooks/useAlbum';
+import { useFetchMintedAlbums } from '@/hooks/useFetchMintedAlbums';
+import { useFetchMintedSongs } from '@/hooks/useFetchMintedSongs';
+
 const MyNFTs = () => {
-  const dispatch = useDispatch();
-  const allAlbums = useSelector(selectAlbums);
-  const mintedAlbums = useSelector(selectMintedAlbums);
-  const mintedSongs = useSelector(selectSongs);
-  const { deleteAlbum } = useAlbum();
   const { walletAddress } = useWallets();
+  const { data: mintedAlbums, loading: isLoadingAlbums } = useFetchMintedAlbums(walletAddress);
+  const { data: mintedSongs, loading: isLoadingSongs } = useFetchMintedSongs(walletAddress);
+  const { deleteAlbum } = useAlbum();
+
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isLoading, setLoading] = useState(false);
-
-  useEffect(() => {
-    dispatch(fetchAllAlbumsAsync());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (walletAddress) {
-      dispatch(fetchMintedAlbumListAsync(walletAddress));
-      dispatch(fetchMintedSongListAsync(walletAddress));
-    }
-  }, [dispatch, walletAddress]);
-
-  const myAlbums = useMemo(() => {
-    if (allAlbums?.length && mintedAlbums?.length) {
-      const result = [];
-      for (const minted of mintedAlbums) {
-        const item = allAlbums.find(
-          (i) => i.albumid === minted.albumid && i.contract === minted.contract
-        );
-        if (item) {
-          result.push({ ...item, uri: item.uri });
-        }
-      }
-      return result;
-    }
-    return mintedAlbums;
-  }, [allAlbums, mintedAlbums]);
 
   const handleDeleteAlbum = async (album: Album) => {
     try {
@@ -99,14 +66,14 @@ const MyNFTs = () => {
           </Link>
         )} */}
         <div className="col-sm-12">
-          <AlbumTable albums={myAlbums} clickable actions={(album: Album) => <></>} />
+          <AlbumTable albums={mintedAlbums} loading={isLoadingAlbums} clickable />
         </div>
 
         <div className="text-center mt-3 mb-3">
           <h2>My Songs</h2>
         </div>
         <div className="col-sm-12">
-          <SongTable songs={mintedSongs} actions={(album: Album) => <></>} />
+          <SongTable songs={mintedSongs} loading={isLoadingSongs} />
         </div>
       </div>
       <DeleteConfirmModal

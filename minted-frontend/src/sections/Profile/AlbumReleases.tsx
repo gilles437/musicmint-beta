@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
-import ProfileForm, { Profile, ProfileInput } from './ProfileForm';
-import { addArtist } from '@/firebase/config';
-import { uploadFile, uploadMetadata } from '@/utils/bucket';
-import { createIpfsUrl } from '@/utils/ipfs';
-import { useArtistMetadata } from '@/hooks/useArtistMetadata';
-import Button from 'react-bootstrap/esm/Button';
-import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
-import { useSelector } from 'react-redux';
-import { Album, selectAlbums } from '@/lib/redux';
+import React from 'react';
 import Link from 'next/link';
+import { Album } from '@/lib/redux';
+import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
+import Loader from '@/components/Loader';
 
 type Props = {
   address: string;
 };
 
 const AlbumReleases = ({ address }: Props) => {
-  useFetchOwnedAlbums(address);
-  const albums = useSelector(selectAlbums);
+  const { data: albums, loading: isLoading } = useFetchOwnedAlbums(address);
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <>

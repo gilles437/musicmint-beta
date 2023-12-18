@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import axios from 'axios';
 import {
   Album,
-  AlbumMetadata,
+  fetchAlbumByIdAsync,
   selectAlbumMetadata,
   setAlbumMetadata,
   useDispatch,
@@ -40,6 +40,13 @@ export const useAlbumMetadata = (album?: Album | null) => {
     }
     return null;
   }, [metadataDict, album]);
+
+  useEffect(() => {
+    // There is no uri in the minted albums
+    if (album && !album.uri) {
+      dispatch(fetchAlbumByIdAsync({ contract: album.contract, albumId: album.albumid }));
+    }
+  }, [album]);
 
   useEffect(() => {
     if (album && album.uri && !metadata) {

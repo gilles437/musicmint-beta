@@ -1,14 +1,20 @@
 import { Album } from '@/lib/redux';
 import AlbumRow from './AlbumRow';
+import Loader from '../Loader';
 
 type Props = {
   albums: Album[];
+  loading?: boolean;
   showOwner?: boolean;
   clickable?: boolean;
   actions?: (album: Album) => React.ReactElement;
 };
 
-const AlbumTable = ({ albums, showOwner, clickable, actions }: Props) => {
+const AlbumTable = ({ albums, loading, showOwner, clickable, actions }: Props) => {
+  if (loading) {
+    return <Loader size={40} />;
+  }
+
   return (
     <div className="mt-5 table-responsive">
       <table className="table table-hover table-success table-striped">

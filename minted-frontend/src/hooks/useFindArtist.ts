@@ -1,10 +1,10 @@
-import { useMemo } from "react";
-import { selectArtists, useSelector } from "@/lib/redux";
-import { useWallets } from "@/contexts/Wallets";
+import { useMemo } from 'react';
+import { useWallets } from '@/contexts/Wallets';
+import { useFetchArtists } from './useFetchArtists';
 
 export const useFindArtist = () => {
   const { walletAddress } = useWallets();
-  const artists = useSelector(selectArtists);
+  const { data: artists } = useFetchArtists();
 
   return useMemo(() => {
     if (artists && artists.length) {
