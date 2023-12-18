@@ -5,8 +5,10 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Album, AlbumMetadata } from '@/lib/redux';
+
+import { Album } from '@/lib/redux';
 import LoadingButton from '@/components/LoadingButton';
+import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 
 export type CreateAlbumInput = {
   title: string;
@@ -18,11 +20,11 @@ export type CreateAlbumInput = {
 
 type Props = {
   album?: Album;
-  metadata?: AlbumMetadata | null;
   onSubmit: (input: CreateAlbumInput) => Promise<boolean>;
 };
 
-const AlbumForm = ({ album, metadata, onSubmit }: Props) => {
+const AlbumForm = ({ album, onSubmit }: Props) => {
+  const metadata = useAlbumMetadata(album);
   const [isLoading, setIsLoading] = useState(false);
 
   const formik = useFormik({

@@ -1,24 +1,25 @@
 import { useEffect } from 'react';
 import {
-  fetchMintedSongListAsync,
+  Album,
+  fetchAlbumSongListAsync,
   selectSongs,
   setSongs,
   useDispatch,
   useSelector,
 } from '@/lib/redux';
 
-export const useFetchMintedSongs = (owner: string | null) => {
+export const useFetchAlbumSongs = (album?: Album | null) => {
   const dispatch = useDispatch();
   const { loadingSongs } = useSelector((state) => state.album);
   const songs = useSelector(selectSongs);
 
   useEffect(() => {
-    owner && dispatch(fetchMintedSongListAsync(owner));
+    album && dispatch(fetchAlbumSongListAsync(album.albumid));
 
     return () => {
       dispatch(setSongs([]));
     };
-  }, [dispatch, owner]);
+  }, [dispatch, album]);
 
   return {
     loading: loadingSongs,
