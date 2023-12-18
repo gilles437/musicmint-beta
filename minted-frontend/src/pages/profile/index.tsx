@@ -4,8 +4,10 @@ import React, { useEffect, useMemo } from 'react';
 
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+import ProfileTab from '@/sections/Profile/ProfileTab';
+import AlbumReleases from '@/sections/Profile/AlbumReleases';
 
-const Profile = dynamic(() => import('@/sections/Profile'), {
+const AboutArtist = dynamic(() => import('@/sections/Profile/AboutArtist'), {
   ssr: false,
 });
 
@@ -33,36 +35,12 @@ const ProfilePage: NextPage = () => {
       <main>
         <section className="projects section-padding style-12">
           <div className="container">
-            <ul className="nav nav-underline">
-              <li className="nav-item">
-                <div
-                  className="nav-link active"
-                  id="nav-about-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#nav-about"
-                  role="tab"
-                  aria-controls="nav-about"
-                  aria-selected="true"
-                >
-                  <h1 style={{ cursor: 'pointer' }}>About</h1>
-                </div>
-              </li>
-              <li className="nav-item">
-                <div
-                  className="nav-link"
-                  id="nav-releases-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#nav-releases"
-                  role="tab"
-                  aria-controls="nav-releases"
-                  aria-selected="false"
-                >
-                  <h1 style={{ cursor: 'pointer' }}>Releases</h1>
-                </div>
-              </li>
-            </ul>
-
-            {!!address && <Profile address={address} readonly={true} />}
+            {!!address && (
+              <ProfileTab
+                aboutTab={<AboutArtist address={address} readonly={true} />}
+                releaseTab={<AlbumReleases address={address} />}
+              />
+            )}
           </div>
         </section>
       </main>

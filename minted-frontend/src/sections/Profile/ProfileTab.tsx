@@ -5,11 +5,12 @@ import React, { useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
-const Profile = dynamic(() => import('@/sections/Profile'), {
-  ssr: false,
-});
+type Props = {
+  aboutTab: React.ReactElement;
+  releaseTab: React.ReactElement;
+}
 
-const ProfileTab = () => {
+const ProfileTab = ({ aboutTab, releaseTab }: Props) => {
   return (
     <>
       <ul className="nav nav-underline">
@@ -42,7 +43,22 @@ const ProfileTab = () => {
       </ul>
 
       <div className="tab-content" id="nav-tabContent">
-        
+        <div
+          className="tab-pane fade show active"
+          id="nav-about"
+          role="tabpanel"
+          aria-labelledby="nav-about-tab"
+        >
+          {aboutTab}
+        </div>
+        <div
+          className="tab-pane fade"
+          id="nav-releases"
+          role="tabpanel"
+          aria-labelledby="nav-releases-tab"
+        >
+          {releaseTab}
+        </div>
       </div>
     </>
   );
