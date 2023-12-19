@@ -1,14 +1,8 @@
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-
-import { Album } from '@/lib/redux';
 import { useWallets } from '@/contexts/Wallets';
 
 import AlbumTable from '@/components/Album/AlbumTable';
 import SongTable from '@/components/AlbumSong/SongTable';
-import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 
-import { useAlbum } from '@/hooks/useAlbum';
 import { useFetchMintedAlbums } from '@/hooks/useFetchMintedAlbums';
 import { useFetchMintedSongs } from '@/hooks/useFetchMintedSongs';
 import { isNotNullOrUndefined } from '@/utils/utils';
@@ -17,37 +11,6 @@ const MyNFTs = () => {
   const { walletAddress } = useWallets();
   const { data: mintedAlbums, loading: isLoadingAlbums } = useFetchMintedAlbums(walletAddress);
   const { data: mintedSongs, loading: isLoadingSongs } = useFetchMintedSongs(walletAddress);
-  const { deleteAlbum } = useAlbum();
-
-  const [selectedAlbum, setSelectedAlbum] = useState<Album>();
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isLoading, setLoading] = useState(false);
-
-  const handleDeleteAlbum = async (album: Album) => {
-    try {
-      setLoading(true);
-
-      const deletedAlbumId = await deleteAlbum(album.albumid, album.contract);
-      console.log('deletedAlbumId', deletedAlbumId);
-
-      if (isNotNullOrUndefined(deletedAlbumId)) {
-        return toast.info('You have successfully deleted your album');
-      }
-    } catch (err: any) {
-      console.error(err);
-      if (err && err.message === 'Cancelled') {
-        return toast.error(`Transaction cancelled`);
-      }
-    } finally {
-      setLoading(false);
-    }
-    toast.error('Something went wrong!');
-  };
-
-  const handleConfirmDeletion = () => {
-    setShowDeleteConfirm(false);
-    selectedAlbum && handleDeleteAlbum(selectedAlbum);
-  };
 
   return (
     <>
@@ -79,13 +42,6 @@ const MyNFTs = () => {
           <SongTable songs={mintedSongs} loading={isLoadingSongs} />
         </div>
       </div>
-      <DeleteConfirmModal
-        show={showDeleteConfirm}
-        title="Delete Album"
-        description="Are you sure to delete the album?"
-        onConfirm={handleConfirmDeletion}
-        onCancel={() => setShowDeleteConfirm(false)}
-      />
     </>
   );
 };

@@ -36,6 +36,16 @@ const initialState: AlbumState = {
   songMetadata: {},
 };
 
+const filterAlbum = (albums: Album[], album: Album) => {
+  return albums.filter((s) => !(s.contract === album.contract && s.albumid === album.albumid));
+};
+
+const filterSong = (songs: Song[], song: Song) => {
+  return songs.filter(
+    (s) => !(s.contract === song.contract && s.albumid === song.albumid && s.songid === song.songid)
+  );
+};
+
 export const albumSlice = createSlice({
   name: 'admin',
   initialState,
@@ -62,6 +72,12 @@ export const albumSlice = createSlice({
       if (action.payload.id) {
         state.songMetadata[action.payload.id] = action.payload.metadata;
       }
+    },
+    removeAlbum: (state, action: PayloadAction<Album>) => {
+      state.albums = filterAlbum(state.albums, action.payload);
+    },
+    removeSong: (state, action: PayloadAction<Song>) => {
+      state.songs = filterSong(state.songs, action.payload);
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -150,4 +166,6 @@ export const {
   setAlbumMetadata,
   setSongs,
   setSongMetadata,
+  removeAlbum,
+  removeSong,
 } = albumSlice.actions;

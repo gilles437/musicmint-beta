@@ -125,7 +125,7 @@ export const useAlbumSong = (contractAddress?: string) => {
             console.log('*****tx**result=', result.status.isFinalized);
             if (result.status.isFinalized) {
               unsub();
-              resolve(albumId);
+              resolve(songId);
             }
           });
         } catch (err) {

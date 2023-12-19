@@ -1,12 +1,16 @@
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+
+import { Album, Song } from '@/lib/redux';
 import SongTable from '@/components/AlbumSong/SongTable';
 import LoadingButton from '@/components/LoadingButton';
-import { Album, Song } from '@/lib/redux';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
+
 import { useAlbumSong } from '@/hooks/useAlbumSong';
 import { useFetchAlbumSongs } from '@/hooks/useFetchAlbumSongs';
+import { useRemoveSong } from '@/hooks/useRemoveStoreItem';
+
 import { isNotNullOrUndefined } from '@/utils/utils';
 
 type Props = {
@@ -17,6 +21,7 @@ type Props = {
 const AlbumSongs = ({ album, editable }: Props) => {
   const { data: songList, refresh } = useFetchAlbumSongs(album);
   const { mintSong, deleteSong } = useAlbumSong(album.contract);
+  const removeStoreSong = useRemoveSong();
 
   const [selectedSong, setSelectedSong] = useState<Song>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -38,7 +43,8 @@ const AlbumSongs = ({ album, editable }: Props) => {
       console.log('DeleteSong', removedId);
 
       if (isNotNullOrUndefined(removedId)) {
-        refresh();
+        removeStoreSong(song);
+        // refresh();
         return toast.info('You have successfully deleted the song');
       }
     } catch (err: any) {

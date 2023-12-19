@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
@@ -13,6 +13,7 @@ import LoadingButton from '@/components/LoadingButton';
 import { useAlbum } from '@/hooks/useAlbum';
 import { useFindArtist } from '@/hooks/useFindArtist';
 import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
+import { useRemoveAlbum } from '@/hooks/useRemoveStoreItem';
 import Loader from '@/components/Loader';
 import { isNotNullOrUndefined } from '@/utils/utils';
 
@@ -23,6 +24,7 @@ const MyAlbums = () => {
   const { walletAddress } = useWallets();
   const { data: albums, loading: isLoadingAlbums, refresh } = useFetchOwnedAlbums(walletAddress);
   const { deleteAlbum } = useAlbum();
+  const removeStoreAlbum = useRemoveAlbum();
 
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -35,7 +37,8 @@ const MyAlbums = () => {
       console.log('deletedAlbumId', deletedAlbumId);
 
       if (isNotNullOrUndefined(deletedAlbumId)) {
-        refresh();
+        removeStoreAlbum(album);
+        // setTimeout(() => refresh(), 5000);
         return toast.info('You have successfully deleted your album');
       }
     } catch (err: any) {
