@@ -59,7 +59,7 @@ const CreateAlbum = () => {
       const albumId = await createAlbum(Number(input.maxSupply), Number(input.price), metaUrl);
       console.log('albumId', albumId);
 
-      if (albumId !== null && albumId !== undefined && albumId > 0) {
+      if (albumId !== null && albumId !== undefined && albumId >= 0) {
         onAlbumCreated(albumId);
         toast.info(`New Album TokenId is: ${Number(albumId)}`);
         return true;

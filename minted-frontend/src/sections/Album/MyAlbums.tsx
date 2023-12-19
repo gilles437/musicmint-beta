@@ -14,6 +14,7 @@ import { useAlbum } from '@/hooks/useAlbum';
 import { useFindArtist } from '@/hooks/useFindArtist';
 import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
 import Loader from '@/components/Loader';
+import { isNotNullOrUndefined } from '@/utils/utils';
 
 const MyAlbums = () => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const MyAlbums = () => {
       const deletedAlbumId = await deleteAlbum(album.albumid, album.contract);
       console.log('deletedAlbumId', deletedAlbumId);
 
-      if (deletedAlbumId) {
+      if (isNotNullOrUndefined(deletedAlbumId)) {
         return toast.info('You have successfully deleted your album');
       }
     } catch (err: any) {

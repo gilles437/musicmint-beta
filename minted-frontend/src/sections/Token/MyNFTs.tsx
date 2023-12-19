@@ -11,6 +11,7 @@ import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import { useAlbum } from '@/hooks/useAlbum';
 import { useFetchMintedAlbums } from '@/hooks/useFetchMintedAlbums';
 import { useFetchMintedSongs } from '@/hooks/useFetchMintedSongs';
+import { isNotNullOrUndefined } from '@/utils/utils';
 
 const MyNFTs = () => {
   const { walletAddress } = useWallets();
@@ -27,7 +28,9 @@ const MyNFTs = () => {
       setLoading(true);
 
       const deletedAlbumId = await deleteAlbum(album.albumid, album.contract);
-      if (deletedAlbumId) {
+      console.log('deletedAlbumId', deletedAlbumId);
+
+      if (isNotNullOrUndefined(deletedAlbumId)) {
         return toast.info('You have successfully deleted your album');
       }
     } catch (err: any) {
