@@ -183,7 +183,7 @@ function extractCollectionsRecords(ctx: ProcessorContext<Store>): CollectionsRec
                         timestamp: new Date(block.header.timestamp || 0),
                         uri:'',
                         song_id: album.songId,
-                        album_id: album.albumId,
+                        album_id: album.albumId - 1, //TODO
                         max_supply:0,
                         price: BigInt(0),
                         action: "delete",
