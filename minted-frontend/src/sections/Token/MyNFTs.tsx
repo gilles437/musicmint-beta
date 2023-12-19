@@ -5,7 +5,6 @@ import SongTable from '@/components/AlbumSong/SongTable';
 
 import { useFetchMintedAlbums } from '@/hooks/useFetchMintedAlbums';
 import { useFetchMintedSongs } from '@/hooks/useFetchMintedSongs';
-import { isNotNullOrUndefined } from '@/utils/utils';
 
 const MyNFTs = () => {
   const { walletAddress } = useWallets();
