@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   fetchOwnedAlbumListAsync,
   selectAlbums,
@@ -12,16 +12,21 @@ export const useFetchOwnedAlbums = (owner?: string | null) => {
   const { loadingAlbums } = useSelector((state) => state.album);
   const albums = useSelector(selectAlbums);
 
-  useEffect(() => {
+  const refresh = useCallback(() => {
     owner && dispatch(fetchOwnedAlbumListAsync(owner));
+  }, [dispatch, owner]);
+
+  useEffect(() => {
+    refresh();
 
     return () => {
       dispatch(setAlbums([]));
     };
-  }, [dispatch, owner]);
+  }, [dispatch, refresh]);
 
   return {
-    loading: loadingAlbums,
     data: albums,
+    loading: loadingAlbums,    
+    refresh,
   };
 };
