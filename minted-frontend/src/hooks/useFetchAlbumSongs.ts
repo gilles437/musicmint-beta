@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   Album,
   fetchAlbumSongListAsync,
@@ -13,19 +13,24 @@ export const useFetchAlbumSongs = (album?: Album | null) => {
   const { loadingSongs } = useSelector((state) => state.album);
   const songs = useSelector(selectSongs);
 
-  useEffect(() => {
+  const refresh = useCallback(() => {
     if (album) {
       const payload = { contract: album.contract, albumId: album.albumid };
       dispatch(fetchAlbumSongListAsync(payload));
     }
+  }, [dispatch, album]);
+
+  useEffect(() => {
+    refresh();
 
     return () => {
       dispatch(setSongs([]));
     };
-  }, [dispatch, album]);
+  }, [dispatch, refresh]);
 
   return {
-    loading: loadingSongs,
     data: songs,
+    loading: loadingSongs,
+    refresh,
   };
 };

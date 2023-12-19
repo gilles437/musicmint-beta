@@ -21,7 +21,7 @@ const MyAlbums = () => {
 
   const artist = useFindArtist();
   const { walletAddress } = useWallets();
-  const { data: albums, loading: isLoadingAlbums } = useFetchOwnedAlbums(walletAddress);
+  const { data: albums, loading: isLoadingAlbums, refresh } = useFetchOwnedAlbums(walletAddress);
   const { deleteAlbum } = useAlbum();
 
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
@@ -35,6 +35,7 @@ const MyAlbums = () => {
       console.log('deletedAlbumId', deletedAlbumId);
 
       if (isNotNullOrUndefined(deletedAlbumId)) {
+        refresh();
         return toast.info('You have successfully deleted your album');
       }
     } catch (err: any) {
