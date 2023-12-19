@@ -210,6 +210,13 @@ pub mod albums {
             instance
         }
 
+        #[ink(message)]
+        #[openbrush::modifiers(only_owner)]
+        pub fn set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), AFT37Error> {
+            uri_storage::Internal::_set_token_uri(self, token_id, token_uri)?;
+            Ok(())
+        }
+
         /// Denies an ID from being used.
         #[ink(message)]
         #[openbrush::modifiers(only_owner)]
