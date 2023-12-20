@@ -52,4 +52,10 @@ export class Collections {
 
     @Column_("text", {nullable: false})
     contract!: string
+
+    @Column_("timestamp with time zone", {nullable: true})
+    updatedAt!: Date | undefined | null
+
+    @Column_("timestamp with time zone", {nullable: true})
+    deletedAt!: Date | undefined | null
 }
