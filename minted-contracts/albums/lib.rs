@@ -79,6 +79,21 @@ pub mod albums {
         album_id: AlbumId,
         /// Song id.
         song_id: SongId,
+        /// The price of the mint.
+        price: Balance,
+    }
+
+    /// Event emitted when an artist updates a creation (song or album).
+    #[ink(event)]
+    pub struct ItemUpdated {
+        /// The artist.
+        from: AccountId,
+        /// Album id.
+        album_id: AlbumId,
+        /// Song id.
+        song_id: SongId,
+        /// The new URI of the creation.
+        new_uri: URI,
     }
 
     /// The main contract structure.
@@ -175,6 +190,7 @@ pub mod albums {
         NotOwner,
         InvalidAlbumId,
         InvalidSongId,
+        InvalidId,
         DeniedId,
         Internal(AFT37Error),
     }
@@ -212,8 +228,22 @@ pub mod albums {
 
         #[ink(message)]
         #[openbrush::modifiers(only_owner)]
-        pub fn set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), AFT37Error> {
-            uri_storage::Internal::_set_token_uri(self, token_id, token_uri)?;
+        pub fn set_token_uri(&mut self, token_id: Id, token_uri: URI) -> Result<(), Error> {
+            uri_storage::Internal::_set_token_uri(self, token_id.clone(), token_uri.clone())?;
+
+            let (album_id, song_id) = match token_id {
+                Id::U32(id) => ((id >> 16) as AlbumId, (id & 0xFFFF) as SongId),
+                _ => return Err(Error::InvalidId),
+            };
+
+            self.env().emit_event({
+                ItemUpdated {
+                    from: self.env().caller(),
+                    new_uri: token_uri,
+                    album_id,
+                    song_id,
+                }
+            });
             Ok(())
         }
 
@@ -357,6 +387,7 @@ pub mod albums {
                     to: caller,
                     song_id: 0,
                     album_id,
+                    price: self.payable_mint.price_per_mint.get(&id).unwrap(),
                 }
             });
 
@@ -385,6 +416,7 @@ pub mod albums {
                     to: caller,
                     album_id,
                     song_id,
+                    price: self.payable_mint.price_per_mint.get(&id).unwrap(),
                 }
             });
 
