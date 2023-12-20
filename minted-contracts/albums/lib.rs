@@ -83,7 +83,7 @@ pub mod albums {
         price: Balance,
     }
 
-    /// Event emitted when a user mints a creation (song or album).
+    /// Event emitted when an artist updates a creation (song or album).
     #[ink(event)]
     pub struct ItemUpdated {
         /// The artist.
@@ -92,7 +92,7 @@ pub mod albums {
         album_id: AlbumId,
         /// Song id.
         song_id: SongId,
-        /// The URI of the creation.
+        /// The new URI of the creation.
         new_uri: URI,
     }
 
