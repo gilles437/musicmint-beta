@@ -35,6 +35,8 @@ type Collections @entity {
   maxsupply: Int! @index
   price: BigInt! @index
   contract: ID!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
 type MintItems @entity {
@@ -50,5 +52,7 @@ type MintItems @entity {
   maxsupply: Int! @index
   price: BigInt! @index
   contract: ID!
+  updatedAt: DateTime
+  deletedAt: DateTime
 }
 
