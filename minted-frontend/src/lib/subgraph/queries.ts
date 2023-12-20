@@ -25,7 +25,6 @@ export const QUERY_GET_ALL_ALBUMS = () => gql`
       albumid
       block
       contract
-      extrinsicHash
       from
       id
       maxsupply
@@ -43,7 +42,6 @@ export const QUERY_GET_OWNED_ALBUMS = (from: string) => gql`
       albumid
       block
       contract
-      extrinsicHash
       from
       id
       maxsupply
@@ -61,7 +59,6 @@ export const QUERY_GET_MINTED_ALBUMS = (to: string) => gql`
       albumid
       block
       contract
-      extrinsicHash
       from
       id
       maxsupply
@@ -80,7 +77,6 @@ export const QUERY_GET_MINTED_SONG = (to: string) => gql`
       songid
       block
       contract
-      extrinsicHash
       from
       id
       maxsupply
@@ -98,7 +94,6 @@ export const QUERY_GET_ALBUM_BY_ID = (from: string, albumId: number) => gql`
       albumid
       block
       contract
-      extrinsicHash
       from
       id
       maxsupply
@@ -116,7 +111,6 @@ export const QUERY_GET_ALBUM_SONGS = (from: string, albumId: number) => gql`
       albumid
       block
       contract
-      extrinsicHash
       from
       id
       maxsupply
@@ -135,7 +129,6 @@ export const QUERY_GET_SONG_BY_ID = (from: string, albumId: number, songId: numb
       albumid
       block
       contract
-      extrinsicHash
       from
       id
       maxsupply
