@@ -9,7 +9,7 @@ type Props = {
 
 const AboutArtist = ({ address }: Props) => {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const metadata = useArtistMetadata(address);
+  const { data: metadata } = useArtistMetadata(address);
 
   useEffect(() => {
     setProfile(metadata);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   selectArtistMetadata,
   setArtistMetadata,
@@ -11,6 +11,7 @@ import { fetchMetadata } from './useAlbumMetadata';
 export const useArtistMetadata = (address: string) => {
   const dispatch = useDispatch();
   const metadataDict = useSelector(selectArtistMetadata);
+  const [loading, setLoading] = useState(true);
 
   const metadata = useMemo(() => {
     if (address) {
@@ -35,7 +36,9 @@ export const useArtistMetadata = (address: string) => {
         meta && dispatch(setArtistMetadata({ metadata: meta, address }));
       });
     }
+    
+    metadata && setLoading(false);
   }, [address, metadata, updateArtistMetadata]);
 
-  return metadata;
+  return { data: metadata, loading };
 };
