@@ -10,7 +10,7 @@ type Props = {
 
 const CollectionCard = ({ album }: Props) => {
   const albumInfo = useAlbumMetadata(album);
-  const artistInfo = useArtistMetadata(album.from);
+  const { data: artistInfo } = useArtistMetadata(album.from);
 
   return (
     <div className="collection-card">
