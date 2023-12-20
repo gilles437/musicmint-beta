@@ -15,7 +15,7 @@ export const useFetchAlbumSongs = (album?: Album | null) => {
 
   const refresh = useCallback(() => {
     if (album) {
-      const payload = { contract: album.contract, albumId: album.albumid };
+      const payload = { owner: album.from, albumId: album.albumid };
       dispatch(fetchAlbumSongListAsync(payload));
     }
   }, [dispatch, album]);

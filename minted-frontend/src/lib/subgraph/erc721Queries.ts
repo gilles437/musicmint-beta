@@ -107,9 +107,9 @@ export const QUERY_GET_MINTED_SONG = (to: string) => gql`
   }
 `;
 
-export const QUERY_GET_ALBUM_BY_ID = (contract: string, albumId: number) => gql`
+export const QUERY_GET_ALBUM_BY_ID = (from: string, albumId: number) => gql`
   query getCollections {
-    collections(where: {contract_eq: "${contract}", albumid_eq: ${albumId}}) {
+    collections(where: {from_eq: "${from}", albumid_eq: ${albumId}}) {
       albumid
       block
       contract
@@ -125,9 +125,9 @@ export const QUERY_GET_ALBUM_BY_ID = (contract: string, albumId: number) => gql`
   }
 `;
 
-export const QUERY_GET_ALBUM_SONGS = (contract: string, albumId: number) => gql`
+export const QUERY_GET_ALBUM_SONGS = (from: string, albumId: number) => gql`
   query getCollections {
-    collections(where: {contract_eq: "${contract}", albumid_eq: ${albumId}, songid_gt: 0}) {
+    collections(where: {from_eq: "${from}", albumid_eq: ${albumId}, songid_gt: 0}) {
       albumid
       block
       contract
@@ -144,9 +144,9 @@ export const QUERY_GET_ALBUM_SONGS = (contract: string, albumId: number) => gql`
   }
 `;
 
-export const QUERY_GET_SONG_BY_ID = (contract: string, albumId: number, songId: number) => gql`
+export const QUERY_GET_SONG_BY_ID = (from: string, albumId: number, songId: number) => gql`
   query getCollections {
-    collections(where: {contract_eq: "${contract}", albumid_eq: ${albumId}, songid_eq: ${songId}}) {
+    collections(where: {from_eq: "${from}", albumid_eq: ${albumId}, songid_eq: ${songId}}) {
       albumid
       block
       contract

@@ -25,7 +25,7 @@ const AlbumRow = ({ album, showOwner, clickable, actions }: Props) => {
   }, [router.query?.minted]);
 
   const onClick = () => {
-    router.push(`/album/detail?contract=${album.contract}&albumId=${album.albumid}&minted=${minted}`);
+    router.push(`/album/detail?owner=${album.from}&albumId=${album.albumid}&minted=${minted}`);
   };
 
   return (

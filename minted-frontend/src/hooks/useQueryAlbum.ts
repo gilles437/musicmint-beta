@@ -8,27 +8,27 @@ export const useQueryAlbum = () => {
   const dispatch = useDispatch();
   const albums = useSelector(selectAlbums);
 
-  const [contract, setContract] = useState<string>();
+  const [owner, setOwner] = useState<string>();
   const [albumId, setAlbumId] = useState<number>();
 
   useEffect(() => {
-    if (query?.contract && query?.albumId) {
-      const _contract = query.contract as string;
-      setContract(_contract);
+    if (query?.owner && query?.albumId) {
+      const from = query.owner as string;
+      setOwner(from);
 
       const _albumId = Number(query.albumId as string);
       setAlbumId(_albumId);
 
-      dispatch(fetchAlbumByIdAsync({ contract: _contract, albumId: _albumId }));
+      dispatch(fetchAlbumByIdAsync({ owner: from, albumId: _albumId }));
     }
-  }, [query?.contract, query?.albumId]);
+  }, [query?.owner, query?.albumId]);
 
   return useMemo(() => {
-    if (contract && isNotNullOrUndefined(albumId)) {
+    if (owner && isNotNullOrUndefined(albumId)) {
       return (albums || []).find(
-        (i) => i.contract === contract && Number(i.albumid) === Number(albumId)
+        (i) => i.from === owner && Number(i.albumid) === Number(albumId)
       );
     }
     return undefined;
-  }, [albums, contract, albumId]);
+  }, [albums, owner, albumId]);
 };

@@ -14,7 +14,7 @@ const AlbumCard = ({ album, actionButton }: Props) => {
   return (
     <div className={`mix `}>
       <Link
-        href={`/album/detail?contract=${album.contract}&albumId=${album.albumid}`}
+        href={`/album/detail?owner=${album.from}&albumId=${album.albumid}`}
         className="project-card hover-shadow"
       >
         <div className="top-inf">

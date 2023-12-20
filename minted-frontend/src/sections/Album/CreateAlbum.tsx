@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
 import { AlbumMetadata, fetchAlbumByIdAsync, useDispatch } from '@/lib/redux';
+import { useWallets } from '@/contexts/Wallets';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import { useAlbum } from '@/hooks/useAlbum';
@@ -13,6 +14,7 @@ const CreateAlbum = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [contractAddress, setContractAddress] = useState('');
+  const { walletAddress } = useWallets();
   const { createAlbum } = useAlbum(contractAddress);
 
   useEffect(() => {
@@ -23,10 +25,10 @@ const CreateAlbum = () => {
 
   const onAlbumCreated = async (albumId: number) => {
     console.log('onAlbumCreated', albumId);
-    await dispatch(fetchAlbumByIdAsync({ contract: contractAddress, albumId }));
+    walletAddress && await dispatch(fetchAlbumByIdAsync({ owner: walletAddress, albumId }));
 
     const timerId = setTimeout(() => {
-      router.push(`/album/edit?contract=${contractAddress}&albumId=${albumId}`);
+      router.push(`/album/edit?from=${walletAddress}&albumId=${albumId}`);
     }, 2000);
     return () => clearTimeout(timerId);
   };
