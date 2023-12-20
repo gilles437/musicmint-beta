@@ -21,7 +21,7 @@ export const QUERY_GET_SUPER_ADMIN_TRANSFERS = () => gql`
 
 export const QUERY_GET_ALL_ALBUMS = () => gql`
   query getCollections {
-    collections(where: { songid_eq: 0 }) {
+    collections(where: { songid_eq: 0, deletedAt_isNull: true }) {
       albumid
       block
       contract
@@ -39,7 +39,7 @@ export const QUERY_GET_ALL_ALBUMS = () => gql`
 
 export const QUERY_GET_OWNED_ALBUMS = (from: string) => gql`
   query getCollections {
-    collections(where: {from_eq: "${from}", songid_eq: 0}) {
+    collections(where: {from_eq: "${from}", songid_eq: 0, deletedAt_isNull: true}) {
       albumid
       block
       contract
@@ -57,7 +57,7 @@ export const QUERY_GET_OWNED_ALBUMS = (from: string) => gql`
 
 export const QUERY_GET_MINTED_ALBUMS = (to: string) => gql`
   query getMintItems {
-    mintItems(where: {to_eq: "${to}", songid_eq: 0}) {
+    mintItems(where: {to_eq: "${to}", songid_eq: 0, deletedAt_isNull: true}) {
       albumid
       block
       contract
@@ -75,7 +75,7 @@ export const QUERY_GET_MINTED_ALBUMS = (to: string) => gql`
 
 export const QUERY_GET_MINTED_SONG = (to: string) => gql`
   query getMintItems {
-    mintItems(where: {to_eq: "${to}", songid_gt: 0}) {
+    mintItems(where: {to_eq: "${to}", songid_gt: 0, deletedAt_isNull: true}) {
       albumid
       songid
       block
@@ -94,7 +94,7 @@ export const QUERY_GET_MINTED_SONG = (to: string) => gql`
 
 export const QUERY_GET_ALBUM_BY_ID = (from: string, albumId: number) => gql`
   query getCollections {
-    collections(where: {from_eq: "${from}", albumid_eq: ${albumId}}) {
+    collections(where: {from_eq: "${from}", albumid_eq: ${albumId}, deletedAt_isNull: true}) {
       albumid
       block
       contract
@@ -112,7 +112,7 @@ export const QUERY_GET_ALBUM_BY_ID = (from: string, albumId: number) => gql`
 
 export const QUERY_GET_ALBUM_SONGS = (from: string, albumId: number) => gql`
   query getCollections {
-    collections(where: {from_eq: "${from}", albumid_eq: ${albumId}, songid_gt: 0}) {
+    collections(where: {from_eq: "${from}", albumid_eq: ${albumId}, songid_gt: 0, deletedAt_isNull: true}) {
       albumid
       block
       contract
@@ -131,7 +131,7 @@ export const QUERY_GET_ALBUM_SONGS = (from: string, albumId: number) => gql`
 
 export const QUERY_GET_SONG_BY_ID = (from: string, albumId: number, songId: number) => gql`
   query getCollections {
-    collections(where: {from_eq: "${from}", albumid_eq: ${albumId}, songid_eq: ${songId}}) {
+    collections(where: {from_eq: "${from}", albumid_eq: ${albumId}, songid_eq: ${songId}, deletedAt_isNull: true}) {
       albumid
       block
       contract
