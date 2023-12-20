@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -13,7 +13,7 @@ import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 export type CreateAlbumInput = {
   title: string;
   description: string;
-  image?: File | null;
+  file: File | null;
   maxSupply: number;
   price: string;
 };
@@ -43,12 +43,32 @@ const AlbumForm = ({ album, onSubmit }: Props) => {
     if (album && metadata) {
       formik.setFieldValue('title', metadata.title);
       formik.setFieldValue('description', metadata.description);
+      formik.setFieldValue('file', metadata.image);
       formik.setFieldValue('maxSupply', album.maxsupply);
       formik.setFieldValue('price', metadata.price);
     }
   }, [album, metadata]);
 
   const emptyFields = () => {};
+
+  const isModified = useMemo(() => {
+    if (album && metadata) {
+      return (
+        metadata.title !== formik.values.title ||
+        metadata.description !== formik.values.description ||
+        metadata.price !== formik.values.price ||
+        metadata.image != formik.values.file
+      );
+    }
+    return true;
+  }, [formik, metadata]);
+
+  const profileImage = useMemo(() => {
+    if (formik.values.file && typeof formik.values.file !== 'string') {
+      return URL.createObjectURL(formik.values.file);
+    }
+    return metadata?.image;
+  }, [formik, metadata?.image]);
 
   return (
     <Form noValidate onSubmit={formik.handleSubmit}>
@@ -101,12 +121,12 @@ const AlbumForm = ({ album, onSubmit }: Props) => {
                 type="file"
                 accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
                 disabled={isLoading}
-                isInvalid={!!(formik.touched.image && formik.errors.image)}
-                onChange={(e: any) => formik.setFieldValue('image', e.target.files[0])}
+                isInvalid={!!(formik.touched.file && formik.errors.file)}
+                onChange={(e: any) => formik.setFieldValue('file', e.target.files[0])}
               />
-              {!!formik.touched.image && (
+              {!!formik.touched.file && (
                 <Form.Control.Feedback type="invalid" tooltip>
-                  {formik.errors.image}
+                  {formik.errors.file}
                 </Form.Control.Feedback>
               )}
             </Form.Group>
@@ -154,7 +174,7 @@ const AlbumForm = ({ album, onSubmit }: Props) => {
           {!!metadata && (
             <div className="text-center" style={{ marginTop: 45 }}>
               <Image
-                src={metadata.image || '/images/album.png'}
+                src={profileImage || '/images/album.png'}
                 alt="Album"
                 width={420}
                 height={420}
@@ -171,6 +191,7 @@ const AlbumForm = ({ album, onSubmit }: Props) => {
               loading={isLoading}
               type="submit"
               className="color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+              disabled={!isModified}
             >
               <span>{album ? 'Update' : 'Create'} Album</span>
             </LoadingButton>
@@ -184,7 +205,7 @@ const AlbumForm = ({ album, onSubmit }: Props) => {
 const initialValues = {
   title: '',
   description: '',
-  image: null,
+  file: null,
   maxSupply: 0,
   price: '',
 };
@@ -192,7 +213,7 @@ const initialValues = {
 const validationSchema = yup.object().shape({
   title: yup.string().required('Title required'),
   description: yup.string().required('Description required'),
-  image: yup.mixed().required('Image required'),
+  file: yup.mixed().required('Image required'),
   maxSupply: yup.number().required('Max Supply required'),
   price: yup.string().required('Price required'),
 });

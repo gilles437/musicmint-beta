@@ -34,14 +34,14 @@ const CreateAlbum = () => {
   const handleCreateAlbum = async (input: CreateAlbumInput) => {
     console.log('handleCreateAlbum', input);
     try {
-      const imageCid = await uploadFile(input.image!);
+      const imageCid = await uploadFile(input.file!);
       if (!imageCid) {
         console.error('error when uploading image nft');
         return false;
       }
 
       const metadata: AlbumMetadata = {
-        name: input.image ? input.image.name.toString() : '',
+        name: input.file ? input.file.name.toString() : '',
         title: input.title,
         description: input.description,
         price: input.price,
@@ -71,7 +71,7 @@ const CreateAlbum = () => {
       }
     }
     
-    toast.error(`Something wrong to create song`);
+    toast.error(`Something wrong to create album`);
     return false;
   };
 
