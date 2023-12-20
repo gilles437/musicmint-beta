@@ -9,7 +9,7 @@ import {
   QUERY_GET_ALBUM_BY_ID,
   QUERY_GET_SONG_BY_ID,
   QUERY_GET_MINTED_SONG,
-} from '@/lib/subgraph/erc721Queries';
+} from '@/lib/subgraph/queries';
 import { Album, Song } from './types';
 
 interface FetchType<T> {

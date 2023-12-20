@@ -1,7 +1,7 @@
 import { request } from "graphql-request";
 
 import { DEFAULT_CHAIN, ADMIN_SUBGRAPH_URLS } from "@/constants";
-import { QUERY_GET_SUPER_ADMIN_TRANSFERS } from "@/lib/subgraph/erc721Queries";
+import { QUERY_GET_SUPER_ADMIN_TRANSFERS } from "@/lib/subgraph/queries";
 import { SuperAdmin } from "./types";
 
 interface FetchType {
