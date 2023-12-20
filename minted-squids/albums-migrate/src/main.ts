@@ -88,7 +88,7 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async ctx => {
 
     // Updated Items
     const updatedItems = txs
-        .filter(tx => tx.action === 'updated')
+        .filter(tx => tx.action === 'update')
         .map(tx => ({
             contract: tx.contract,
             from: tx.from,
@@ -99,9 +99,13 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async ctx => {
         }));
 
     if (updatedItems.length) {
-        console.log('updatedItems', mintItems);
+        console.log('updatedItems', updatedItems);
         const entities = await ctx.store.find(Collections, {
-            where: updatedItems,
+            where: updatedItems.map(i => ({
+                contract: i.contract,
+                albumid: i.albumid,
+                songid: i.songid,
+            })),
         });
         console.log('updated.entities', entities);
         if (entities && entities.length) {
@@ -135,7 +139,11 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async ctx => {
     if (deletedItems.length) {
         console.log('deletedItems', deletedItems);
         const entities = await ctx.store.find(Collections, {
-            where: deletedItems,
+            where: deletedItems.map(i => ({
+                contract: i.contract,
+                albumid: i.albumid,
+                songid: i.songid,
+            })),
         });
         console.log('deleted.entities', entities);
         if (entities && entities.length) {
@@ -143,10 +151,9 @@ processor.run(new TypeormDatabase({ supportHotBlocks: true }), async ctx => {
             // await ctx.store.remove(Collections, entityIds);
 
             for (const entity of entities) {
-                const item = updatedItems.find(
+                const item = deletedItems.find(
                     i =>
                         i.contract === entity.contract &&
-                        i.from === entity.from &&
                         i.albumid === entity.albumid &&
                         i.songid === entity.songid
                 );
@@ -263,7 +270,7 @@ function extractCollectionsRecords(
                         album_id: album.albumId,
                         max_supply: 0,
                         price: BigInt(0),
-                        action: 'updated',
+                        action: 'update',
                         contract: encodeAddress(contract),
                     });
                 }
