@@ -92,7 +92,7 @@ const MyAlbums = () => {
                       e.stopPropagation();
                       e.preventDefault();
                       router.push(
-                        `/album/edit?contract=${album.contract}&albumId=${album.albumid}`
+                        `/album/edit?owner=${album.from}&albumId=${album.albumid}`
                       );
                     }}
                   >

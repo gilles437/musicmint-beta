@@ -45,22 +45,22 @@ export const fetchMintedSongListAsync = createAppAsyncThunk(
 
 export const fetchAlbumByIdAsync = createAppAsyncThunk(
   'album/fetchAlbumByIdAsync',
-  async ({ contract, albumId }: { contract: string; albumId: number }) => {
-    return await fetchAlbumById(contract, albumId);
+  async ({ owner, albumId }: { owner: string; albumId: number }) => {
+    return await fetchAlbumById(owner, albumId);
   }
 );
 
 export const fetchAlbumSongListAsync = createAppAsyncThunk(
   'album/fetchAlbumSongListAsync',
-  async ({ contract, albumId }: { contract: string; albumId: number }) => {
-    return await fetchAlbumSongList(contract, albumId);
+  async ({ owner, albumId }: { owner: string; albumId: number }) => {
+    return await fetchAlbumSongList(owner, albumId);
   }
 );
 
 export const fetchSongByIdAsync = createAppAsyncThunk(
   'album/fetchSongByIdAsync',
-  async (args: { contract: string; albumId: number; songId: number }) => {
-    const { contract, albumId, songId } = args;
-    return await fetchSongById(contract, albumId, songId);
+  async (args: { owner: string; albumId: number; songId: number }) => {
+    const { owner, albumId, songId } = args;
+    return await fetchSongById(owner, albumId, songId);
   }
 );

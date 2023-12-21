@@ -7,7 +7,7 @@ type Props = {
 };
 
 const AboutArtist = ({ address }: Props) => {
-  const metadata = useArtistMetadata(address);
+  const { data: metadata } = useArtistMetadata(address);
 
   return (
     <div className="row my-5">

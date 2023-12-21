@@ -15,7 +15,7 @@ const imageUrl = () => {
 };
 
 const ArtistAvatar = ({ artist }: Props) => {
-  const metadata = useArtistMetadata(artist.to);
+  const { data: metadata } = useArtistMetadata(artist.to);
 
   return (
     <div className="col-lg-3 col-sm-6">

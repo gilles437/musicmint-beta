@@ -46,7 +46,7 @@ export const useSongMetadata = (song?: Song | null) => {
     if (song && !song.uri) {
       dispatch(
         fetchSongByIdAsync({
-          contract: song.contract,
+          owner: song.from,
           albumId: song.albumid,
           songId: song.songid,
         })

@@ -9,7 +9,7 @@ import {
   QUERY_GET_ALBUM_BY_ID,
   QUERY_GET_SONG_BY_ID,
   QUERY_GET_MINTED_SONG,
-} from '@/lib/subgraph/erc721Queries';
+} from '@/lib/subgraph/queries';
 import { Album, Song } from './types';
 
 interface FetchType<T> {
@@ -52,10 +52,10 @@ export const fetchMintedSongList = async (owner: string): Promise<Song[]> => {
   return result.mintItems;
 };
 
-export const fetchAlbumById = async (contract: string, albumId: number): Promise<Album | null> => {
+export const fetchAlbumById = async (owner: string, albumId: number): Promise<Album | null> => {
   const result: FetchType<Album> = await request(
     ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
-    QUERY_GET_ALBUM_BY_ID(contract, albumId)
+    QUERY_GET_ALBUM_BY_ID(owner, albumId)
   );
   if (result.collections?.length) {
     return result.collections[0];
@@ -63,22 +63,22 @@ export const fetchAlbumById = async (contract: string, albumId: number): Promise
   return null;
 };
 
-export const fetchAlbumSongList = async (contract: string, albumId: number): Promise<Song[]> => {
+export const fetchAlbumSongList = async (owner: string, albumId: number): Promise<Song[]> => {
   const result: FetchType<Song> = await request(
     ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
-    QUERY_GET_ALBUM_SONGS(contract, albumId)
+    QUERY_GET_ALBUM_SONGS(owner, albumId)
   );
   return result.collections;
 };
 
 export const fetchSongById = async (
-  contract: string,
+  owner: string,
   albumId: number,
   songId: number
 ): Promise<Song | null> => {
   const result: FetchType<Song> = await request(
     ALBUM_SUBGRAPH_URLS[DEFAULT_CHAIN],
-    QUERY_GET_SONG_BY_ID(contract, albumId, songId)
+    QUERY_GET_SONG_BY_ID(owner, albumId, songId)
   );
   if (result.collections?.length) {
     return result.collections[0];

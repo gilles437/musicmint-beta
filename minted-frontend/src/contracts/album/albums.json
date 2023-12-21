@@ -1,6 +1,6 @@
 {
   "source": {
-    "hash": "0x0ea0f4a54b94e774ea0795f5fd3bfd40a953b3a80cfb346e8b49ab3acbfb53ed",
+    "hash": "0x9c917b7673e447122d3581fd3c040536956ec752b26481eb09c4ef687325d29f",
     "language": "ink! 4.3.0",
     "compiler": "rustc 1.76.0-nightly",
     "build_info": {
@@ -296,12 +296,85 @@
               ],
               "type": 8
             }
+          },
+          {
+            "docs": [
+              " The price of the mint."
+            ],
+            "indexed": false,
+            "label": "price",
+            "type": {
+              "displayName": [
+                "Balance"
+              ],
+              "type": 0
+            }
           }
         ],
         "docs": [
           "Event emitted when a user mints a creation (song or album)."
         ],
         "label": "ItemMinted"
+      },
+      {
+        "args": [
+          {
+            "docs": [
+              " The artist."
+            ],
+            "indexed": false,
+            "label": "from",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "docs": [
+              " Album id."
+            ],
+            "indexed": false,
+            "label": "album_id",
+            "type": {
+              "displayName": [
+                "AlbumId"
+              ],
+              "type": 8
+            }
+          },
+          {
+            "docs": [
+              " Song id."
+            ],
+            "indexed": false,
+            "label": "song_id",
+            "type": {
+              "displayName": [
+                "SongId"
+              ],
+              "type": 8
+            }
+          },
+          {
+            "docs": [
+              " The new URI of the creation."
+            ],
+            "indexed": false,
+            "label": "new_uri",
+            "type": {
+              "displayName": [
+                "URI"
+              ],
+              "type": 5
+            }
+          }
+        ],
+        "docs": [
+          "Event emitted when an artist updates a creation (song or album)."
+        ],
+        "label": "ItemUpdated"
       }
     ],
     "lang_error": {
@@ -380,7 +453,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 15
         },
         "selector": "0x9117e1d3"
       },
@@ -426,7 +499,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 21
+          "type": 19
         },
         "selector": "0xc9fd7a55"
       },
@@ -481,7 +554,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 21
+          "type": 19
         },
         "selector": "0xe6e12c71"
       },
@@ -509,7 +582,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 15
         },
         "selector": "0x06ca4865"
       },
@@ -546,7 +619,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 18
+          "type": 15
         },
         "selector": "0xd4c16804"
       },
@@ -574,7 +647,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 21
+          "type": 19
         },
         "selector": "0xead2d6f3"
       },
@@ -611,7 +684,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 21
+          "type": 19
         },
         "selector": "0x79815f7b"
       },
@@ -619,17 +692,17 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "Ownable::renounce_ownership",
-        "mutates": true,
+        "label": "Ownable::owner",
+        "mutates": false,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 23
+          "type": 21
         },
-        "selector": "0x5e228753"
+        "selector": "0x4fa43c8c"
       },
       {
         "args": [
@@ -640,7 +713,7 @@
                 "ownable_external",
                 "TransferOwnershipInput1"
               ],
-              "type": 26
+              "type": 22
             }
           }
         ],
@@ -662,17 +735,17 @@
         "args": [],
         "default": false,
         "docs": [],
-        "label": "Ownable::owner",
-        "mutates": false,
+        "label": "Ownable::renounce_ownership",
+        "mutates": true,
         "payable": false,
         "returnType": {
           "displayName": [
             "ink",
             "MessageResult"
           ],
-          "type": 27
+          "type": 23
         },
-        "selector": "0x4fa43c8c"
+        "selector": "0x5e228753"
       },
       {
         "args": [
@@ -693,7 +766,7 @@
                 "aft37_external",
                 "ApproveInput2"
               ],
-              "type": 28
+              "type": 26
             }
           },
           {
@@ -717,9 +790,120 @@
             "ink",
             "MessageResult"
           ],
-          "type": 15
+          "type": 27
         },
         "selector": "0xc432e7a4"
+      },
+      {
+        "args": [
+          {
+            "label": "owner",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "AllowanceInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "operator",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "AllowanceInput2"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "id",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "AllowanceInput3"
+              ],
+              "type": 26
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AFT37::allowance",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 29
+        },
+        "selector": "0x893600ca"
+      },
+      {
+        "args": [
+          {
+            "label": "owner",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "BalanceOfInput1"
+              ],
+              "type": 2
+            }
+          },
+          {
+            "label": "id",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "BalanceOfInput2"
+              ],
+              "type": 26
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AFT37::balance_of",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 29
+        },
+        "selector": "0xae8acf6f"
+      },
+      {
+        "args": [
+          {
+            "label": "id",
+            "type": {
+              "displayName": [
+                "aft37_external",
+                "TotalSupplyInput1"
+              ],
+              "type": 26
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AFT37::total_supply",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 29
+        },
+        "selector": "0x65ad2f93"
       },
       {
         "args": [
@@ -774,46 +958,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 15
+          "type": 27
         },
         "selector": "0x385cc204"
-      },
-      {
-        "args": [
-          {
-            "label": "owner",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "BalanceOfInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "id",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "BalanceOfInput2"
-              ],
-              "type": 28
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AFT37::balance_of",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 29
-        },
-        "selector": "0xae8acf6f"
       },
       {
         "args": [
@@ -878,99 +1025,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 15
+          "type": 27
         },
         "selector": "0x842da239"
-      },
-      {
-        "args": [
-          {
-            "label": "id",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "TotalSupplyInput1"
-              ],
-              "type": 28
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AFT37::total_supply",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 29
-        },
-        "selector": "0x65ad2f93"
-      },
-      {
-        "args": [
-          {
-            "label": "owner",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "AllowanceInput1"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "operator",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "AllowanceInput2"
-              ],
-              "type": 2
-            }
-          },
-          {
-            "label": "id",
-            "type": {
-              "displayName": [
-                "aft37_external",
-                "AllowanceInput3"
-              ],
-              "type": 28
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AFT37::allowance",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 29
-        },
-        "selector": "0x893600ca"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AFT37URIStorage::base_uri",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 30
-        },
-        "selector": "0xadff9bda"
       },
       {
         "args": [
@@ -995,9 +1052,68 @@
             "ink",
             "MessageResult"
           ],
-          "type": 31
+          "type": 30
         },
         "selector": "0x7fd773dc"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AFT37URIStorage::base_uri",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 32
+        },
+        "selector": "0xadff9bda"
+      },
+      {
+        "args": [],
+        "default": false,
+        "docs": [],
+        "label": "AFT37PayableMint::withdraw",
+        "mutates": true,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 27
+        },
+        "selector": "0x0698a062"
+      },
+      {
+        "args": [
+          {
+            "label": "id",
+            "type": {
+              "displayName": [
+                "aft37payablemint_external",
+                "MaxSupplyInput1"
+              ],
+              "type": 12
+            }
+          }
+        ],
+        "default": false,
+        "docs": [],
+        "label": "AFT37PayableMint::max_supply",
+        "mutates": false,
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "ink",
+            "MessageResult"
+          ],
+          "type": 33
+        },
+        "selector": "0xa7da8816"
       },
       {
         "args": [
@@ -1032,52 +1148,9 @@
             "ink",
             "MessageResult"
           ],
-          "type": 15
+          "type": 27
         },
         "selector": "0x2af98e53"
-      },
-      {
-        "args": [],
-        "default": false,
-        "docs": [],
-        "label": "AFT37PayableMint::withdraw",
-        "mutates": true,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 15
-        },
-        "selector": "0x0698a062"
-      },
-      {
-        "args": [
-          {
-            "label": "id",
-            "type": {
-              "displayName": [
-                "aft37payablemint_external",
-                "MaxSupplyInput1"
-              ],
-              "type": 12
-            }
-          }
-        ],
-        "default": false,
-        "docs": [],
-        "label": "AFT37PayableMint::max_supply",
-        "mutates": false,
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "ink",
-            "MessageResult"
-          ],
-          "type": 33
-        },
-        "selector": "0xa7da8816"
       },
       {
         "args": [
@@ -1112,7 +1185,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 15
+          "type": 27
         },
         "selector": "0x9a629f37"
       },
@@ -1176,7 +1249,7 @@
             "ink",
             "MessageResult"
           ],
-          "type": 15
+          "type": 27
         },
         "selector": "0xc5317b9a"
       }
@@ -1788,6 +1861,52 @@
           "variant": {
             "variants": [
               {
+                "index": 0,
+                "name": "NotOwner"
+              },
+              {
+                "index": 1,
+                "name": "InvalidAlbumId"
+              },
+              {
+                "index": 2,
+                "name": "InvalidSongId"
+              },
+              {
+                "index": 3,
+                "name": "InvalidId"
+              },
+              {
+                "index": 4,
+                "name": "DeniedId"
+              },
+              {
+                "fields": [
+                  {
+                    "type": 18,
+                    "typeName": "AFT37Error"
+                  }
+                ],
+                "index": 5,
+                "name": "Internal"
+              }
+            ]
+          }
+        },
+        "path": [
+          "albums",
+          "albums",
+          "Error"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "type": {
+        "def": {
+          "variant": {
+            "variants": [
+              {
                 "fields": [
                   {
                     "type": 5,
@@ -1840,7 +1959,7 @@
       }
     },
     {
-      "id": 18,
+      "id": 19,
       "type": {
         "def": {
           "variant": {
@@ -1848,7 +1967,7 @@
               {
                 "fields": [
                   {
-                    "type": 19
+                    "type": 20
                   }
                 ],
                 "index": 0,
@@ -1869,53 +1988,11 @@
         "params": [
           {
             "name": "T",
-            "type": 19
+            "type": 20
           },
           {
             "name": "E",
             "type": 11
-          }
-        ],
-        "path": [
-          "Result"
-        ]
-      }
-    },
-    {
-      "id": 19,
-      "type": {
-        "def": {
-          "variant": {
-            "variants": [
-              {
-                "fields": [
-                  {
-                    "type": 6
-                  }
-                ],
-                "index": 0,
-                "name": "Ok"
-              },
-              {
-                "fields": [
-                  {
-                    "type": 20
-                  }
-                ],
-                "index": 1,
-                "name": "Err"
-              }
-            ]
-          }
-        },
-        "params": [
-          {
-            "name": "T",
-            "type": 6
-          },
-          {
-            "name": "E",
-            "type": 20
           }
         ],
         "path": [
@@ -1930,38 +2007,38 @@
           "variant": {
             "variants": [
               {
+                "fields": [
+                  {
+                    "type": 12
+                  }
+                ],
                 "index": 0,
-                "name": "NotOwner"
-              },
-              {
-                "index": 1,
-                "name": "InvalidAlbumId"
-              },
-              {
-                "index": 2,
-                "name": "InvalidSongId"
-              },
-              {
-                "index": 3,
-                "name": "DeniedId"
+                "name": "Ok"
               },
               {
                 "fields": [
                   {
-                    "type": 17,
-                    "typeName": "AFT37Error"
+                    "type": 17
                   }
                 ],
-                "index": 4,
-                "name": "Internal"
+                "index": 1,
+                "name": "Err"
               }
             ]
           }
         },
+        "params": [
+          {
+            "name": "T",
+            "type": 12
+          },
+          {
+            "name": "E",
+            "type": 17
+          }
+        ],
         "path": [
-          "albums",
-          "albums",
-          "Error"
+          "Result"
         ]
       }
     },
@@ -2014,22 +2091,17 @@
           "variant": {
             "variants": [
               {
-                "fields": [
-                  {
-                    "type": 12
-                  }
-                ],
                 "index": 0,
-                "name": "Ok"
+                "name": "None"
               },
               {
                 "fields": [
                   {
-                    "type": 20
+                    "type": 2
                   }
                 ],
                 "index": 1,
-                "name": "Err"
+                "name": "Some"
               }
             ]
           }
@@ -2037,15 +2109,11 @@
         "params": [
           {
             "name": "T",
-            "type": 12
-          },
-          {
-            "name": "E",
-            "type": 20
+            "type": 2
           }
         ],
         "path": [
-          "Result"
+          "Option"
         ]
       }
     },
@@ -2172,7 +2240,7 @@
               {
                 "fields": [
                   {
-                    "type": 2
+                    "type": 12
                   }
                 ],
                 "index": 1,
@@ -2184,7 +2252,7 @@
         "params": [
           {
             "name": "T",
-            "type": 2
+            "type": 12
           }
         ],
         "path": [
@@ -2201,7 +2269,7 @@
               {
                 "fields": [
                   {
-                    "type": 26
+                    "type": 28
                   }
                 ],
                 "index": 0,
@@ -2222,7 +2290,7 @@
         "params": [
           {
             "name": "T",
-            "type": 26
+            "type": 28
           },
           {
             "name": "E",
@@ -2241,17 +2309,22 @@
           "variant": {
             "variants": [
               {
+                "fields": [
+                  {
+                    "type": 6
+                  }
+                ],
                 "index": 0,
-                "name": "None"
+                "name": "Ok"
               },
               {
                 "fields": [
                   {
-                    "type": 12
+                    "type": 18
                   }
                 ],
                 "index": 1,
-                "name": "Some"
+                "name": "Err"
               }
             ]
           }
@@ -2259,11 +2332,15 @@
         "params": [
           {
             "name": "T",
-            "type": 12
+            "type": 6
+          },
+          {
+            "name": "E",
+            "type": 18
           }
         ],
         "path": [
-          "Option"
+          "Result"
         ]
       }
     },
@@ -2318,7 +2395,7 @@
               {
                 "fields": [
                   {
-                    "type": 9
+                    "type": 31
                   }
                 ],
                 "index": 0,
@@ -2339,7 +2416,7 @@
         "params": [
           {
             "name": "T",
-            "type": 9
+            "type": 31
           },
           {
             "name": "E",
@@ -2360,7 +2437,7 @@
               {
                 "fields": [
                   {
-                    "type": 32
+                    "type": 9
                   }
                 ],
                 "index": 0,
@@ -2369,7 +2446,7 @@
               {
                 "fields": [
                   {
-                    "type": 11
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -2381,11 +2458,11 @@
         "params": [
           {
             "name": "T",
-            "type": 32
+            "type": 9
           },
           {
             "name": "E",
-            "type": 11
+            "type": 18
           }
         ],
         "path": [
@@ -2411,7 +2488,7 @@
               {
                 "fields": [
                   {
-                    "type": 17
+                    "type": 11
                   }
                 ],
                 "index": 1,
@@ -2427,7 +2504,7 @@
           },
           {
             "name": "E",
-            "type": 17
+            "type": 11
           }
         ],
         "path": [
@@ -2495,7 +2572,7 @@
               {
                 "fields": [
                   {
-                    "type": 17
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -2511,7 +2588,7 @@
           },
           {
             "name": "E",
-            "type": 17
+            "type": 18
           }
         ],
         "path": [
@@ -2600,7 +2677,7 @@
               {
                 "fields": [
                   {
-                    "type": 17
+                    "type": 18
                   }
                 ],
                 "index": 1,
@@ -2616,7 +2693,7 @@
           },
           {
             "name": "E",
-            "type": 17
+            "type": 18
           }
         ],
         "path": [

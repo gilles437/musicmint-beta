@@ -44,7 +44,7 @@ export const useAlbumMetadata = (album?: Album | null) => {
   useEffect(() => {
     // There is no uri in the minted albums
     if (album && !album.uri) {
-      dispatch(fetchAlbumByIdAsync({ contract: album.contract, albumId: album.albumid }));
+      dispatch(fetchAlbumByIdAsync({ owner: album.from, albumId: album.albumid }));
     }
   }, [album]);
 

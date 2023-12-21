@@ -6,6 +6,7 @@ import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { useArtistMetadata } from '@/hooks/useArtistMetadata';
 import Button from 'react-bootstrap/esm/Button';
+import Loader from '@/components/Loader';
 
 type Props = {
   address: string;
@@ -13,7 +14,7 @@ type Props = {
 
 const UpdateProfile = ({ address }: Props) => {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const metadata = useArtistMetadata(address);
+  const { data: metadata, loading } = useArtistMetadata(address);
 
   useEffect(() => {
     setProfile(metadata);
@@ -69,6 +70,10 @@ const UpdateProfile = ({ address }: Props) => {
     return false;
   };
 
+  if (loading) {
+    return <Loader />
+  }
+
   return (
     <>
       {/* <div className="text-center mb-3">
@@ -83,7 +88,7 @@ const UpdateProfile = ({ address }: Props) => {
           Balance: 0
         </span>
       </div>
-
+      
       <ProfileForm profile={profile} onSubmit={handleUpdateProfile} />
     </>
   );
