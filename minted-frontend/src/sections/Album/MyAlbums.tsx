@@ -13,6 +13,7 @@ import LoadingButton from '@/components/LoadingButton';
 import { useAlbum } from '@/hooks/useAlbum';
 import { useFindArtist } from '@/hooks/useFindArtist';
 import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
+import { useFetchSoldAlbums } from '@/hooks/useFetchSoldAlbums';
 import { useRemoveAlbum } from '@/hooks/useRemoveStoreItem';
 import Loader from '@/components/Loader';
 import { isNotNullOrUndefined } from '@/utils/utils';
@@ -23,6 +24,7 @@ const MyAlbums = () => {
   const artist = useFindArtist();
   const { walletAddress } = useWallets();
   const { data: albums, loading: isLoadingAlbums, refresh } = useFetchOwnedAlbums(walletAddress);
+  useFetchSoldAlbums(walletAddress);
   const { deleteAlbum } = useAlbum();
   const removeStoreAlbum = useRemoveAlbum();
 
