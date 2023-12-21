@@ -10,6 +10,7 @@ import {
   fetchSongByIdAsync,
   fetchMintedAlbumListAsync,
   fetchMintedSongListAsync,
+  fetchSoldAlbumListAsync,
 } from './thunks';
 import { Album, AlbumMetadata, Song, SongMetadata } from './types';
 
@@ -19,10 +20,12 @@ export interface AlbumState {
   loading: boolean;
   loadingAlbums: boolean;
   loadingSongs: boolean;
+  loadingSoldAlbums: boolean;
   albums: Album[];
   albumMetadata: { [key: string]: AlbumMetadata };
   songs: Song[];
   songMetadata: { [key: string]: SongMetadata };
+  soldAlbums: Album[];
 }
 
 const initialState: AlbumState = {
@@ -30,10 +33,12 @@ const initialState: AlbumState = {
   loading: false,
   loadingAlbums: false,
   loadingSongs: false,
+  loadingSoldAlbums: false,
   albums: [],
   albumMetadata: {},
   songs: [],
   songMetadata: {},
+  soldAlbums: [],
 };
 
 const filterAlbum = (albums: Album[], album: Album) => {
@@ -64,6 +69,9 @@ export const albumSlice = createSlice({
       if (action.payload.id) {
         state.albumMetadata[action.payload.id] = action.payload.metadata;
       }
+    },
+    setSoldAlbums: (state, action: PayloadAction<Album[]>) => {
+      state.soldAlbums = action.payload;
     },
     setSongs: (state, action: PayloadAction<Song[]>) => {
       state.songs = action.payload;
@@ -125,6 +133,13 @@ export const albumSlice = createSlice({
         state.loadingAlbums = false;
         state.albums = action.payload;
       })
+      .addCase(fetchSoldAlbumListAsync.pending, (state) => {
+        state.loadingSoldAlbums = true;
+      })
+      .addCase(fetchSoldAlbumListAsync.fulfilled, (state, action) => {
+        state.loadingSoldAlbums = false;
+        state.soldAlbums = action.payload;
+      })
       .addCase(fetchMintedSongListAsync.pending, (state) => {
         state.loadingSongs = true;
       })
@@ -164,6 +179,7 @@ export const {
   setLoadingStatus: setAlbumLoadingStatus,
   setAlbums,
   setAlbumMetadata,
+  setSoldAlbums,
   setSongs,
   setSongMetadata,
   removeAlbum,
