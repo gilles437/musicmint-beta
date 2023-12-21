@@ -43,6 +43,8 @@ const AlbumRow = ({ album, showOwner, clickable, actions }: Props) => {
       {!!showOwner && <td>{beatifyAddress(album.from)}</td>}
       <td>{album.maxsupply || ''}</td>
       <td>{metadata?.price || ''}</td>
+      <td>{''}</td>
+      <td>{''}</td>
       <td>{dayjs(album.timestamp).format('MM/DD/YYYY HH:mm')}</td>
       <td>{actions ? actions(album) : ''}</td>
     </tr>
