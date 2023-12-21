@@ -5,7 +5,8 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "rm -rf lib && tsc"
+    "build": "rm -rf lib && tsc",
+    "typegen": "npx squid-ink-typegen --abi abi/albums.json --output src/abi/albums.ts"
   },
   "dependencies": {
     "@subsquid/archive-registry": "^3.3.0",
@@ -20,6 +21,7 @@
     "typeorm": "^0.3.17"
   },
   "devDependencies": {
+    "@subsquid/ink-typegen": "^3.0.2",
     "@subsquid/substrate-metadata-explorer": "^3.1.1",
     "@subsquid/substrate-typegen": "^8.0.1",
     "@subsquid/typeorm-codegen": "^1.3.2",
