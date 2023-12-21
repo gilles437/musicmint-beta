@@ -20,7 +20,7 @@ const CreateSong = ({ album }: Props) => {
       console.log('onSongCreated', songId);
       dispatch(
         fetchSongByIdAsync({
-          owner: album.from,
+          contract: album.contract,
           albumId: album.albumid,
           songId,
         })

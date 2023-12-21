@@ -3,7 +3,6 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
 import { Album, AlbumMetadata, fetchAlbumByIdAsync, useDispatch } from '@/lib/redux';
-import { useWallets } from '@/contexts/Wallets';
 import { useAlbum } from '@/hooks/useAlbum';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import { createIpfsUrl } from '@/utils/ipfs';
@@ -17,13 +16,12 @@ type Props = {
 const EditAlbum = ({ album }: Props) => {
   const dispatch: any = useDispatch();
   const router = useRouter();
-  const { walletAddress } = useWallets();
   const { setTokenUri } = useAlbum(album?.contract);
   const metadata = useAlbumMetadata(album);
 
   const onAlbumUpdated = async (albumId: number) => {
     console.log('onAlbumUpdated', albumId);
-    walletAddress && dispatch(fetchAlbumByIdAsync({ owner: walletAddress, albumId }));
+    dispatch(fetchAlbumByIdAsync({ contract: album.contract, albumId }));
 
     const timerId = setTimeout(() => {
       router.push(`/album/owned`);

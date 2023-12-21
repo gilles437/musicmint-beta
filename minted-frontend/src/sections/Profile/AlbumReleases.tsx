@@ -45,7 +45,7 @@ const AlbumDetail = ({ album, index }: { album: Album; index: number }) => {
             <h5>{metadata?.price} AFT</h5>
           </div>
           <div className="mb-2">
-            <Link href={`/album/detail?owner=${album.from}&albumId=${album.albumid}`}>
+            <Link href={`/album/detail?contract=${album.contract}&albumId=${album.albumid}`}>
               <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
                 Explore Album
               </button>
@@ -69,7 +69,7 @@ const AlbumDetail = ({ album, index }: { album: Album; index: number }) => {
           <h5>{album.price} AFT</h5>
         </div>
         <div className="mb-2">
-          <Link href={`/album/detail?owner=${album.from}&albumId=${album.albumid}`}>
+          <Link href={`/album/detail?contract=${album.contract}&albumId=${album.albumid}`}>
             <button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
               Explore Album
             </button>

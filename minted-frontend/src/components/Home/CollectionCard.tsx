@@ -15,7 +15,7 @@ const CollectionCard = ({ album }: Props) => {
   return (
     <div className="collection-card">
       <Link
-        href={`/album/detail?owner=${album.from}&albumId=${album.albumid}`}
+        href={`/album/detail?contract=${album.contract}&albumId=${album.albumid}`}
         className="project-card hover-shadow"
       >
         <div className="top-info">
