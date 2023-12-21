@@ -34,7 +34,7 @@ export const useArtistMetadata = (address: string) => {
     if (address && !metadata) {
       updateArtistMetadata(address).then((meta) => {
         meta && dispatch(setArtistMetadata({ metadata: meta, address }));
-      });
+      }).finally(() => setLoading(false));
     }
     
     metadata && setLoading(false);
