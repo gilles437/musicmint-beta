@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Album } from '@/lib/redux';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
+import { useAlbumStats } from '@/hooks/useAlbumStats';
 import { beatifyAddress } from '@/utils/account';
 import { useMemo } from 'react';
 
@@ -16,6 +17,7 @@ type Props = {
 const AlbumRow = ({ album, showOwner, clickable, actions }: Props) => {
   const router = useRouter();
   const metadata = useAlbumMetadata(album);
+  const { getSoldAmount, getGainAmount } = useAlbumStats();
 
   const minted = useMemo(() => {
     if (router.query?.minted) {
@@ -43,8 +45,8 @@ const AlbumRow = ({ album, showOwner, clickable, actions }: Props) => {
       {!!showOwner && <td>{beatifyAddress(album.from)}</td>}
       <td>{album.maxsupply || ''}</td>
       <td>{metadata?.price || ''}</td>
-      <td>{''}</td>
-      <td>{''}</td>
+      <td>{getSoldAmount(album.contract, album.albumid)}</td>
+      <td>{getGainAmount(album.contract, album.albumid)}</td>
       <td>{dayjs(album.timestamp).format('MM/DD/YYYY HH:mm')}</td>
       <td>{actions ? actions(album) : ''}</td>
     </tr>

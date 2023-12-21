@@ -9,7 +9,7 @@ import {
 
 export const useFetchSoldAlbums = (owner: string | null) => {
   const dispatch = useDispatch();
-  const { loadingAlbums } = useSelector((state) => state.album);
+  const { loadingSoldAlbums } = useSelector((state) => state.album);
   const albums = useSelector(selectSoldAlbums);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export const useFetchSoldAlbums = (owner: string | null) => {
   }, [dispatch, owner]);
 
   return {
-    loading: loadingAlbums,
+    loading: loadingSoldAlbums,
     data: albums,
   };
 };
