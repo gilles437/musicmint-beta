@@ -38,7 +38,7 @@ export const useArtistMetadata = (address: string) => {
     }
     
     metadata && setLoading(false);
-  }, [address, metadata, updateArtistMetadata]);
+  }, [dispatch, address, metadata, updateArtistMetadata]);
 
   return { data: metadata, loading };
 };

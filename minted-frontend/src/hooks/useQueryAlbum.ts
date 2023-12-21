@@ -21,7 +21,7 @@ export const useQueryAlbum = () => {
 
       dispatch(fetchAlbumByIdAsync({ owner: from, albumId: _albumId }));
     }
-  }, [query?.owner, query?.albumId]);
+  }, [dispatch, query?.owner, query?.albumId]);
 
   return useMemo(() => {
     if (owner && isNotNullOrUndefined(albumId)) {

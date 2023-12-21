@@ -52,7 +52,7 @@ export const useSongMetadata = (song?: Song | null) => {
         })
       );
     }
-  }, [song]);
+  }, [dispatch, song]);
 
   useEffect(() => {
     if (song && song.uri && !metadata) {
@@ -60,7 +60,7 @@ export const useSongMetadata = (song?: Song | null) => {
         meta && dispatch(setSongMetadata({ metadata: meta, id: song.id }));
       });
     }
-  }, [song, metadata]);
+  }, [dispatch, song, metadata]);
 
   return metadata;
 };

@@ -61,7 +61,7 @@ const AlbumForm = ({ album, onSubmit }: Props) => {
       );
     }
     return true;
-  }, [formik, metadata]);
+  }, [formik, album, metadata]);
 
   const profileImage = useMemo(() => {
     if (formik.values.file && typeof formik.values.file !== 'string') {

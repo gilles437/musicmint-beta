@@ -46,7 +46,7 @@ export const useAlbumMetadata = (album?: Album | null) => {
     if (album && !album.uri) {
       dispatch(fetchAlbumByIdAsync({ owner: album.from, albumId: album.albumid }));
     }
-  }, [album]);
+  }, [dispatch, album]);
 
   useEffect(() => {
     if (album && album.uri && !metadata) {
@@ -54,7 +54,7 @@ export const useAlbumMetadata = (album?: Album | null) => {
         meta && dispatch(setAlbumMetadata({ metadata: meta, id: album.id }));
       });
     }
-  }, [album, metadata]);
+  }, [dispatch, album, metadata]);
 
   return metadata;
 };

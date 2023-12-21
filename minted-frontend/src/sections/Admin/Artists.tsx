@@ -23,13 +23,14 @@ const ArtistsSection = () => {
   const adminContract = useAdminContract();
   const findAddress = useFindAddress();
 
+  //TODO - create a hook
   const fetchArtistList = useCallback(() => {
     dispatch(fetchArtistListAsync());
   }, [dispatch]);
 
   useEffect(() => {
     fetchArtistList();
-  }, []);
+  }, [fetchArtistList]);
 
   const isSuperAdmin = useMemo(() => {
     // Check if it is super admin.

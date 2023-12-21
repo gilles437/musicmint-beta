@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useDispatch, Album } from '@/lib/redux';
+import { Album } from '@/lib/redux';
 import { useWallets } from '@/contexts/Wallets';
 
 import AlbumTable from '@/components/Album/AlbumTable';

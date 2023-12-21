@@ -40,7 +40,7 @@ export const useAlbumSong = (contractAddress?: string) => {
       options: { value: 0, storageDepositLimit: null, gasLimit },
       signer: { signer: wallet.signer },
     };
-  }, [api, wallet, gasLimit]);
+  }, [api, wallet, walletAddress, gasLimit]);
 
   const createSong = useCallback(
     async (

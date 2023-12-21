@@ -121,7 +121,7 @@ export const useAdminContract = () => {
 
       return artists.filter((i) => i.contract);
     },
-    [request]
+    [request, gasLimit]
   );
 
   const addArtist = useCallback(
@@ -196,7 +196,7 @@ export const useAdminContract = () => {
 
       return true;
     },
-    [request]
+    [request, gasLimit]
   );
 
   return {
