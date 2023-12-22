@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
-import { useAlbumContract } from './useAlbumContract';
+import { useInitialize } from './useInitialize';
 import { createAlbumContract } from './utils';
 
 export const useSetTokenUri = () => {
-  const { params } = useAlbumContract();
+  const { params } = useInitialize();
 
   return useCallback(
     async (contractAddress: string, albumId: number, metaUrl: string): Promise<number | null> => {

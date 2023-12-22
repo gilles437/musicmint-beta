@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 
 import { ContractEventsType } from './types';
 import { useChainDecimals } from './useChainDecimals';
-import { useAlbumContract } from './useAlbumContract';
+import { useInitialize } from './useInitialize';
 import { createAlbumContract } from './utils';
 
 export const useCreateSong = () => {
   const chainDecimals = useChainDecimals();
-  const { params } = useAlbumContract();
+  const { params } = useInitialize();
 
   return useCallback(
     async (

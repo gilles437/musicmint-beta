@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import { ContractEventsType } from './types';
 import { useChainDecimals } from './useChainDecimals';
-import { useAlbumContract } from './useAlbumContract';
+import { useInitialize } from './useInitialize';
 import { createAlbumContract } from './utils';
 
 export const useCreateAlbum = () => {
   const chainDecimals = useChainDecimals();
-  const { params } = useAlbumContract();
+  const { params } = useInitialize();
 
   return useCallback(
     async (
@@ -37,7 +37,6 @@ export const useCreateAlbum = () => {
             priceInWei,
             metaUrl
           );
-
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
             return reject(queryTx.result.asErr);

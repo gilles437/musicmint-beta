@@ -4,7 +4,7 @@ import { useApi } from '@/contexts/Polkadot';
 import { useWallets } from '@/contexts/Wallets';
 import { useGasLimit } from './useGasLimit';
 
-export const useAlbumContract = () => {
+export const useInitialize = () => {
   const { api } = useApi();
   const gasLimit = useGasLimit(api);
   const { wallet, walletAddress } = useWallets();

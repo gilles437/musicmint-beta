@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 
 import { useInitialize } from './useInitialize';
-import { createAlbumContract } from './utils';
+import { createAdminContract } from './utils';
 
-export const useDeleteAlbum = () => {
+export const useRemoveArtist = () => {
   const { params } = useInitialize();
 
   return useCallback(
-    async (contractAddress: string, albumId: number): Promise<number | null> => {
-      return new Promise<number>(async (resolve, reject) => {
+    async (address: string, contractAddress: string): Promise<boolean> => {
+      return new Promise<boolean>(async (resolve, reject) => {
         try {
           if (!params) {
             return reject('API not ready');
@@ -16,28 +16,31 @@ export const useDeleteAlbum = () => {
 
           const { api, signer, options, account } = params;
 
-          const contract = createAlbumContract(api, contractAddress);
+          const contract = createAdminContract(api);
           if (!contract) {
             return reject('Iniitialize Error!');
           }
           console.log('contract', contract);
 
-          const queryTx = await contract.query.deleteAlbum(account, options, albumId);
+          const queryTx = await contract.query.removeAdmin(
+            account,
+            options,
+            address,
+            contractAddress
+          );
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
             return reject(queryTx.result.asErr);
           }
 
-          console.log('deleteAlbum, albumId=', albumId);
-          const tx = await contract.tx.deleteAlbum(options, albumId);
+          const tx = await contract.tx.removeAdmin(options, address, contractAddress);
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
-            // console.log('*****tx**result=', result.toHuman());
             console.log('*****tx**result=', result.status.isFinalized);
             if (result.status.isFinalized) {
               unsub();
-              resolve(albumId);
+              resolve(true);
             }
           });
         } catch (err) {

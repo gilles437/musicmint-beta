@@ -1,11 +1,11 @@
 import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
 
-import { useAlbumContract } from './useAlbumContract';
+import { useInitialize } from './useInitialize';
 import { createAlbumContract } from './utils';
 
 export const useMintSong = () => {
-  const { params } = useAlbumContract();
+  const { params } = useInitialize();
 
   return useCallback(
     async (
