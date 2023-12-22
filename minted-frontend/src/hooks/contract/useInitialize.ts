@@ -19,7 +19,6 @@ export const useInitialize = () => {
       return null;
     }
 
-    console.info('API Ready!!!');
     return {
       api,
       wallet,

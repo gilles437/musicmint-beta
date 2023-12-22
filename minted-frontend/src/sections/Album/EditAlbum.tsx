@@ -56,6 +56,7 @@ const EditAlbum = ({ album }: Props) => {
       }
 
       const metaUrl = createIpfsUrl(metadataId);
+      console.log('metaUrl', metaUrl)
       toast.info(`Album Metadata saved on ${metaUrl}`);
 
       const albumId = await setTokenUri(album.contract, album.albumid, metaUrl);
@@ -73,7 +74,7 @@ const EditAlbum = ({ album }: Props) => {
       }
     }
 
-    toast.error(`Something wrong to update album`);
+    toast.error(`Something went wrong!`);
     return false;
   };
 

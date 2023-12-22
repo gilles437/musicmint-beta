@@ -46,16 +46,24 @@ const ArtistsSection = () => {
       return;
     }
 
-    const success = await addArtist(newAdminInput, newContractAddress);
-
-    if (success) {
-      toast.success('Artist has been successfully added');
-      setNewAdminInput('');
-      const timerId = setTimeout(() => fetchArtistList(), 5000);
-      return () => clearTimeout(timerId);
-    } else {
-      toast.warn('Failed to add artist');
+    try {
+      const success = await addArtist(newAdminInput, newContractAddress);
+      if (success) {
+        toast.success('Artist has been successfully added');
+        setNewAdminInput('');
+        
+        const timerId = setTimeout(() => fetchArtistList(), 5000);
+        return () => clearTimeout(timerId);
+      }
+    } catch (err: any) {
+      if (err && err.message === 'Cancelled') {
+        toast.error(`Transaction cancelled`);
+        return false;
+      }
     }
+
+    toast.error(`Something went wrong!`);
+    return false;
   };
 
   const removeAdmin = async (artistAddress: string) => {
@@ -76,16 +84,23 @@ const ArtistsSection = () => {
       return;
     }
 
-    const success = await removeArtist(artist.to, artist.contract);
-
-    if (success) {
-      toast.success('Artist has been successfully removed');
-      setNewAdminInput('');
-      const timerId = setTimeout(() => fetchArtistList(), 5000);
-      return () => clearTimeout(timerId);
-    } else {
-      toast.warn('Failed to remove artist');
+    try {
+      const success = await removeArtist(artist.to, artist.contract);
+      if (success) {
+        toast.success('Artist has been successfully removed');
+        setNewAdminInput('');
+        const timerId = setTimeout(() => fetchArtistList(), 5000);
+        return () => clearTimeout(timerId);
+      }
+    } catch (err: any) {
+      if (err && err.message === 'Cancelled') {
+        toast.error(`Transaction cancelled`);
+        return false;
+      }
     }
+
+    toast.error(`Something went wrong!`);
+    return false;
   };
 
   const handleAddAdminChange = (event: any) => {

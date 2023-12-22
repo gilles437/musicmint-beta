@@ -36,6 +36,7 @@ export const useSetTokenUri = () => {
             if (!result.status.isFinalized) {
               return;
             }
+            console.log('*****tx**result=', JSON.parse(JSON.stringify(result)));
 
             unsub();
             resolve(albumId);

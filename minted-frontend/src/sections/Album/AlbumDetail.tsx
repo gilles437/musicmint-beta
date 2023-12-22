@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { Album } from '@/lib/redux';
 import { useMintAlbum } from '@/hooks/contract/useMintAlbum';
 import AlbumDetail from '@/components/Album/AlbumDetail';
+import { isNullOrUndefined } from '@/utils/utils';
 
 type Props = {
   album: Album;
@@ -17,7 +18,7 @@ const AlbumDetailSection = ({ album }: Props) => {
       console.log('handleBuyAlbum', album);
       try {
         const mintedId = await mintAlbum(album.contract, album.albumid, album.price);
-        if (mintedId) {
+        if (!isNullOrUndefined(mintedId)) {
           toast.info('You have successfully minted the album');
           return true;
         }
