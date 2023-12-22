@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 import { ContractEventsType } from './types';
 import { useChainDecimals } from './useChainDecimals';
-import { useContract } from './useContract';
+import { useAlbumContract } from './useAlbumContract';
 
 export const useCreateAlbum = (contractAddress?: string | null) => {  
   const chainDecimals = useChainDecimals();
-  const { contract, params } = useContract(contractAddress);
+  const { contract, params } = useAlbumContract(contractAddress);
 
   return useCallback(
     async (maxSupply: number, tokenPrice: number, metaUrl: string): Promise<number | null> => {

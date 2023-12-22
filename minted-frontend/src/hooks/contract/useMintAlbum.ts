@@ -1,11 +1,11 @@
-import { ContractPromise } from '@polkadot/api-contract';
 import { BN } from '@polkadot/util';
 import { useCallback } from 'react';
-import contractAbi from '@/contracts/album/albums.json';
-import { useContract } from './useContract';
+
+import { useAlbumContract } from './useAlbumContract';
+import { createAlbumContract } from './utils';
 
 export const useMintAlbum = () => {
-  const { params } = useContract();
+  const { params } = useAlbumContract();
 
   return useCallback(
     async (albumId: number, price: string, contractAddress: string): Promise<number | null> => {
@@ -28,15 +28,19 @@ export const useMintAlbum = () => {
             return reject(`You don't have enough balance in your wallet!`);
           }
 
-          const contract_ = new ContractPromise(api, contractAbi, contractAddress);
-          const queryTx = await contract_.query.mintAlbum(account, mintOptions, albumId);
+          const contract = createAlbumContract(api, contractAddress);
+          if (!contract) {
+            return reject('Iniitialize Error!');
+          }
+          console.log('contract', contract);
+          const queryTx = await contract.query.mintAlbum(account, mintOptions, albumId);
 
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
             return reject(queryTx.result.asErr);
           }
 
-          const tx = await contract_.tx.mintAlbum(mintOptions, albumId);
+          const tx = await contract.tx.mintAlbum(mintOptions, albumId);
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {

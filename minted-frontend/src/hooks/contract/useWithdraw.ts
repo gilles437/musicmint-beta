@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import { useContract } from './useContract';
+import { useAlbumContract } from './useAlbumContract';
 import { ContractEventsType } from './types';
 
 export const useAlbum = (contractAddress?: string | null) => {
-  const { contract, params } = useContract(contractAddress);
+  const { contract, params } = useAlbumContract(contractAddress);
 
   return useCallback(async (): Promise<string | null> => {
     return new Promise<string | null>(async (resolve, reject) => {

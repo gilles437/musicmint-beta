@@ -1,10 +1,10 @@
-import { ContractPromise } from '@polkadot/api-contract';
 import { useCallback } from 'react';
-import contractAbi from '@/contracts/album/albums.json';
-import { useContract } from './useContract';
+
+import { useAlbumContract } from './useAlbumContract';
+import { createAlbumContract } from './utils';
 
 export const useDeleteAlbum = () => {
-  const { params } = useContract();
+  const { params } = useAlbumContract();
 
   return useCallback(
     async (albumId: number, contractAddress: string): Promise<number | null> => {
@@ -16,9 +16,12 @@ export const useDeleteAlbum = () => {
 
           const { api, signer, options, account } = params;
 
-          const contract_ = new ContractPromise(api, contractAbi, contractAddress);
-          console.log('contract_', contract_);
-          const queryTx = await contract_.query.deleteAlbum(account, options, albumId);
+          const contract = createAlbumContract(api, contractAddress);
+          if (!contract) {
+            return reject('Iniitialize Error!');
+          }
+          console.log('contract', contract);
+          const queryTx = await contract.query.deleteAlbum(account, options, albumId);
 
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
@@ -26,7 +29,7 @@ export const useDeleteAlbum = () => {
           }
 
           console.log('deleteAlbum, albumId=', albumId);
-          const tx = await contract_.tx.deleteAlbum(options, albumId);
+          const tx = await contract.tx.deleteAlbum(options, albumId);
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {

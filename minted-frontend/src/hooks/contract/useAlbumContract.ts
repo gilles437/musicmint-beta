@@ -1,20 +1,19 @@
-import { ContractPromise } from '@polkadot/api-contract';
 import { useMemo } from 'react';
 
-import contractAbi from '@/contracts/album/albums.json';
 import { useApi } from '@/contexts/Polkadot';
 import { useWallets } from '@/contexts/Wallets';
 
 import { useGasLimit } from './useGasLimit';
+import { createAlbumContract } from './utils';
 
-export const useContract = (address?: string | null) => {
+export const useAlbumContract = (address?: string | null) => {
   const { api } = useApi();
   const gasLimit = useGasLimit(api);
   const { wallet, walletAddress } = useWallets();
 
   const contract = useMemo(() => {
     if (api && address) {
-      return new ContractPromise(api, contractAbi, address);
+      return createAlbumContract(api, address);
     }
     return null;
   }, [api, address]);
