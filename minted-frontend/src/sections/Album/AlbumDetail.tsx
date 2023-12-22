@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
 
 import { Album } from '@/lib/redux';
-import { useAlbum } from '@/hooks/useAlbum';
+import { useMintAlbum } from '@/hooks/contract/useMintAlbum';
 import AlbumDetail from '@/components/Album/AlbumDetail';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 };
 
 const AlbumDetailSection = ({ album }: Props) => {
-  const { mintAlbum } = useAlbum(album?.contract);
+  const mintAlbum = useMintAlbum();
 
   const handleBuyAlbum = useCallback(
     async (album: Album) => {

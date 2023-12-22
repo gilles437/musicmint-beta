@@ -10,7 +10,7 @@ import AlbumTable from '@/components/Album/AlbumTable';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import LoadingButton from '@/components/LoadingButton';
 
-import { useAlbum } from '@/hooks/useAlbum';
+import { useDeleteAlbum } from '@/hooks/contract/useDeleteAlbum';
 import { useFindArtist } from '@/hooks/useFindArtist';
 import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
 import { useFetchSoldAlbums } from '@/hooks/useFetchSoldAlbums';
@@ -25,7 +25,7 @@ const MyAlbums = () => {
   const { walletAddress } = useWallets();
   const { data: albums, loading: isLoadingAlbums, refresh } = useFetchOwnedAlbums(walletAddress);
   useFetchSoldAlbums(walletAddress);
-  const { deleteAlbum } = useAlbum();
+  const deleteAlbum = useDeleteAlbum();
   const removeStoreAlbum = useRemoveAlbum();
 
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();

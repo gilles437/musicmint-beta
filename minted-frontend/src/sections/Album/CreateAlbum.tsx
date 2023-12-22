@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { AlbumMetadata, fetchAlbumByIdAsync, useDispatch } from '@/lib/redux';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
-import { useAlbum } from '@/hooks/useAlbum';
+import { useCreateAlbum } from '@/hooks/contract/useCreateAlbum';
 
 import CreateAlbumForm, { CreateAlbumInput } from './AlbumForm';
 
@@ -13,7 +13,7 @@ const CreateAlbum = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [contractAddress, setContractAddress] = useState('');
-  const { createAlbum } = useAlbum(contractAddress);
+  const createAlbum = useCreateAlbum(contractAddress);
 
   useEffect(() => {
     if (router.query?.contract) {

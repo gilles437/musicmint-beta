@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import Loader from '@/components/Loader';
 import LoadingButton from '@/components/LoadingButton';
 import { addArtist } from '@/firebase/config';
-import { useAlbum } from '@/hooks/useAlbum';
+import { useWithdraw } from '@/hooks/contract/useWithdraw';
 import { useArtistMetadata } from '@/hooks/useArtistMetadata';
 import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
@@ -18,7 +18,7 @@ const UpdateProfile = ({ address }: Props) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const { data: metadata, loading: loadingMetadata } = useArtistMetadata(address);
   const { data: albums } = useFetchOwnedAlbums(address);
-  const { withdraw } = useAlbum(albums?.length ? albums[0].contract : null);
+  const withdraw = useWithdraw();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -77,8 +77,15 @@ const UpdateProfile = ({ address }: Props) => {
 
   const handleWithdraw = async () => {
     try {
+      if (!albums?.length) {
+        toast.error("You don't have any albums");
+        return;
+      }
+
       setLoading(true);
-      const amount = await withdraw();
+
+      const contract = albums[0].contract;
+      const amount = await withdraw(contract);
       console.log('withdraw.amount', amount);
 
       toast.success("You have been successfully withdraw");
