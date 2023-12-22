@@ -1,5 +1,5 @@
 import { ContractPromise } from '@polkadot/api-contract';
-import { BN } from "@polkadot/util";
+import { BN } from '@polkadot/util';
 import { useCallback, useMemo } from 'react';
 
 import contractAbi from '@/contracts/album/albums.json';
@@ -11,7 +11,9 @@ import { useChainDecimals } from './useChainDecimals';
 
 export interface ContractEventsType {
   dispatchInfo: {};
-  events: [];
+  events: {
+    event: { data: any[] };
+  }[];
   status: {};
   txHash: string;
   txIndex: number;
@@ -26,7 +28,7 @@ export interface ContractEventsType {
   ];
 }
 
-export const useAlbum = (contractAddress?: string) => {
+export const useAlbum = (contractAddress?: string | null) => {
   const { api } = useApi();
   const gasLimit = useGasLimit(api);
   const chainDecimals = useChainDecimals(api);
@@ -68,7 +70,7 @@ export const useAlbum = (contractAddress?: string) => {
           }
 
           const { signer, options, account } = request;
-          const priceInWei = Math.floor(Number(tokenPrice) * (10 ** chainDecimals));
+          const priceInWei = Math.floor(Number(tokenPrice) * 10 ** chainDecimals);
 
           const queryTx = await contract.query.createAlbum(
             account,
@@ -123,12 +125,7 @@ export const useAlbum = (contractAddress?: string) => {
 
           const { signer, options, account } = request;
 
-          const queryTx = await contract.query.setTokenUri(
-            account,
-            options,
-            albumId,
-            metaUrl
-          );
+          const queryTx = await contract.query.setTokenUri(account, options, albumId, metaUrl);
 
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
@@ -156,6 +153,51 @@ export const useAlbum = (contractAddress?: string) => {
     [request, contract]
   );
 
+  const withdraw = useCallback(async (): Promise<string | null> => {
+    return new Promise<string | null>(async (resolve, reject) => {
+      try {
+        if (!request || !contract) {
+          return reject('API is not ready');
+        }
+
+        const { signer, options, account } = request;
+        console.log('contract.query', contract.query);
+
+        const queryTx = await contract.query['aft37PayableMint::withdraw'](account, options);
+
+        if (!queryTx.result?.isOk) {
+          console.error('****queryTx.error', queryTx.result.asErr);
+          return reject(queryTx.result.asErr);
+        }
+
+        const tx = await contract.tx['aft37PayableMint::withdraw'](options);
+        console.log('*****tx=', tx);
+
+        const unsub = await tx.signAndSend(account, signer, (result) => {
+          console.log('*****tx**result=', result.status.isFinalized);
+          if (!result.status.isFinalized) {
+            return;
+          }
+
+          const event: ContractEventsType = JSON.parse(JSON.stringify(result, null, 2));
+          console.log('*****withdraw.event', event);
+
+          let amount = '0';
+          const { events } = event;
+          if (events?.length && events.length > 1 && events[1].event?.data?.length == 3) {
+            amount = events[1].event.data[2];
+          }
+
+          unsub();
+          resolve(amount);
+        });
+      } catch (err) {
+        console.error(err);
+        reject(err);
+      }
+    });
+  }, [request, contract]);
+
   const deleteAlbum = useCallback(
     async (albumId: number, contractAddress: string): Promise<number | null> => {
       return new Promise<number>(async (resolve, reject) => {
@@ -175,7 +217,7 @@ export const useAlbum = (contractAddress?: string) => {
             return reject(queryTx.result.asErr);
           }
 
-          console.log('deleteAlbum, albumId=', albumId)
+          console.log('deleteAlbum, albumId=', albumId);
           const tx = await contract_.tx.deleteAlbum(options, albumId);
           console.log('*****tx=', tx);
 
@@ -206,10 +248,12 @@ export const useAlbum = (contractAddress?: string) => {
 
           const { api, signer, options, account } = request;
           const mintOptions = { ...options, value: price };
-          console.log('mintOptions', mintOptions)
+          console.log('mintOptions', mintOptions);
 
           const res = await api.query.system.account(account);
-          const { data: { free: balance } } = res.toJSON() as any;
+          const {
+            data: { free: balance },
+          } = res.toJSON() as any;
 
           if (new BN(balance).sub(new BN(price)).isNeg()) {
             return reject(`You don't have enough balance in your wallet!`);
@@ -247,6 +291,7 @@ export const useAlbum = (contractAddress?: string) => {
   return {
     createAlbum,
     setTokenUri,
+    withdraw,
     deleteAlbum,
     mintAlbum,
   };
