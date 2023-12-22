@@ -7,7 +7,8 @@ import SongTable from '@/components/AlbumSong/SongTable';
 import LoadingButton from '@/components/LoadingButton';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 
-import { useAlbumSong } from '@/hooks/useAlbumSong';
+import { useDeleteSong } from '@/hooks/contract/useDeleteSong';
+import { useMintSong } from '@/hooks/contract/useMintSong';
 import { useFetchAlbumSongs } from '@/hooks/useFetchAlbumSongs';
 import { useRemoveSong } from '@/hooks/useRemoveStoreItem';
 
@@ -20,7 +21,8 @@ type Props = {
 
 const AlbumSongs = ({ album, editable }: Props) => {
   const { data: songList, refresh } = useFetchAlbumSongs(album);
-  const { mintSong, deleteSong } = useAlbumSong(album.contract);
+  const deleteSong = useDeleteSong(album.contract);
+  const mintSong = useMintSong();
   const removeStoreSong = useRemoveSong();
 
   const [selectedSong, setSelectedSong] = useState<Song>();

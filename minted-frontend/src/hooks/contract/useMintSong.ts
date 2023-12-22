@@ -4,11 +4,16 @@ import { useCallback } from 'react';
 import { useAlbumContract } from './useAlbumContract';
 import { createAlbumContract } from './utils';
 
-export const useMintAlbum = () => {
+export const useMintSong = () => {
   const { params } = useAlbumContract();
 
   return useCallback(
-    async (albumId: number, price: string, contractAddress: string): Promise<number | null> => {
+    async (
+      contractAddress: string,
+      albumId: number,
+      songId: number,
+      price: string
+    ): Promise<number | null> => {
       return new Promise<number | null>(async (resolve, reject) => {
         try {
           if (!params) {
@@ -34,13 +39,13 @@ export const useMintAlbum = () => {
           }
           console.log('contract', contract);
 
-          const queryTx = await contract.query.mintAlbum(account, mintOptions, albumId);
+          const queryTx = await contract.query.mintSong(account, mintOptions, albumId, songId);
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
             return reject(queryTx.result.asErr);
           }
 
-          const tx = await contract.tx.mintAlbum(mintOptions, albumId);
+          const tx = await contract.tx.mintSong(mintOptions, albumId, songId);
           console.log('*****tx=', tx);
 
           const unsub = await tx.signAndSend(account, signer, (result) => {
@@ -48,7 +53,7 @@ export const useMintAlbum = () => {
             console.log('*****tx**result=', result.status.isFinalized);
             if (result.status.isFinalized) {
               unsub();
-              resolve(albumId);
+              resolve(songId);
             }
           });
           return true;
