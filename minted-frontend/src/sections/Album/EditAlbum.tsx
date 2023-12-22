@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 
 import { Album, AlbumMetadata, fetchAlbumByIdAsync, useDispatch } from '@/lib/redux';
-import { useAlbum } from '@/hooks/useAlbum';
+import { useSetTokenUri } from '@/hooks/contract/useSetTokenUri';
 import { useAlbumMetadata } from '@/hooks/useAlbumMetadata';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
@@ -16,7 +16,7 @@ type Props = {
 const EditAlbum = ({ album }: Props) => {
   const dispatch: any = useDispatch();
   const router = useRouter();
-  const { setTokenUri } = useAlbum(album?.contract);
+  const setTokenUri = useSetTokenUri();
   const metadata = useAlbumMetadata(album);
 
   const onAlbumUpdated = async (albumId: number) => {
@@ -56,9 +56,10 @@ const EditAlbum = ({ album }: Props) => {
       }
 
       const metaUrl = createIpfsUrl(metadataId);
+      console.log('metaUrl', metaUrl)
       toast.info(`Album Metadata saved on ${metaUrl}`);
 
-      const albumId = await setTokenUri(album.albumid, metaUrl);
+      const albumId = await setTokenUri(album.contract, album.albumid, metaUrl);
       console.log('success', albumId);
 
       if (albumId !== null && albumId !== undefined && albumId >= 0) {
@@ -73,7 +74,7 @@ const EditAlbum = ({ album }: Props) => {
       }
     }
 
-    toast.error(`Something wrong to update album`);
+    toast.error(`Something went wrong!`);
     return false;
   };
 

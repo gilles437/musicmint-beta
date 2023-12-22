@@ -3,24 +3,21 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { beatifyAddress } from '@/utils/account';
 import Identicon from '@polkadot/react-identicon';
-import {
-  Artist,
-  useSelector,
-  useDispatch,
-  fetchArtistListAsync,
-} from '@/lib/redux';
+import { Artist, useSelector, useDispatch, fetchArtistListAsync } from '@/lib/redux';
 import { useWallets } from '@/contexts/Wallets';
-import { useAdminContract } from '@/hooks/useAdminContract';
 import { useFindAddress } from '@/hooks/useFindAddress';
+import { useDeployArtistContract } from '@/hooks/contract/useDeployArtistContract';
+import { useAddArtist } from '@/hooks/contract/useAddArtist';
+import { useRemoveArtist } from '@/hooks/contract/useRemoveArtist';
 
 const ArtistsSection = () => {
   const dispatch = useDispatch();
   const { walletAddress } = useWallets();
-  const { superAdmins, artists: artistList } = useSelector(
-    (state) => state.admin
-  );
+  const { superAdmins, artists: artistList } = useSelector((state) => state.admin);
   const [newAdminInput, setNewAdminInput] = useState<string>('');
-  const adminContract = useAdminContract();
+  const addArtist = useAddArtist();
+  const removeArtist = useRemoveArtist();
+  const deployContract = useDeployArtistContract();
   const findAddress = useFindAddress();
 
   //TODO - create a hook
@@ -49,19 +46,24 @@ const ArtistsSection = () => {
       return;
     }
 
-    const success = await adminContract.addArtist(
-      newAdminInput,
-      newContractAddress
-    );
-
-    if (success) {
-      toast.success('Artist has been successfully added');
-      setNewAdminInput('');
-      const timerId = setTimeout(() => fetchArtistList(), 5000);
-      return () => clearTimeout(timerId);
-    } else {
-      toast.warn('Failed to add artist');
+    try {
+      const success = await addArtist(newAdminInput, newContractAddress);
+      if (success) {
+        toast.success('Artist has been successfully added');
+        setNewAdminInput('');
+        
+        const timerId = setTimeout(() => fetchArtistList(), 5000);
+        return () => clearTimeout(timerId);
+      }
+    } catch (err: any) {
+      if (err && err.message === 'Cancelled') {
+        toast.error(`Transaction cancelled`);
+        return false;
+      }
     }
+
+    toast.error(`Something went wrong!`);
+    return false;
   };
 
   const removeAdmin = async (artistAddress: string) => {
@@ -82,19 +84,23 @@ const ArtistsSection = () => {
       return;
     }
 
-    const success = await adminContract.removeArtist(
-      artist.to,
-      artist.contract
-    );
-
-    if (success) {
-      toast.success('Artist has been successfully removed');
-      setNewAdminInput('');
-      const timerId = setTimeout(() => fetchArtistList(), 5000);
-      return () => clearTimeout(timerId);
-    } else {
-      toast.warn('Failed to remove artist');
+    try {
+      const success = await removeArtist(artist.to, artist.contract);
+      if (success) {
+        toast.success('Artist has been successfully removed');
+        setNewAdminInput('');
+        const timerId = setTimeout(() => fetchArtistList(), 5000);
+        return () => clearTimeout(timerId);
+      }
+    } catch (err: any) {
+      if (err && err.message === 'Cancelled') {
+        toast.error(`Transaction cancelled`);
+        return false;
+      }
     }
+
+    toast.error(`Something went wrong!`);
+    return false;
   };
 
   const handleAddAdminChange = (event: any) => {
@@ -119,12 +125,8 @@ const ArtistsSection = () => {
     }
 
     console.log(`start deploy contract`, newAdminInput);
-    await adminContract.deployArtistContract(
-      newAdminInput,
-      (contractAddress: string) => {
-        addAdmin(contractAddress);
-      }
-    );
+    const deployed = await deployContract(newAdminInput);
+    addAdmin(deployed);
   };
 
   return (
@@ -140,10 +142,7 @@ const ArtistsSection = () => {
             style={{ width: '100%', height: '100%' }}
           />
         </div>
-        <div
-          className="col-sm-6"
-          style={{ alignItems: 'flex-end', display: 'flex' }}
-        >
+        <div className="col-sm-6" style={{ alignItems: 'flex-end', display: 'flex' }}>
           <button
             onClick={(e) => deployAdminContract()}
             className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
@@ -170,9 +169,7 @@ const ArtistsSection = () => {
                     <th scope="row">
                       {!!adminAccount.to && (
                         <div className="d-flex">
-                          <p className="ps-1">
-                            {beatifyAddress(adminAccount.to)}
-                          </p>
+                          <p className="ps-1">{beatifyAddress(adminAccount.to)}</p>
                           <Identicon
                             value={adminAccount.to}
                             size={32}
@@ -185,9 +182,7 @@ const ArtistsSection = () => {
                     <th scope="row">
                       {!!adminAccount.contract && (
                         <div className="d-flex">
-                          <p className="ps-1">
-                            {beatifyAddress(adminAccount.contract)}
-                          </p>
+                          <p className="ps-1">{beatifyAddress(adminAccount.contract)}</p>
                           <Identicon
                             value={adminAccount.contract}
                             size={32}
@@ -199,9 +194,7 @@ const ArtistsSection = () => {
                     </th>
                     <td>
                       {adminAccount.timestamp
-                        ? dayjs(adminAccount.timestamp).format(
-                            'MM/DD/YYYY HH:mm'
-                          )
+                        ? dayjs(adminAccount.timestamp).format('MM/DD/YYYY HH:mm')
                         : ''}
                     </td>
                     <td>

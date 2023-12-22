@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 
 import { Album, SongMetadata, fetchSongByIdAsync, useDispatch } from '@/lib/redux';
 import CreateSongForm, { CreateSongInput } from '@/components/AlbumSong/SongForm';
-import { useAlbumSong } from '@/hooks/useAlbumSong';
+import { useCreateSong } from '@/hooks/contract/useCreateSong';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
 import { createIpfsUrl } from '@/utils/ipfs';
 
@@ -13,7 +13,7 @@ type Props = {
 
 const CreateSong = ({ album }: Props) => {
   const dispatch = useDispatch();
-  const { createSong } = useAlbumSong(album?.contract);
+  const createSong = useCreateSong();
 
   const onSongCreated = useCallback(
     (songId: number) => {
@@ -70,6 +70,7 @@ const CreateSong = ({ album }: Props) => {
         toast.info(`Song Metadata saved on ${metaUrl}`);
 
         const songId = await createSong(
+          album.contract,
           album.albumid,
           Number(input.maxSupply),
           Number(input.price),

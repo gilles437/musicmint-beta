@@ -6,11 +6,12 @@ type Props = {
   albums: Album[];
   loading?: boolean;
   showOwner?: boolean;
+  showStats?: boolean;
   clickable?: boolean;
   actions?: (album: Album) => React.ReactElement;
 };
 
-const AlbumTable = ({ albums, loading, showOwner, clickable, actions }: Props) => {
+const AlbumTable = ({ albums, loading, showOwner, showStats, clickable, actions }: Props) => {
   if (loading) {
     return <Loader size={40} />;
   }
@@ -25,8 +26,8 @@ const AlbumTable = ({ albums, loading, showOwner, clickable, actions }: Props) =
             {!!showOwner && <th scope="col">Owner</th>}
             <th scope="col">Max Supply</th>
             <th scope="col">Price</th>
-            <th scope="col">Sold</th>
-            <th scope="col">Gains</th>
+            {!!showStats && <th scope="col">Sold</th>}
+            {!!showStats && <th scope="col">Gains</th>}
             <th scope="col">Created On</th>
             <th scope="col"></th>
           </tr>
@@ -38,6 +39,7 @@ const AlbumTable = ({ albums, loading, showOwner, clickable, actions }: Props) =
               album={album}
               clickable={clickable}
               showOwner={showOwner}
+              showStats={showStats}
               actions={actions}
             />
           ))}

@@ -10,7 +10,7 @@ import AlbumTable from '@/components/Album/AlbumTable';
 import DeleteConfirmModal from '@/components/Modal/DeleteConfirmModal';
 import LoadingButton from '@/components/LoadingButton';
 
-import { useAlbum } from '@/hooks/useAlbum';
+import { useDeleteAlbum } from '@/hooks/contract/useDeleteAlbum';
 import { useFindArtist } from '@/hooks/useFindArtist';
 import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
 import { useFetchSoldAlbums } from '@/hooks/useFetchSoldAlbums';
@@ -25,7 +25,7 @@ const MyAlbums = () => {
   const { walletAddress } = useWallets();
   const { data: albums, loading: isLoadingAlbums, refresh } = useFetchOwnedAlbums(walletAddress);
   useFetchSoldAlbums(walletAddress);
-  const { deleteAlbum } = useAlbum();
+  const deleteAlbum = useDeleteAlbum();
   const removeStoreAlbum = useRemoveAlbum();
 
   const [selectedAlbum, setSelectedAlbum] = useState<Album>();
@@ -35,7 +35,7 @@ const MyAlbums = () => {
   const handleDeleteAlbum = async (album: Album) => {
     try {
       setLoading(true);
-      const deletedAlbumId = await deleteAlbum(album.albumid, album.contract);
+      const deletedAlbumId = await deleteAlbum(album.contract, album.albumid);
       console.log('deletedAlbumId', deletedAlbumId);
 
       if (isNotNullOrUndefined(deletedAlbumId)) {
@@ -85,6 +85,7 @@ const MyAlbums = () => {
             <AlbumTable
               albums={albums}
               clickable={false}
+              showStats
               actions={(album: Album) => (
                 <>
                   <Button

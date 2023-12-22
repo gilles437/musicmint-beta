@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { AlbumMetadata, fetchAlbumByIdAsync, useDispatch } from '@/lib/redux';
 import { createIpfsUrl } from '@/utils/ipfs';
 import { uploadFile, uploadMetadata } from '@/utils/bucket';
-import { useAlbum } from '@/hooks/useAlbum';
+import { useCreateAlbum } from '@/hooks/contract/useCreateAlbum';
 
 import CreateAlbumForm, { CreateAlbumInput } from './AlbumForm';
 
@@ -13,7 +13,7 @@ const CreateAlbum = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [contractAddress, setContractAddress] = useState('');
-  const { createAlbum } = useAlbum(contractAddress);
+  const createAlbum = useCreateAlbum();
 
   useEffect(() => {
     if (router.query?.contract) {
@@ -56,7 +56,12 @@ const CreateAlbum = () => {
       const metaUrl = createIpfsUrl(metadataId);
       toast.info(`New Album Metadata saved on ${metaUrl}`);
 
-      const albumId = await createAlbum(Number(input.maxSupply), Number(input.price), metaUrl);
+      const albumId = await createAlbum(
+        contractAddress,
+        Number(input.maxSupply),
+        Number(input.price),
+        metaUrl
+      );
       console.log('albumId', albumId);
 
       if (albumId !== null && albumId !== undefined && albumId >= 0) {
@@ -70,7 +75,7 @@ const CreateAlbum = () => {
         return false;
       }
     }
-    
+
     toast.error(`Something wrong to create album`);
     return false;
   };

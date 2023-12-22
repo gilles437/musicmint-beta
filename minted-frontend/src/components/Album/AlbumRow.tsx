@@ -10,11 +10,12 @@ import { useMemo } from 'react';
 type Props = {
   album: Album;
   showOwner?: boolean;
+  showStats?: boolean;
   clickable?: boolean;
   actions?: (album: Album) => React.ReactElement;
 };
 
-const AlbumRow = ({ album, showOwner, clickable, actions }: Props) => {
+const AlbumRow = ({ album, showOwner, showStats, clickable, actions }: Props) => {
   const router = useRouter();
   const metadata = useAlbumMetadata(album);
   const { getSoldAmount, getGainAmount } = useAlbumStats();
@@ -27,7 +28,9 @@ const AlbumRow = ({ album, showOwner, clickable, actions }: Props) => {
   }, [router.query?.minted]);
 
   const onClick = () => {
-    router.push(`/album/detail?contract=${album.contract}&albumId=${album.albumid}&minted=${minted}`);
+    router.push(
+      `/album/detail?contract=${album.contract}&albumId=${album.albumid}&minted=${minted}`
+    );
   };
 
   return (
@@ -45,8 +48,8 @@ const AlbumRow = ({ album, showOwner, clickable, actions }: Props) => {
       {!!showOwner && <td>{beatifyAddress(album.from)}</td>}
       <td>{album.maxsupply || ''}</td>
       <td>{metadata?.price || ''}</td>
-      <td>{getSoldAmount(album.contract, album.albumid)}</td>
-      <td>{getGainAmount(album.contract, album.albumid)}</td>
+      {!!showStats && <td>{getSoldAmount(album.contract, album.albumid)}</td>}
+      {!!showStats && <td>{getGainAmount(album.contract, album.albumid)}</td>}
       <td>{dayjs(album.timestamp).format('MM/DD/YYYY HH:mm')}</td>
       <td>{actions ? actions(album) : ''}</td>
     </tr>

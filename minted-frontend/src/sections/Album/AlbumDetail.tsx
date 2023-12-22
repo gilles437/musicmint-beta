@@ -2,22 +2,23 @@ import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
 
 import { Album } from '@/lib/redux';
-import { useAlbum } from '@/hooks/useAlbum';
+import { useMintAlbum } from '@/hooks/contract/useMintAlbum';
 import AlbumDetail from '@/components/Album/AlbumDetail';
+import { isNullOrUndefined } from '@/utils/utils';
 
 type Props = {
   album: Album;
 };
 
 const AlbumDetailSection = ({ album }: Props) => {
-  const { mintAlbum } = useAlbum(album?.contract);
+  const mintAlbum = useMintAlbum();
 
   const handleBuyAlbum = useCallback(
     async (album: Album) => {
       console.log('handleBuyAlbum', album);
       try {
-        const mintedId = await mintAlbum(album.albumid, album.price, album.contract);
-        if (mintedId) {
+        const mintedId = await mintAlbum(album.contract, album.albumid, album.price);
+        if (!isNullOrUndefined(mintedId)) {
           toast.info('You have successfully minted the album');
           return true;
         }
