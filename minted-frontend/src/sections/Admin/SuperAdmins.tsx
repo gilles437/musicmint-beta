@@ -11,7 +11,8 @@ import {
 } from "@/lib/redux";
 import { useWallets } from "@/contexts/Wallets";
 import { useFindAddress } from "@/hooks/useFindAddress";
-import { useAdminContract } from "@/hooks/useAdminContract";
+import { useAddSuperAdmin } from "@/hooks/contract/useAddSuperAdmin";
+import { useRemoveSuperAdmin } from "@/hooks/contract/useRemoveSuperAdmin";
 
 const toastFunction = (string: any) => {
   toast.warn(string, { position: toast.POSITION.TOP_RIGHT });
@@ -22,7 +23,8 @@ const SuperAdminSection = () => {
   const superAdmins = useSelector(selectSuperAdmins);
   const { walletAddress } = useWallets();
   const [newSuperAdminInput, setNewSuperAdminInput] = useState<string>("");
-  const adminContract = useAdminContract();
+  const addSuperAdmin = useAddSuperAdmin();
+  const removeSuperAdmin = useRemoveSuperAdmin();
   const findAddress = useFindAddress();
 
   const caller = "5FNj1E5Wxqg1vMo1qd6Zi6XZjrAXB8ECuXCyHDrsRQZSAPHL"; //The address of Contract Owner
@@ -39,7 +41,7 @@ const SuperAdminSection = () => {
     return walletAddress && caller === walletAddress;
   };
 
-  const addSuperAdmin = async () => {
+  const handleAddSuperAdmin = async () => {
     if (!newSuperAdminInput) {
       toastFunction("You should input address !");
       return;
@@ -55,7 +57,7 @@ const SuperAdminSection = () => {
       return;
     }
 
-    const success = await adminContract.addSuperAdmin(newSuperAdminInput);
+    const success = await addSuperAdmin(newSuperAdminInput);
 
     if (success) {
       setNewSuperAdminInput("");
@@ -68,7 +70,7 @@ const SuperAdminSection = () => {
     }
   };
 
-  const removeSuperAdmin = async (adminAddress: string) => {
+  const handleRemoveSuperAdmin = async (adminAddress: string) => {
     if (!adminAddress) {
       toastFunction("You should input address !");
       return;
@@ -79,7 +81,7 @@ const SuperAdminSection = () => {
       return;
     }
 
-    const success = await adminContract.removeSuperAdmin(adminAddress);
+    const success = await removeSuperAdmin(adminAddress);
 
     if (success) {
       setNewSuperAdminInput("");
@@ -114,7 +116,7 @@ const SuperAdminSection = () => {
           style={{ alignItems: "flex-end", display: "flex" }}
         >
           <button
-            onClick={(e) => addSuperAdmin()}
+            onClick={(e) => handleAddSuperAdmin()}
             className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
           >
             Add Super Admin
@@ -163,7 +165,7 @@ const SuperAdminSection = () => {
                       <td>
                         <button
                           onClick={(e) =>
-                            removeSuperAdmin(superAdminAccount.to)
+                            handleRemoveSuperAdmin(superAdminAccount.to)
                           }
                           className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
                         >
