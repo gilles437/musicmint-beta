@@ -7,7 +7,7 @@ export const useDeleteAlbum = () => {
   const { params } = useAlbumContract();
 
   return useCallback(
-    async (albumId: number, contractAddress: string): Promise<number | null> => {
+    async (contractAddress: string, albumId: number): Promise<number | null> => {
       return new Promise<number>(async (resolve, reject) => {
         try {
           if (!params) {
@@ -21,8 +21,8 @@ export const useDeleteAlbum = () => {
             return reject('Iniitialize Error!');
           }
           console.log('contract', contract);
-          const queryTx = await contract.query.deleteAlbum(account, options, albumId);
 
+          const queryTx = await contract.query.deleteAlbum(account, options, albumId);
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
             return reject(queryTx.result.asErr);

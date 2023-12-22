@@ -13,7 +13,7 @@ type Props = {
 
 const CreateSong = ({ album }: Props) => {
   const dispatch = useDispatch();
-  const createSong = useCreateSong(album?.contract);
+  const createSong = useCreateSong();
 
   const onSongCreated = useCallback(
     (songId: number) => {
@@ -70,6 +70,7 @@ const CreateSong = ({ album }: Props) => {
         toast.info(`Song Metadata saved on ${metaUrl}`);
 
         const songId = await createSong(
+          album.contract,
           album.albumid,
           Number(input.maxSupply),
           Number(input.price),

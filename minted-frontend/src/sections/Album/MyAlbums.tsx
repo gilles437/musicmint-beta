@@ -35,7 +35,7 @@ const MyAlbums = () => {
   const handleDeleteAlbum = async (album: Album) => {
     try {
       setLoading(true);
-      const deletedAlbumId = await deleteAlbum(album.albumid, album.contract);
+      const deletedAlbumId = await deleteAlbum(album.contract, album.albumid);
       console.log('deletedAlbumId', deletedAlbumId);
 
       if (isNotNullOrUndefined(deletedAlbumId)) {

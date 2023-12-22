@@ -2,21 +2,12 @@ import { useMemo } from 'react';
 
 import { useApi } from '@/contexts/Polkadot';
 import { useWallets } from '@/contexts/Wallets';
-
 import { useGasLimit } from './useGasLimit';
-import { createAlbumContract } from './utils';
 
-export const useAlbumContract = (address?: string | null) => {
+export const useAlbumContract = () => {
   const { api } = useApi();
   const gasLimit = useGasLimit(api);
   const { wallet, walletAddress } = useWallets();
-
-  const contract = useMemo(() => {
-    if (api && address) {
-      return createAlbumContract(api, address);
-    }
-    return null;
-  }, [api, address]);
 
   const params = useMemo(() => {
     if (!api) {
@@ -39,7 +30,6 @@ export const useAlbumContract = (address?: string | null) => {
   }, [api, wallet, walletAddress, gasLimit]);
 
   return {
-    contract,
     params,
   };
 };

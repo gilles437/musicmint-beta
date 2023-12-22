@@ -16,7 +16,7 @@ const AlbumDetailSection = ({ album }: Props) => {
     async (album: Album) => {
       console.log('handleBuyAlbum', album);
       try {
-        const mintedId = await mintAlbum(album.albumid, album.price, album.contract);
+        const mintedId = await mintAlbum(album.contract, album.albumid, album.price);
         if (mintedId) {
           toast.info('You have successfully minted the album');
           return true;

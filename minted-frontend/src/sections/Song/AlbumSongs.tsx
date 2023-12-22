@@ -21,7 +21,7 @@ type Props = {
 
 const AlbumSongs = ({ album, editable }: Props) => {
   const { data: songList, refresh } = useFetchAlbumSongs(album);
-  const deleteSong = useDeleteSong(album.contract);
+  const deleteSong = useDeleteSong();
   const mintSong = useMintSong();
   const removeStoreSong = useRemoveSong();
 
@@ -41,7 +41,7 @@ const AlbumSongs = ({ album, editable }: Props) => {
     try {
       setIsLoading(true);
 
-      const removedId = await deleteSong(song.albumid, song.songid);
+      const removedId = await deleteSong(song.contract, song.albumid, song.songid);
       console.log('DeleteSong', removedId);
 
       if (isNotNullOrUndefined(removedId)) {

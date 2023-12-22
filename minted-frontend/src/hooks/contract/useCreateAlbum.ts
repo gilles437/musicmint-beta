@@ -2,21 +2,33 @@ import { useCallback } from 'react';
 import { ContractEventsType } from './types';
 import { useChainDecimals } from './useChainDecimals';
 import { useAlbumContract } from './useAlbumContract';
+import { createAlbumContract } from './utils';
 
-export const useCreateAlbum = (contractAddress?: string | null) => {  
+export const useCreateAlbum = () => {
   const chainDecimals = useChainDecimals();
-  const { contract, params } = useAlbumContract(contractAddress);
+  const { params } = useAlbumContract();
 
   return useCallback(
-    async (maxSupply: number, tokenPrice: number, metaUrl: string): Promise<number | null> => {
+    async (
+      contractAddress: string,
+      maxSupply: number,
+      tokenPrice: number,
+      metaUrl: string
+    ): Promise<number | null> => {
       return new Promise<number | null>(async (resolve, reject) => {
         try {
-          if (!params || !contract) {
+          if (!params) {
             return reject('API is not ready');
           }
 
-          const { signer, options, account } = params;
+          const { api, signer, options, account } = params;
           const priceInWei = Math.floor(Number(tokenPrice) * 10 ** chainDecimals);
+
+          const contract = createAlbumContract(api, contractAddress);
+          if (!contract) {
+            return reject('Iniitialize Error!');
+          }
+          console.log('contract', contract);
 
           const queryTx = await contract.query.createAlbum(
             account,
@@ -58,6 +70,6 @@ export const useCreateAlbum = (contractAddress?: string | null) => {
         }
       });
     },
-    [contract, params, chainDecimals]
+    [params, chainDecimals]
   );
 };

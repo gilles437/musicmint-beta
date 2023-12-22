@@ -1,21 +1,28 @@
 import { useCallback } from 'react';
-import { useAlbumContract } from './useAlbumContract';
 
-export const useSetTokenUri = (contractAddress?: string | null) => {
-  const { contract, params } = useAlbumContract(contractAddress);
+import { useAlbumContract } from './useAlbumContract';
+import { createAlbumContract } from './utils';
+
+export const useSetTokenUri = () => {
+  const { params } = useAlbumContract();
 
   return useCallback(
-    async (albumId: number, metaUrl: string): Promise<number | null> => {
+    async (contractAddress: string, albumId: number, metaUrl: string): Promise<number | null> => {
       return new Promise<number | null>(async (resolve, reject) => {
         try {
-          if (!params || !contract) {
+          if (!params) {
             return reject('API is not ready');
           }
 
-          const { signer, options, account } = params;
+          const { api, signer, options, account } = params;
+
+          const contract = createAlbumContract(api, contractAddress);
+          if (!contract) {
+            return reject('Iniitialize Error!');
+          }
+          console.log('contract', contract);
 
           const queryTx = await contract.query.setTokenUri(account, options, albumId, metaUrl);
-
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
             return reject(queryTx.result.asErr);
@@ -39,6 +46,6 @@ export const useSetTokenUri = (contractAddress?: string | null) => {
         }
       });
     },
-    [contract, params]
+    [params]
   );
 };

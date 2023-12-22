@@ -3,13 +3,15 @@ import { useCallback } from 'react';
 import { ContractEventsType } from './types';
 import { useChainDecimals } from './useChainDecimals';
 import { useAlbumContract } from './useAlbumContract';
+import { createAlbumContract } from './utils';
 
-export const useCreateSong = (contractAddress?: string) => {
+export const useCreateSong = () => {
   const chainDecimals = useChainDecimals();
-  const { contract, params } = useAlbumContract(contractAddress);
+  const { params } = useAlbumContract();
 
   return useCallback(
     async (
+      contractAddress: string,
       albumId: number,
       maxSupply: number,
       tokenPrice: number,
@@ -17,12 +19,18 @@ export const useCreateSong = (contractAddress?: string) => {
     ): Promise<number | null> => {
       return new Promise<number | null>(async (resolve, reject) => {
         try {
-          if (!params || !contract) {
+          if (!params) {
             return reject('API is not ready');
           }
 
-          const { signer, options, account } = params;
+          const { api, signer, options, account } = params;
           const priceInWei = Math.floor(Number(tokenPrice) * 10 ** chainDecimals);
+
+          const contract = createAlbumContract(api, contractAddress);
+          if (!contract) {
+            return reject('Iniitialize Error!');
+          }
+          console.log('contract', contract);
 
           const queryTx = await contract.query.createSong(
             account,
@@ -32,7 +40,6 @@ export const useCreateSong = (contractAddress?: string) => {
             priceInWei,
             metaUrl
           );
-
           console.log('*****queryTx=', queryTx);
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
@@ -65,6 +72,6 @@ export const useCreateSong = (contractAddress?: string) => {
         }
       });
     },
-    [params, contract, chainDecimals]
+    [params, chainDecimals]
   );
 };

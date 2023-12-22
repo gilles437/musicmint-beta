@@ -16,7 +16,7 @@ type Props = {
 const EditAlbum = ({ album }: Props) => {
   const dispatch: any = useDispatch();
   const router = useRouter();
-  const setTokenUri = useSetTokenUri(album?.contract);
+  const setTokenUri = useSetTokenUri();
   const metadata = useAlbumMetadata(album);
 
   const onAlbumUpdated = async (albumId: number) => {
@@ -58,7 +58,7 @@ const EditAlbum = ({ album }: Props) => {
       const metaUrl = createIpfsUrl(metadataId);
       toast.info(`Album Metadata saved on ${metaUrl}`);
 
-      const albumId = await setTokenUri(album.albumid, metaUrl);
+      const albumId = await setTokenUri(album.contract, album.albumid, metaUrl);
       console.log('success', albumId);
 
       if (albumId !== null && albumId !== undefined && albumId >= 0) {

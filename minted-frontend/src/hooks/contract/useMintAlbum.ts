@@ -8,7 +8,7 @@ export const useMintAlbum = () => {
   const { params } = useAlbumContract();
 
   return useCallback(
-    async (albumId: number, price: string, contractAddress: string): Promise<number | null> => {
+    async (contractAddress: string, albumId: number, price: string): Promise<number | null> => {
       return new Promise<number | null>(async (resolve, reject) => {
         try {
           if (!params) {

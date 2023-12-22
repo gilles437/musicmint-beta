@@ -1,21 +1,28 @@
 import { useCallback } from 'react';
 
 import { useAlbumContract } from './useAlbumContract';
+import { createAlbumContract } from './utils';
 
-export const useDeleteSong = (contractAddress?: string) => {
-  const { contract, params } = useAlbumContract(contractAddress);
+export const useDeleteSong = () => {
+  const { params } = useAlbumContract();
 
   return useCallback(
-    async (albumId: number, songId: number): Promise<number | null> => {
+    async (contractAddress: string, albumId: number, songId: number): Promise<number | null> => {
       return new Promise<number | null>(async (resolve, reject) => {
         try {
-          if (!params || !contract) {
+          if (!params) {
             return reject('API is not ready');
           }
 
-          const { signer, options, account } = params;
-          const queryTx = await contract.query.deleteSong(account, options, albumId, songId);
+          const { api, signer, options, account } = params;
 
+          const contract = createAlbumContract(api, contractAddress);
+          if (!contract) {
+            return reject('Iniitialize Error!');
+          }
+          console.log('contract', contract);
+
+          const queryTx = await contract.query.deleteSong(account, options, albumId, songId);
           if (!queryTx.result?.isOk) {
             console.error('****queryTx.error', queryTx.result.asErr);
             return reject(queryTx.result.asErr);
@@ -37,6 +44,6 @@ export const useDeleteSong = (contractAddress?: string) => {
         }
       });
     },
-    [params, contract]
+    [params]
   );
 };
