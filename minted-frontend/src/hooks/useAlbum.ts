@@ -57,7 +57,7 @@ export const useAlbum = (contractAddress?: string) => {
       options: { value: 0, storageDepositLimit: null, gasLimit },
       signer: { signer: wallet.signer },
     };
-  }, [api, contract, wallet, walletAddress, gasLimit]);
+  }, [api, wallet, walletAddress, gasLimit]);
 
   const createAlbum = useCallback(
     async (maxSupply: number, tokenPrice: number, metaUrl: string): Promise<number | null> => {
@@ -153,7 +153,7 @@ export const useAlbum = (contractAddress?: string) => {
         }
       });
     },
-    [request, contract, chainDecimals]
+    [request, contract]
   );
 
   const deleteAlbum = useCallback(
