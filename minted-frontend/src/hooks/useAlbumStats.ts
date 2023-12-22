@@ -1,8 +1,10 @@
-import { BN } from '@polkadot/util';
+import { BN, formatBalance } from '@polkadot/util';
 import { useCallback } from 'react';
 import { selectSoldAlbums, useSelector } from '@/lib/redux';
+import { useChainDecimals } from './contract/useChainDecimals';
 
 export const useAlbumStats = () => {
+  const chainDecimals = useChainDecimals();
   const soldAlbums = useSelector(selectSoldAlbums);
 
   const getSoldAlbums = useCallback(
@@ -27,14 +29,17 @@ export const useAlbumStats = () => {
 
   const getGainAmount = useCallback(
     (contract: string, albumId: number) => {
-      const albums = getSoldAlbums(contract, albumId);
-      if (albums) {
-        const value = albums.reduce((amount, album) => amount.add(new BN(album.price)), new BN(0));
-        return value.toString();
+      if (chainDecimals) {
+        const albums = getSoldAlbums(contract, albumId);
+        if (albums) {
+          const value = albums.reduce((amount, album) => amount.add(new BN(album.price)), new BN(0));
+          formatBalance.setDefaults({ unit: 'AFT', decimals: chainDecimals });
+          return formatBalance(value, { forceUnit: 'AFT', decimals: chainDecimals });
+        }
       }
       return undefined;
     },
-    [getSoldAlbums]
+    [chainDecimals, getSoldAlbums]
   );
 
   return {

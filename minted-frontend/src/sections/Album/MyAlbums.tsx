@@ -85,6 +85,7 @@ const MyAlbums = () => {
             <AlbumTable
               albums={albums}
               clickable={false}
+              showStats
               actions={(album: Album) => (
                 <>
                   <Button
