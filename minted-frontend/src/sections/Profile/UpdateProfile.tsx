@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import ProfileForm, { Profile, ProfileInput } from './ProfileForm';
-import { addArtist } from '@/firebase/config';
-import { uploadFile, uploadMetadata } from '@/utils/bucket';
-import { createIpfsUrl } from '@/utils/ipfs';
-import { useArtistMetadata } from '@/hooks/useArtistMetadata';
 import Button from 'react-bootstrap/esm/Button';
 import Loader from '@/components/Loader';
+import { addArtist } from '@/firebase/config';
+import { useAlbum } from '@/hooks/useAlbum';
+import { useArtistMetadata } from '@/hooks/useArtistMetadata';
+import { useFetchOwnedAlbums } from '@/hooks/useFetchOwnedAlbums';
+import { uploadFile, uploadMetadata } from '@/utils/bucket';
+import { createIpfsUrl } from '@/utils/ipfs';
+import ProfileForm, { Profile, ProfileInput } from './ProfileForm';
 
 type Props = {
   address: string;
@@ -14,7 +16,10 @@ type Props = {
 
 const UpdateProfile = ({ address }: Props) => {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const { data: metadata, loading } = useArtistMetadata(address);
+  const { data: metadata, loading: loadingMetadata } = useArtistMetadata(address);
+  const { data: albums } = useFetchOwnedAlbums(address);
+  const { withdraw } = useAlbum(albums?.length ? albums[0].contract : null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setProfile(metadata);
@@ -70,8 +75,29 @@ const UpdateProfile = ({ address }: Props) => {
     return false;
   };
 
-  if (loading) {
-    return <Loader />
+  const handleWithdraw = async () => {
+    try {
+      setLoading(true);
+      const amount = await withdraw();
+      console.log('withdraw.amount', amount);
+
+      toast.success("You have been successfully withdraw");
+      return true;
+    } catch (err: any) {
+      if (err && err.message === 'Cancelled') {
+        toast.error(`Transaction cancelled`);
+        return false;
+      }
+    } finally {
+      setLoading(false);
+    }
+
+    toast.error('Something went wrong!');
+    return false;
+  };
+
+  if (loadingMetadata) {
+    return <Loader />;
   }
 
   return (
@@ -81,14 +107,15 @@ const UpdateProfile = ({ address }: Props) => {
       </div> */}
 
       <div className="text-center mb-3">
-        <Button className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen">
+        <Button
+          className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
+          onClick={handleWithdraw}
+        >
           Withdraw
         </Button>
-        <span style={{ paddingLeft: 20 }}>
-          Balance: 0
-        </span>
+        <span style={{ paddingLeft: 20 }}>Balance: 0</span>
       </div>
-      
+
       <ProfileForm profile={profile} onSubmit={handleUpdateProfile} />
     </>
   );
