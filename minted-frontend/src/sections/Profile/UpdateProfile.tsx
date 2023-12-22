@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import Button from 'react-bootstrap/esm/Button';
 import Loader from '@/components/Loader';
+import LoadingButton from '@/components/LoadingButton';
 import { addArtist } from '@/firebase/config';
 import { useAlbum } from '@/hooks/useAlbum';
 import { useArtistMetadata } from '@/hooks/useArtistMetadata';
@@ -107,12 +107,13 @@ const UpdateProfile = ({ address }: Props) => {
       </div> */}
 
       <div className="text-center mb-3">
-        <Button
+        <LoadingButton
+          loading={loading}
           className="btn rounded-3 color-000 fw-bold border-1 border brd-light bg-yellowGreen"
           onClick={handleWithdraw}
         >
           Withdraw
-        </Button>
+        </LoadingButton>
         <span style={{ paddingLeft: 20 }}>Balance: 0</span>
       </div>
 
